@@ -5,6 +5,7 @@ Ships a recipe that pulls in and enables everything it needs.
 
 ## Requirements
 
+- PHP `>= 8.3`
 - Drupal `^11 || ^12`
 - Composer + Drush
 - Contrib modules (pulled automatically by Composer): `canvas`, `canvas_field_component`, `focal_point` (→ `crop`), `twig_tweak`
@@ -56,10 +57,12 @@ drush cache:rebuild
 ## What the recipe sets up
 
 - Enables the remaining modules: `twig_tweak`, `focal_point` (→ `crop`),
-  `media`, `media_library`, `menu_ui`, `menu_link_content`, `datetime`,
-  `options`, `path`
+  `media`, `media_library`, `image`, `menu_ui`, `menu_link_content`,
+  `datetime`, `options`, `path`
 - Sets Jarvis as the default theme and places its blocks in the correct
   regions (via config actions on the auto-created theme blocks)
+- Sets the site front page to `/test-page` (the demo Canvas page) — change it
+  under **Configuration → Basic site settings** after install if unwanted
 - Imports base config: custom image styles (`hero_banner`, `wide`), the
   `focal_point` crop type, `media` types + fields, and theme settings
 - Creates the **Jarvis Sample** content type (fields, form/view displays, and
