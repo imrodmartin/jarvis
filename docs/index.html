@@ -1,1 +1,1308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Building the Jarvis Theme — A Beginner's Tutorial</title>
+<style>
+  :root { --fg:#1b2130; --muted:#5a6472; --bg:#ffffff; --accent:#2d6cdf;
+          --border:#e3e7ee; --code-bg:#f6f8fa; --tbl-head:#f0f3f8; }
+  @media (prefers-color-scheme: dark) {
+    :root { --fg:#e6e9ef; --muted:#9aa4b2; --bg:#12151b; --accent:#5b8cf0;
+            --border:#2a2f3a; --code-bg:#1b1f27; --tbl-head:#1b1f27; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+         font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 3rem 1.25rem 6rem; }
+  h1,h2,h3,h4 { line-height:1.25; font-weight:700; margin: 2.2em 0 .6em; }
+  h1 { font-size: 2.15rem; margin-top:.2em; border-bottom:2px solid var(--accent); padding-bottom:.35em; }
+  h2 { font-size: 1.5rem; border-bottom:1px solid var(--border); padding-bottom:.3em; }
+  h3 { font-size: 1.18rem; }
+  h4 { font-size: 1.02rem; color:var(--muted); }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  p, li { color: var(--fg); }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .88em; }
+  p code, li code, td code { background: var(--code-bg); padding: .12em .4em; border-radius: 4px;
+                             border:1px solid var(--border); }
+  pre { background: var(--code-bg); border:1px solid var(--border); border-radius: 8px;
+        padding: 1rem 1.15rem; overflow-x: auto; font-size: .84rem; line-height:1.5; }
+  pre code { background: none; border: none; padding: 0; }
+  blockquote { margin: 1.2em 0; padding: .6em 1.1em; border-left: 4px solid var(--accent);
+               background: var(--code-bg); border-radius: 0 6px 6px 0; color: var(--fg); }
+  blockquote p { margin: .3em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1.4em 0; font-size: .92rem; display:block; overflow-x:auto; }
+  th, td { border: 1px solid var(--border); padding: .55em .8em; text-align: left; vertical-align: top; }
+  th { background: var(--tbl-head); font-weight: 600; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2.5em 0; }
+  ul, ol { padding-left: 1.4em; }
+  li { margin: .3em 0; }
+  .toc { background: var(--code-bg); border:1px solid var(--border); border-radius: 8px; padding: .5em 1.2em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1 id="building-the-jarvis-theme-a-beginners-tutorial">Building the Jarvis Theme — A Beginner's Tutorial</h1>
+<p>This is a complete, step-by-step guide to building <strong>Jarvis</strong> from an empty folder: a
+DXPR-style Drupal 11 theme with Bootstrap 5, a set of <strong>Single Directory Components
+(SDC)</strong>, full <strong>Drupal Canvas</strong> integration, colour + font theme settings, and a
+<strong>recipe</strong> that installs everything with one command.</p>
+<p>It assumes you have never built a Drupal theme before. Every file is explained. By the
+end you'll understand <em>why</em> each piece exists, not just <em>what</em> to type.</p>
+<hr />
+<h2 id="table-of-contents">Table of contents</h2>
+<ol>
+<li><a href="#1-what-were-building">What we're building (the big picture)</a></li>
+<li><a href="#2-key-concepts">Key concepts, in plain English</a></li>
+<li><a href="#3-prerequisites">Prerequisites &amp; site setup</a></li>
+<li><a href="#step-1-scaffold-the-theme">Step 1 — Scaffold the theme</a></li>
+<li><a href="#step-2-bootstrap-and-css">Step 2 — Add Bootstrap and the CSS layer</a></li>
+<li><a href="#step-3-page-template">Step 3 — The page template (regions &amp; layout)</a></li>
+<li><a href="#step-4-first-sdc">Step 4 — Your first Single Directory Component</a></li>
+<li><a href="#step-5-slots">Step 5 — Components with slots (Section &amp; Columns)</a></li>
+<li><a href="#step-6-hero">Step 6 — A component with an image (Hero)</a></li>
+<li><a href="#step-7-colours">Step 7 — Colour settings</a></li>
+<li><a href="#step-8-fonts">Step 8 — Font settings (self-hosted Google Fonts)</a></li>
+<li><a href="#step-9-canvas">Step 9 — Wiring the theme into Drupal Canvas</a></li>
+<li><a href="#step-10-content-templates">Step 10 — Content templates (fielded nodes → components)</a></li>
+<li><a href="#step-11-recipe">Step 11 — Package it all as a recipe</a></li>
+<li><a href="#step-12-install">Step 12 — Install, apply, and test</a></li>
+<li><a href="#troubleshooting">Troubleshooting &amp; cheat sheet</a></li>
+</ol>
+<hr />
+<p><a name="1-what-were-building"></a></p>
+<h2 id="1-what-were-building">1. What we're building</h2>
+<p>Jarvis is a <strong>base theme + component kit</strong>. It gives a site builder:</p>
+<ul>
+<li>A responsive page shell (header, nav, hero, sidebars, footer) built on Bootstrap 5.</li>
+<li>A palette of drag-and-drop <strong>components</strong> (Hero, Card, Section, Text, Image, Video,
+  1/2/3-column layouts) that non-developers place visually in <strong>Canvas</strong>.</li>
+<li>A theme settings screen where an admin picks brand <strong>colours</strong> and <strong>fonts</strong> with no
+  code.</li>
+<li>A <strong>recipe</strong> so the whole thing — theme, modules, demo content — installs in one step.</li>
+</ul>
+<p>Final folder layout:</p>
+<pre class="codehilite"><code>web/themes/custom/jarvis/
+├── jarvis.info.yml          # tells Drupal &quot;I am a theme&quot;, declares regions
+├── jarvis.libraries.yml     # declares CSS/JS bundles
+├── jarvis.theme             # PHP: preprocess hooks (colours, fonts output)
+├── theme-settings.php       # PHP: the admin settings form (colour + font pickers)
+├── logo.svg
+├── templates/
+│   └── page.html.twig       # the page shell / region layout
+├── css/
+│   ├── overrides.css        # Bootstrap variable overrides + spacing utilities
+│   ├── color-settings.css   # styles for the settings form
+│   └── font-settings.css
+├── js/
+│   ├── color-settings.js    # settings-form behaviour
+│   └── font-settings.js
+├── libraries/bootstrap/     # vendored Bootstrap 5 CSS + JS
+├── components/              # ← the Single Directory Components
+│   ├── hero/  card/  section/  text/  image/  video/
+│   ├── one-column/ two-column/ three-column/
+│   └── (each has .component.yml + .twig + optional .css/.js)
+├── google-fonts.json        # font catalogue for the settings dropdown
+└── recipe/                  # the installer (config + demo content)
+    ├── recipe.yml
+    ├── config/
+    └── content/
+</code></pre>
 
+<hr />
+<p><a name="2-key-concepts"></a></p>
+<h2 id="2-key-concepts-in-plain-english">2. Key concepts, in plain English</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>What it means for this tutorial</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Theme</strong></td>
+<td>The folder that controls how your site <em>looks</em>. Jarvis is a <em>base theme</em> extending Drupal's <code>stable9</code>.</td>
+</tr>
+<tr>
+<td><strong>Region</strong></td>
+<td>A named drop-zone in the page (Header, Footer, Content…). Blocks and menus get placed into regions.</td>
+</tr>
+<tr>
+<td><strong>Twig</strong></td>
+<td>Drupal's templating language (<code>{{ variable }}</code>, <code>{% if %}</code>). HTML with holes you fill in.</td>
+</tr>
+<tr>
+<td><strong>Library</strong></td>
+<td>A named bundle of CSS + JS. Drupal only loads a library when something asks for it.</td>
+</tr>
+<tr>
+<td><strong>SDC (Single Directory Component)</strong></td>
+<td>A self-contained UI widget living in one folder: a <code>*.component.yml</code> (its "form"/schema) plus a <code>*.twig</code> (its HTML), and optional CSS/JS. Drupal core auto-discovers them.</td>
+</tr>
+<tr>
+<td><strong>Props &amp; Slots</strong></td>
+<td>A component's inputs. <strong>Props</strong> are simple values (text, a number, a colour). <strong>Slots</strong> are <em>areas you drop other components into</em> (like a column that holds cards).</td>
+</tr>
+<tr>
+<td><strong>Drupal Canvas</strong></td>
+<td>A visual, drag-and-drop page builder (the successor experience to Layout Builder). It reads your SDC components and lets site builders arrange them on a canvas.</td>
+</tr>
+<tr>
+<td><strong>Content template</strong></td>
+<td>A saved Canvas layout for a <em>content type</em> — e.g. "every Article renders its hero field as a Hero component, then its body as Text."</td>
+</tr>
+<tr>
+<td><strong>Recipe</strong></td>
+<td>A YAML-based installer. It turns on modules, imports config, and loads demo content in one command. Replaces the old "install profile / features" dance.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The mental model:</strong> you build <em>components</em> once (developer job), then a <em>site builder</em>
+composes pages out of them in Canvas (no code). The theme settings let an admin
+re-skin the whole thing (colours/fonts) without touching CSS.</p>
+<hr />
+<p><a name="3-prerequisites"></a></p>
+<h2 id="3-prerequisites-site-setup">3. Prerequisites &amp; site setup</h2>
+<p>You need a working Drupal 11 site. This project uses <strong>DDEV</strong> (Docker-based local dev).</p>
+<pre class="codehilite"><code class="language-bash"># From an empty project folder:
+ddev config --project-type=drupal --docroot=web
+ddev start
+ddev composer create drupal/recommended-project:^11
+ddev composer require drush/drush
+ddev drush site:install --account-name=admin --account-pass=admin -y
+ddev launch          # opens the site in your browser
+</code></pre>
+
+<p>Jarvis relies on <strong>Drupal Canvas</strong> and a few contrib modules. Install them now so they're
+available while you build:</p>
+<pre class="codehilite"><code class="language-bash">ddev composer require drupal/canvas drupal/focal_point drupal/twig_tweak
+</code></pre>
+
+<blockquote>
+<p><strong>Note on Canvas:</strong> Canvas is the drag-and-drop builder. Its machine name is <code>canvas</code>,
+and it ships a companion <code>canvas_field_component</code>. You <em>can</em> build and preview all the
+SDC components without Canvas — they also work in Layout Builder — but the Canvas page
+regions and content templates in Step 9–10 require it.</p>
+</blockquote>
+<p>Your theme goes in <code>web/themes/custom/jarvis/</code>. Create that folder:</p>
+<pre class="codehilite"><code class="language-bash">mkdir -p web/themes/custom/jarvis
+cd web/themes/custom/jarvis
+</code></pre>
+
+<p>Everything below is created inside that folder.</p>
+<hr />
+<p><a name="step-1-scaffold-the-theme"></a></p>
+<h2 id="step-1-scaffold-the-theme">Step 1 — Scaffold the theme</h2>
+<h3 id="1a-jarvisinfoyml-the-themes-identity-card">1a. <code>jarvis.info.yml</code> — the theme's identity card</h3>
+<p>Every theme needs a <code>*.info.yml</code>. The filename's prefix (<code>jarvis</code>) is the theme's
+<strong>machine name</strong> and must match the folder name.</p>
+<pre class="codehilite"><code class="language-yaml">name: Jarvis
+type: theme
+base theme: stable9
+core_version_requirement: ^11 || ^12
+description: 'DXPR-style SDC theme with Bootstrap 5, built for Drupal Canvas and Layout Builder.'
+package: Custom
+libraries:
+  - jarvis/global
+regions:
+  header: Header
+  primary_menu: 'Primary menu'
+  breadcrumb: Breadcrumb
+  page_title: 'Page title'
+  hero: Hero
+  highlighted: Highlighted
+  content_top: 'Content top'
+  sidebar_left: 'Left sidebar'
+  content: Content
+  sidebar_right: 'Right sidebar'
+  content_bottom: 'Content bottom'
+  footer: Footer
+</code></pre>
+
+<p>Line by line:</p>
+<ul>
+<li><strong><code>base theme: stable9</code></strong> — we inherit Drupal's clean, markup-light base theme rather
+  than starting from zero. We get sensible core templates for free and override only what
+  we care about.</li>
+<li><strong><code>core_version_requirement</code></strong> — works on Drupal 11 and 12.</li>
+<li><strong><code>libraries: - jarvis/global</code></strong> — load the <code>global</code> library (defined next) on <em>every</em>
+  page. That's how Bootstrap gets onto the page.</li>
+<li><strong><code>regions:</code></strong> — the list of drop-zones. The <strong>key</strong> (<code>header</code>) is the machine name your
+  Twig uses (<code>page.header</code>); the <strong>value</strong> (<code>Header</code>) is the human label shown on the
+  Block layout admin screen. These region names must line up with your <code>page.html.twig</code>
+  (Step 3).</li>
+</ul>
+<h3 id="1b-jarvislibrariesyml-declaring-cssjs">1b. <code>jarvis.libraries.yml</code> — declaring CSS/JS</h3>
+<p>A <strong>library</strong> is a named bundle. Drupal loads it only when referenced.</p>
+<pre class="codehilite"><code class="language-yaml">global:
+  version: 1.x
+  css:
+    base:
+      libraries/bootstrap/css/bootstrap.min.css: { minified: true }
+      css/overrides.css: {}
+  js:
+    libraries/bootstrap/js/bootstrap.bundle.min.js: { minified: true, attributes: { defer: true } }
+
+color-settings:
+  version: 1.x
+  css:
+    theme:
+      css/color-settings.css: {}
+  js:
+    js/color-settings.js: {}
+  dependencies:
+    - core/once
+    - core/drupal
+
+font-settings:
+  version: 1.x
+  css:
+    theme:
+      css/font-settings.css: {}
+  js:
+    js/font-settings.js: {}
+  dependencies:
+    - core/once
+    - core/drupal
+    - core/drupalSettings
+</code></pre>
+
+<ul>
+<li><strong><code>global</code></strong> is attached in <code>info.yml</code>, so it's everywhere. It loads Bootstrap's CSS/JS
+  plus our <code>overrides.css</code>.</li>
+<li><strong><code>css</code> groups</strong> (<code>base</code>, <code>theme</code>…) control load order/weight. <code>base</code> loads before
+  <code>theme</code>, so component CSS can win over Bootstrap.</li>
+<li><strong><code>color-settings</code></strong> / <strong><code>font-settings</code></strong> are <em>only</em> attached to the theme settings
+  admin form (Step 7–8), never on the front end. <code>dependencies</code> pull in Drupal's JS
+  helpers (<code>once</code>, <code>Drupal.behaviors</code>, <code>drupalSettings</code>).</li>
+</ul>
+<h3 id="1c-a-logo-and-an-empty-theme-file">1c. A logo and an empty theme file</h3>
+<ul>
+<li>Drop a <code>logo.svg</code> in the theme root.</li>
+<li>Create an (initially near-empty) <code>jarvis.theme</code> — a PHP file for hooks. We fill it in
+  Steps 7–8:</li>
+</ul>
+<pre class="codehilite"><code class="language-php">&lt;?php
+
+/**
+ * @file
+ * Jarvis theme hooks.
+ */
+</code></pre>
+
+<blockquote>
+<p><strong>Clear the cache after any <code>.yml</code> change.</strong> Drupal caches discovery aggressively:
+<code>ddev drush cr</code>. Get in the habit — 90% of "my change didn't show up" is a stale cache.</p>
+</blockquote>
+<p>Now enable the theme so you can see progress:</p>
+<pre class="codehilite"><code class="language-bash">ddev drush theme:enable jarvis
+ddev drush config:set system.theme default jarvis -y
+ddev drush cr
+</code></pre>
+
+<hr />
+<p><a name="step-2-bootstrap-and-css"></a></p>
+<h2 id="step-2-add-bootstrap-and-the-css-layer">Step 2 — Add Bootstrap and the CSS layer</h2>
+<h3 id="2a-vendor-bootstrap">2a. Vendor Bootstrap</h3>
+<p>Download Bootstrap 5's compiled dist and place two files:</p>
+<pre class="codehilite"><code>libraries/bootstrap/css/bootstrap.min.css
+libraries/bootstrap/js/bootstrap.bundle.min.js
+</code></pre>
+
+<p>(You can grab these from getbootstrap.com → "Download" → <code>dist/</code> folder. The <code>.bundle</code>
+JS includes Popper, which the responsive nav needs.)</p>
+<h3 id="2b-cssoverridescss-theme-by-variables-not-by-rewriting">2b. <code>css/overrides.css</code> — theme by <em>variables</em>, not by rewriting</h3>
+<p>Bootstrap 5 is built on <strong>CSS custom properties</strong> (<code>--bs-primary</code>, etc.). Instead of
+forking Bootstrap's SCSS, we just override its variables. This is the whole styling
+philosophy of Jarvis — <em>theme at the variable level.</em></p>
+<pre class="codehilite"><code class="language-css">/**
+ * Jarvis theme overrides — DXPR-style look via Bootstrap 5 CSS custom properties.
+ */
+:root {
+  --bs-primary: #2d6cdf;
+  --bs-primary-rgb: 45, 108, 223;
+  --bs-secondary: #1b2a4a;
+  --bs-body-font-family: &quot;Inter&quot;, system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, sans-serif;
+  --bs-body-color: #1b2130;
+  --bs-border-radius: 0.65rem;
+  --bs-border-radius-lg: 1rem;
+  --jarvis-section-gap: 4rem;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-hover-bg: #245ac0;
+  --bs-btn-hover-border-color: #245ac0;
+  --bs-btn-padding-x: 1.6rem;
+  --bs-btn-padding-y: 0.7rem;
+  font-weight: 600;
+}
+</code></pre>
+
+<p>Because Jarvis is a <strong>Canvas SDC theme</strong>, avoid viewport units (<code>vh</code>/<code>vw</code>) — they break the
+Canvas preview iframe, which has no real viewport. Stick to <code>rem</code>/<code>px</code>/<code>%</code>.</p>
+<h3 id="2c-spacing-utilities-every-component-shares">2c. Spacing utilities every component shares</h3>
+<p>The design calls for exact <code>10 / 20 / 30px</code> spacing, which Bootstrap's <code>rem</code> scale can't
+hit. So Jarvis ships its own tiny utility set (prefix <code>jp-</code> = "Jarvis padding"). Every
+component's <code>padding</code> / <code>margin</code> props compile down to these classes:</p>
+<pre class="codehilite"><code class="language-css">/* small=10px, medium=20px, large=30px */
+.jp-p-all-small { padding: 10px; }
+.jp-p-all-medium { padding: 20px; }
+.jp-p-all-large { padding: 30px; }
+.jp-p-top-small { padding-top: 10px; }
+/* …top/bottom/left/right × small/medium/large, for padding (jp-p-) and margin (jp-m-) … */
+
+.jp-vpad { padding-top: 30px; padding-bottom: 30px; }
+.jp-nopad { padding-top: 0 !important; padding-bottom: 0 !important; }
+</code></pre>
+
+<p>The naming pattern is deliberate: <code>jp-{p|m}-{side}-{size}</code>. In Step 4 you'll see the Twig
+that builds these class names from a component's props — write the pattern once, reuse it
+in every component.</p>
+<hr />
+<p><a name="step-3-page-template"></a></p>
+<h2 id="step-3-the-page-template-regions-layout">Step 3 — The page template (regions &amp; layout)</h2>
+<p><code>templates/page.html.twig</code> is the shell that wraps every page. It decides which regions are
+<strong>full-width</strong> (span the browser) vs <strong>boxed</strong> (centred <code>.container</code> with side margins),
+and how sidebars behave.</p>
+<p>Create <code>templates/page.html.twig</code>:</p>
+<pre class="codehilite"><code class="language-twig">&lt;div class=&quot;layout-container&quot;&gt;
+
+  {# Full-width header #}
+  {% if page.header %}
+    &lt;header role=&quot;banner&quot; class=&quot;jarvis-region jarvis-region--full jarvis-header&quot;&gt;
+      {{ page.header }}
+    &lt;/header&gt;
+  {% endif %}
+
+  {# Boxed nav row: branding left, menu right, responsive offcanvas on mobile #}
+  {% if page.primary_menu %}
+    &lt;div class=&quot;container jarvis-region jarvis-primary-menu d-flex align-items-center&quot;&gt;
+      &lt;div class=&quot;jarvis-branding-wrap&quot;&gt;
+        {{ page.primary_menu.jarvis_site_branding }}
+      &lt;/div&gt;
+      &lt;button class=&quot;jarvis-menu-toggle d-lg-none ms-auto&quot; type=&quot;button&quot;
+              data-bs-toggle=&quot;offcanvas&quot; data-bs-target=&quot;#jarvis-primary-nav&quot;
+              aria-controls=&quot;jarvis-primary-nav&quot; aria-label=&quot;{{ 'Toggle main menu'|t }}&quot;&gt;
+        &lt;span class=&quot;jarvis-menu-toggle__bar&quot;&gt;&lt;/span&gt;
+      &lt;/button&gt;
+      &lt;div class=&quot;offcanvas-lg offcanvas-end jarvis-primary-nav&quot; tabindex=&quot;-1&quot;
+           id=&quot;jarvis-primary-nav&quot; aria-label=&quot;{{ 'Main menu'|t }}&quot;&gt;
+        &lt;div class=&quot;offcanvas-header d-lg-none&quot;&gt;
+          &lt;button type=&quot;button&quot; class=&quot;btn-close&quot; data-bs-dismiss=&quot;offcanvas&quot;
+                  data-bs-target=&quot;#jarvis-primary-nav&quot; aria-label=&quot;{{ 'Close'|t }}&quot;&gt;&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;offcanvas-body&quot;&gt;
+          {{ page.primary_menu.jarvis_main_menu }}
+          {{ page.primary_menu|without('jarvis_site_branding', 'jarvis_main_menu') }}
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  {% endif %}
+
+  {# Boxed breadcrumb #}
+  {% if page.breadcrumb %}
+    &lt;div class=&quot;container jarvis-region jarvis-breadcrumb&quot;&gt;{{ page.breadcrumb }}&lt;/div&gt;
+  {% endif %}
+
+  {# Full-width page title — hidden on the front page #}
+  {% if page.page_title and not is_front %}
+    &lt;div class=&quot;jarvis-region jarvis-region--full jarvis-page-title&quot;&gt;{{ page.page_title }}&lt;/div&gt;
+  {% endif %}
+
+  {% if page.hero %}
+    &lt;div class=&quot;jarvis-region jarvis-region--full jarvis-hero&quot;&gt;{{ page.hero }}&lt;/div&gt;
+  {% endif %}
+
+  {% if page.highlighted %}
+    &lt;div class=&quot;container jarvis-region jarvis-highlighted&quot;&gt;{{ page.highlighted }}&lt;/div&gt;
+  {% endif %}
+
+  &lt;main role=&quot;main&quot;&gt;
+    &lt;a id=&quot;main-content&quot; tabindex=&quot;-1&quot;&gt;&lt;/a&gt;
+
+    {% if page.content_top %}
+      &lt;div class=&quot;container jarvis-region jarvis-content-top&quot;&gt;{{ page.content_top }}&lt;/div&gt;
+    {% endif %}
+
+    {# A region array is truthy even when empty (it carries cache metadata), so
+       render sidebars to a string and test the trimmed output. #}
+    {% set sidebar_left = page.sidebar_left|render|trim %}
+    {% set sidebar_right = page.sidebar_right|render|trim %}
+    {% set has_sidebar = sidebar_left or sidebar_right %}
+    {% if has_sidebar %}
+      &lt;div class=&quot;container jarvis-region jarvis-main&quot;&gt;
+        &lt;div class=&quot;row g-4&quot;&gt;
+          {% if sidebar_left %}
+            &lt;aside class=&quot;col-12 col-lg-3 jarvis-sidebar jarvis-sidebar--left&quot; role=&quot;complementary&quot;&gt;
+              {{ sidebar_left|raw }}
+            &lt;/aside&gt;
+          {% endif %}
+          &lt;div class=&quot;col jarvis-content&quot;&gt;
+            {{ page.content }}
+          &lt;/div&gt;
+          {% if sidebar_right %}
+            &lt;aside class=&quot;col-12 col-lg-3 jarvis-sidebar jarvis-sidebar--right&quot; role=&quot;complementary&quot;&gt;
+              {{ sidebar_right|raw }}
+            &lt;/aside&gt;
+          {% endif %}
+        &lt;/div&gt;
+      &lt;/div&gt;
+    {% else %}
+      {# No sidebars: edge-to-edge so Canvas full-width columns can break out. #}
+      &lt;div class=&quot;jarvis-content jarvis-content--full&quot;&gt;
+        {{ page.content }}
+      &lt;/div&gt;
+    {% endif %}
+
+    {% if page.content_bottom %}
+      &lt;div class=&quot;container jarvis-region jarvis-content-bottom&quot;&gt;{{ page.content_bottom }}&lt;/div&gt;
+    {% endif %}
+  &lt;/main&gt;
+
+  {% if page.footer %}
+    &lt;footer role=&quot;contentinfo&quot; class=&quot;jarvis-region jarvis-region--full jarvis-footer&quot;&gt;
+      {{ page.footer }}
+    &lt;/footer&gt;
+  {% endif %}
+
+&lt;/div&gt;
+</code></pre>
+
+<p>The three ideas a beginner should take away:</p>
+<ol>
+<li><strong><code>{{ page.REGION }}</code></strong> prints a region. The region names match <code>info.yml</code> exactly.</li>
+<li><strong>Full-width vs boxed</strong> is just: wrap in <code>.container</code> (boxed) or don't (full-width).</li>
+<li><strong>Two clever bits worth understanding:</strong></li>
+<li><code>{{ page.primary_menu.jarvis_site_branding }}</code> renders <em>one specific block</em> out of a
+     region by its block ID, so we can split the logo out of the mobile menu drawer. (Those
+     block IDs come from the recipe in Step 11.)</li>
+<li>A Drupal region is "truthy" even when it holds no blocks (it carries cache metadata),
+     so to know whether a sidebar is <em>really</em> empty we render it to a string and <code>trim</code> it.
+     When both sidebars are empty the content goes edge-to-edge, which lets a Canvas
+     full-width column layout break out of the centred column.</li>
+</ol>
+<p><code>ddev drush cr</code> and reload — you now have a themed page shell.</p>
+<hr />
+<p><a name="step-4-first-sdc"></a></p>
+<h2 id="step-4-your-first-single-directory-component">Step 4 — Your first Single Directory Component</h2>
+<p>Now the fun part. An SDC lives in <code>components/&lt;name&gt;/</code> and needs at minimum two files:</p>
+<ul>
+<li><code>&lt;name&gt;.component.yml</code> — the <strong>schema</strong>: its name, category, and the <strong>props</strong> (inputs).</li>
+<li><code>&lt;name&gt;.twig</code> — the <strong>HTML</strong>, which receives those props as variables.</li>
+</ul>
+<p>Drupal core discovers any component under <code>components/</code> automatically. No registration,
+no hook. Clear cache and it appears (including inside Canvas's component list).</p>
+<p>Let's build the <strong>Text</strong> component — a rich-text block with width and alignment controls.</p>
+<h3 id="4a-componentstexttextcomponentyml">4a. <code>components/text/text.component.yml</code></h3>
+<pre class="codehilite"><code class="language-yaml">$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Text
+status: stable
+description: 'Rich text block with width and alignment controls.'
+category: Jarvis
+props:
+  type: object
+  required:
+    - body
+  properties:
+    body:
+      title: Body
+      type: string
+      contentMediaType: text/html
+      'x-formatting-context': block
+      examples:
+        - '&lt;h2&gt;Section heading&lt;/h2&gt;&lt;p&gt;Body copy with &lt;strong&gt;rich text&lt;/strong&gt;.&lt;/p&gt;'
+    width:
+      title: Width
+      type: string
+      enum: [narrow, normal, wide]
+      'meta:enum':
+        narrow: Narrow
+        normal: Normal
+        wide: Wide
+      default: normal
+    align:
+      title: Alignment
+      type: string
+      enum: [start, center, end]
+      'meta:enum':
+        start: Left
+        center: Center
+        end: Right
+      default: start
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum': { none: None, all: 'All sides', top: Top, bottom: Bottom, left: Left, right: Right }
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum': { small: 'Small (10px)', medium: 'Medium (20px)', large: 'Large (30px)' }
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: false
+</code></pre>
+
+<p>How to read the schema — this is the most important thing in the whole tutorial:</p>
+<ul>
+<li><strong><code>$schema</code></strong> points at Drupal's SDC metadata schema. It gives you editor validation and
+  is required for the component to be "recognised."</li>
+<li><strong><code>name</code> / <code>category</code></strong> show up in Canvas's component picker. Everything with
+  <code>category: Jarvis</code> groups together in the sidebar.</li>
+<li><strong><code>status: stable</code></strong> marks it production-ready (vs <code>experimental</code>/<code>deprecated</code>).</li>
+<li><strong><code>props.properties</code></strong> — each entry is one input the site builder fills in:</li>
+<li><strong><code>type</code></strong> is a JSON-Schema type (<code>string</code>, <code>integer</code>, <code>boolean</code>, <code>object</code>).</li>
+<li><strong><code>title</code></strong> is the field label in Canvas.</li>
+<li><strong><code>enum</code> + <code>meta:enum</code></strong> turns a string into a <strong>dropdown</strong>: <code>enum</code> is the stored
+    values, <code>meta:enum</code> is the friendly labels. This is how you give a builder a
+    "Left / Center / Right" picker.</li>
+<li><strong><code>default</code></strong> is the value used when the builder leaves it alone.</li>
+<li><strong><code>contentMediaType: text/html</code></strong> + <strong><code>x-formatting-context: block</code></strong> tells Canvas
+    "this is a rich-text/WYSIWYG field," not a plain string.</li>
+<li><strong><code>required</code></strong> (top-level list) marks props that <em>must</em> have a value. <strong>This matters
+    for Canvas data binding:</strong> a required SDC prop can be bound to a content field, but
+    only if that field is itself required. If a prop won't show the 🔗 "link to field"
+    icon in Canvas, it's usually because the prop is required but the target field isn't.</li>
+</ul>
+<h3 id="4b-componentstexttexttwig">4b. <code>components/text/text.twig</code></h3>
+<p>The Twig receives every prop as a top-level variable of the same name.</p>
+<pre class="codehilite"><code class="language-twig">{#
+/**
+ * @file
+ * Jarvis text block SDC.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'),
+  margin|default('none'), margin_size|default('medium'),
+  vertical_padding|default(false), no_padding|default(false)) %}
+{% set width_class = { narrow: 'col-lg-6', normal: 'col-lg-8', wide: 'col-lg-10' }[width|default('normal')] %}
+{% set align_class = { start: 'text-start', center: 'text-center', end: 'text-end' }[align|default('start')] %}
+
+&lt;div class=&quot;jarvis-text {{ space }}&quot;&gt;
+  &lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;row justify-content-center&quot;&gt;
+      &lt;div class=&quot;{{ width_class }} {{ align_class }}&quot;&gt;
+        {{ body|raw }}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+<p>Notice the <strong>spacing pattern</strong> (<code>space</code>): it stitches the <code>padding</code> + <code>padding_size</code> props
+into a <code>jp-p-all-medium</code>-style class from Step 2c. <strong>Every</strong> Jarvis component reuses this
+logic. It lives once as a Twig macro in <code>templates/jarvis-spacing.html.twig</code>
+(Drupal exposes each theme's <code>templates/</code> dir under the <code>@jarvis</code>
+namespace), and every component imports it — one source of truth is what makes the
+whole kit feel uniform.</p>
+<p><code>{{ body|raw }}</code> prints the HTML without escaping (safe here because Canvas ran it through
+a text-format filter first).</p>
+<h3 id="4c-see-it">4c. See it</h3>
+<pre class="codehilite"><code class="language-bash">ddev drush cr
+</code></pre>
+
+<p>Every component's <code>examples:</code> values feed the SDC preview, so fill them in — they're your
+free "Storybook." Or just drop the component into a Canvas page (Step 9).</p>
+<p>You've now built a complete component. <strong>Card, Image, and Video follow the exact same
+recipe</strong> — a <code>.component.yml</code> describing props, a <code>.twig</code> rendering them, plus a <code>.css</code> for
+component-specific styling. Copy Text, change the props, change the markup.</p>
+<hr />
+<p><a name="step-5-slots"></a></p>
+<h2 id="step-5-components-with-slots-section-columns">Step 5 — Components with slots (Section &amp; Columns)</h2>
+<p>Props are <em>values</em>. <strong>Slots</strong> are <em>areas that hold other components</em>. A slot is how you
+build a column layout: the builder drops a Card <em>into</em> the left column of a 2-column
+component.</p>
+<h3 id="5a-section-a-single-slot-wrapper">5a. Section — a single-slot wrapper</h3>
+<p><code>components/section/section.component.yml</code> (trimmed to essentials):</p>
+<pre class="codehilite"><code class="language-yaml">$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Section
+status: stable
+description: 'Container/section wrapper that holds other components in its slot.'
+category: Jarvis
+props:
+  type: object
+  properties:
+    width:
+      title: Width
+      type: string
+      enum: [normal, full]
+      'meta:enum': { normal: 'Contained', full: 'Full width' }
+      default: normal
+    bg:
+      title: Background
+      type: string
+      enum: [none, light, dark, primary, body-tertiary]
+      'meta:enum': { none: None, light: Light, dark: Dark, primary: Primary, body-tertiary: 'Subtle grey' }
+      default: none
+    # …padding / margin / vertical_padding props, same as Text…
+slots:
+  content:
+    title: Content
+    description: 'Components placed inside this section.'
+</code></pre>
+
+<p>The new part is the top-level <strong><code>slots:</code></strong> key. <code>content</code> is a named drop-zone. In the
+Twig, a slot prints just like a variable:</p>
+<pre class="codehilite"><code class="language-twig">{% set container = (width|default('normal')) == 'full' ? 'container-fluid' : 'container' %}
+{% set bg_class = bg != 'none' ? 'bg-' ~ bg : '' %}
+&lt;section class=&quot;jarvis-section {{ bg_class }}&quot;&gt;
+  &lt;div class=&quot;{{ container }}&quot;&gt;
+    {{ content }}   {# ← whatever the builder dropped into the slot renders here #}
+  &lt;/div&gt;
+&lt;/section&gt;
+</code></pre>
+
+<h3 id="5b-two-column-a-multi-slot-layout">5b. Two-column — a multi-slot layout</h3>
+<p><code>components/two-column/two-column.component.yml</code> declares <strong>two</strong> slots and layout props:</p>
+<pre class="codehilite"><code class="language-yaml">name: '2 Columns'
+category: 'Jarvis Layout'
+props:
+  type: object
+  properties:
+    width:
+      title: 'Section width'
+      type: string
+      enum: [boxed, full]
+      'meta:enum': { boxed: 'Boxed (centred)', full: 'Full width' }
+      default: boxed
+    gap:
+      title: 'Column gap'
+      type: string
+      enum: [none, small, normal, large]
+      'meta:enum': { none: None, small: Small, normal: Normal, large: Large }
+      default: normal
+    ratio:
+      title: 'Column ratio'
+      type: string
+      enum: [even, wide-left, wide-right]
+      'meta:enum': { even: 'Even (1:1)', wide-left: 'Wide left (2:1)', wide-right: 'Wide right (1:2)' }
+      default: even
+    # …padding / margin props…
+slots:
+  first:
+    title: 'Column 1'
+    description: 'Left / top column.'
+  second:
+    title: 'Column 2'
+    description: 'Right / bottom column.'
+</code></pre>
+
+<p>And the Twig maps the <code>ratio</code>/<code>gap</code> props onto Bootstrap's grid classes:</p>
+<pre class="codehilite"><code class="language-twig">{% set gap_class = { none: 'g-0', small: 'g-2', normal: 'g-4', large: 'g-5' }[gap|default('normal')] %}
+{% set cols = {
+  even:         ['col-12 col-md-6', 'col-12 col-md-6'],
+  'wide-left':  ['col-12 col-md-8', 'col-12 col-md-4'],
+  'wide-right': ['col-12 col-md-4', 'col-12 col-md-8'],
+}[ratio|default('even')] %}
+{% set container = (width|default('boxed')) == 'full' ? 'container-fluid' : 'container' %}
+&lt;div class=&quot;jarvis-columns jarvis-columns--2&quot;&gt;
+  &lt;div class=&quot;{{ container }}&quot;&gt;
+    &lt;div class=&quot;row {{ gap_class }}&quot;&gt;
+      &lt;div class=&quot;{{ cols[0] }}&quot;&gt;{{ first }}&lt;/div&gt;
+      &lt;div class=&quot;{{ cols[1] }}&quot;&gt;{{ second }}&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+<p><code>col-12</code> on mobile means each column is full width and they <strong>stack</strong>; <code>col-md-*</code> kicks in
+at ≥768px and puts them <strong>side by side</strong>. That single line is your entire responsive story.
+<code>one-column</code> and <code>three-column</code> are the same idea with one / three slots.</p>
+<hr />
+<p><a name="step-6-hero"></a></p>
+<h2 id="step-6-a-component-with-an-image-hero">Step 6 — A component with an image (Hero)</h2>
+<p>The Hero shows how Canvas passes an <strong>image</strong> into a component. The magic is one line in
+the schema:</p>
+<pre class="codehilite"><code class="language-yaml">image:
+  title: 'Background image'
+  $ref: json-schema-definitions://canvas.module/image
+</code></pre>
+
+<p><strong><code>$ref: json-schema-definitions://canvas.module/image</code></strong> is a Canvas-provided prop type.
+It gives the builder a proper media/image picker, and inside Twig the <code>image</code> prop arrives
+as an object with <code>image.src</code>, <code>image.alt</code>, <code>image.width</code>, <code>image.height</code>. You don't build
+an upload widget — Canvas hands you the resolved values.</p>
+<p><code>components/hero/hero.component.yml</code> (key props):</p>
+<pre class="codehilite"><code class="language-yaml">name: Hero
+category: Jarvis
+props:
+  type: object
+  required:
+    - heading
+  properties:
+    heading:      { title: Heading, type: string }
+    subheading:   { title: Subheading, type: string }
+    cta_text:     { title: 'CTA text', type: string }
+    cta_href:     { title: 'CTA link', type: string, format: uri-reference }
+    image:        { title: 'Background image', $ref: 'json-schema-definitions://canvas.module/image' }
+    overlay:      { title: 'Overlay opacity (%)', type: integer, default: 40 }
+    align:
+      title: 'Text alignment'
+      type: string
+      enum: [start, center, end]
+      'meta:enum': { start: Left, center: Center, end: Right }
+      default: center
+    text_color:
+      title: 'Text color'
+      type: string
+      enum: [light, dark]
+      'meta:enum': { light: 'Light (#ffffff)', dark: 'Dark (#2d6cdf)' }
+      default: light
+    # …padding / margin / vertical_padding…
+</code></pre>
+
+<p><code>components/hero/hero.twig</code> consumes the image object:</p>
+<pre class="codehilite"><code class="language-twig">{% set align_class = { start: 'text-start', center: 'text-center', end: 'text-end' }[align|default('center')] %}
+{% set justify_class = { start: 'justify-content-start', center: 'justify-content-center', end: 'justify-content-end' }[align|default('center')] %}
+{% set has_image = image.src is defined and image.src %}
+{% set overlay = overlay|default(40) %}
+{% set text_color = text_color|default('light') %}
+
+&lt;section class=&quot;jarvis-hero jarvis-hero--text-{{ text_color }} position-relative d-flex align-items-center {{ align_class }}&quot;
+         {% if has_image %}style=&quot;background-image: url('{{ image.src }}');&quot;{% endif %}&gt;
+  {% if has_image %}
+    &lt;div class=&quot;jarvis-hero__overlay&quot; style=&quot;opacity: {{ overlay / 100 }};&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+  {% endif %}
+  &lt;div class=&quot;container position-relative jarvis-hero__inner py-5&quot;&gt;
+    &lt;div class=&quot;row {{ justify_class }}&quot;&gt;
+      &lt;div class=&quot;col-lg-9 col-xl-8&quot;&gt;
+        {% if heading %}&lt;h1 class=&quot;jarvis-hero__heading display-3 fw-bold mb-3&quot;&gt;{{ heading }}&lt;/h1&gt;{% endif %}
+        {% if subheading %}&lt;p class=&quot;jarvis-hero__subheading lead mb-4&quot;&gt;{{ subheading }}&lt;/p&gt;{% endif %}
+        {% if cta_text and cta_href %}&lt;a href=&quot;{{ cta_href }}&quot; class=&quot;btn btn-primary btn-lg&quot;&gt;{{ cta_text }}&lt;/a&gt;{% endif %}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+</code></pre>
+
+<p>Optional polish: a small script can measure the background and <em>raise</em> the overlay
+opacity when white text would fail WCAG AA contrast — the builder sets a floor, the JS
+enforces legibility. In Jarvis that engine is shared by the hero and card components:
+it lives in <code>js/contrast.js</code>, registered as the <code>jarvis/contrast</code>
+library and attached to each component through <code>libraryOverrides: dependencies:</code>
+in its <code>*.component.yml</code>.</p>
+<h3 id="image-styles-inside-components">Image styles inside components</h3>
+<p>For the <code>Image</code> component, note the <code>image_uri</code> prop and the <strong>named image style</strong> trick.
+Canvas gives you <code>image.src</code>, but to render a specific Drupal <strong>image style</strong> (say
+<code>hero_banner</code>) you also pass the raw file URI and let Twig build the derivative with
+<code>twig_tweak</code>'s <code>|image_style</code> filter. That's why the recipe installs <code>twig_tweak</code>, and why
+image styles like <code>hero_banner</code> and <code>wide</code> are shipped as config (Step 11). In a content
+template, use <code>|image_style</code> in the SDC — <strong>don't</strong> try to use a Canvas "adapter" for it
+(adapters are not allowed inside content templates).</p>
+<hr />
+<p><a name="step-7-colours"></a></p>
+<h2 id="step-7-colour-settings">Step 7 — Colour settings</h2>
+<p>Goal: an admin picks brand colours on the theme settings page, and the whole site re-skins
+— no CSS edits. The trick: <strong>write the chosen colours out as CSS custom properties</strong>, and
+have <code>overrides.css</code> consume those properties.</p>
+<p>Three moving parts:</p>
+<ol>
+<li>A <strong>shared list</strong> of colour slots (so the form and the output never drift).</li>
+<li>A <strong>settings form</strong> (<code>theme-settings.php</code>) with a hex field + native colour picker.</li>
+<li>A <strong>preprocess hook</strong> (<code>jarvis.theme</code>) that prints the chosen colours as an inline
+   <code>&lt;style&gt;</code>.</li>
+</ol>
+<h3 id="7a-the-shared-colour-map-jarvistheme">7a. The shared colour map (<code>jarvis.theme</code>)</h3>
+<pre class="codehilite"><code class="language-php">/**
+ * setting key =&gt; [label, CSS custom property, needs -rgb, default].
+ */
+function _jarvis_colors() {
+  return [
+    'jarvis_color_primary'     =&gt; ['Primary', '--bs-primary', TRUE, '#2d6cdf'],
+    'jarvis_color_secondary'   =&gt; ['Secondary', '--bs-secondary', FALSE, '#1b2a4a'],
+    'jarvis_color_title_bg'    =&gt; ['Title background', '--jarvis-title-bg', FALSE, ''],
+    'jarvis_color_title_text'  =&gt; ['Title text', '--jarvis-title-color', FALSE, ''],
+    'jarvis_color_footer_bg'   =&gt; ['Footer background', '--jarvis-footer-bg', FALSE, ''],
+    'jarvis_color_footer_text' =&gt; ['Footer text', '--jarvis-footer-color', FALSE, ''],
+    'jarvis_color_heading'     =&gt; ['Heading color', '--jarvis-heading-color', FALSE, ''],
+    'jarvis_color_header_bg'   =&gt; ['Header block region background', '--jarvis-header-bg', FALSE, ''],
+    'jarvis_color_header_text' =&gt; ['Header block region text', '--jarvis-header-color', FALSE, ''],
+    'jarvis_color_header_link' =&gt; ['Header block region link color', '--jarvis-header-link-color', FALSE, ''],
+  ];
+}
+</code></pre>
+
+<p>One function, used by both the form and the output — that's what keeps them in sync. The
+third element (<code>TRUE</code>) means "also emit an <code>-rgb</code> triplet," which Bootstrap needs for
+<code>rgba()</code> transparency (<code>--bs-primary-rgb</code>).</p>
+<h3 id="7b-the-settings-form-theme-settingsphp">7b. The settings form (<code>theme-settings.php</code>)</h3>
+<p>Drupal automatically calls <code>hook_form_system_theme_settings_alter()</code> in a theme's
+<code>theme-settings.php</code> to add fields to the appearance settings page.</p>
+<pre class="codehilite"><code class="language-php">&lt;?php
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
+
+function jarvis_form_system_theme_settings_alter(array &amp;$form, FormStateInterface $form_state) {
+  $form['jarvis_colors'] = [
+    '#type' =&gt; 'details',
+    '#title' =&gt; t('Colors'),
+    '#open' =&gt; TRUE,
+    '#weight' =&gt; -20,
+  ];
+
+  foreach (_jarvis_colors() as $key =&gt; $info) {
+    [$label, , , $default] = $info;
+    $val = theme_get_setting($key);
+    $val = (is_string($val) &amp;&amp; $val !== '') ? $val : $default;
+    $swatch = ($val !== '') ? $val : '#ffffff';
+
+    $form['jarvis_colors'][$key] = [
+      '#type' =&gt; 'textfield',
+      '#title' =&gt; t($label),
+      '#default_value' =&gt; $val,
+      '#size' =&gt; 10,
+      '#maxlength' =&gt; 7,
+      '#attributes' =&gt; [
+        'class' =&gt; ['jarvis-color-hex'],
+        'pattern' =&gt; '#[0-9a-fA-F]{6}',
+        'placeholder' =&gt; '#ffffff',
+      ],
+      // A native colour picker as the field prefix; JS keeps it in sync with the text field.
+      '#field_prefix' =&gt; Markup::create(
+        '&lt;input type=&quot;color&quot; class=&quot;jarvis-color-pick&quot; value=&quot;'
+        . htmlspecialchars($swatch, ENT_QUOTES) . '&quot;&gt;'
+      ),
+    ];
+  }
+
+  $form['#attached']['library'][] = 'jarvis/color-settings';
+  $form['#validate'][] = 'jarvis_color_settings_validate';
+}
+
+/**
+ * Reject anything that isn't a #rrggbb hex (or empty). Security: this is what
+ * stops someone injecting CSS through a colour value.
+ */
+function jarvis_color_settings_validate(array &amp;$form, FormStateInterface $form_state) {
+  foreach (array_keys(_jarvis_colors()) as $key) {
+    $val = (string) $form_state-&gt;getValue($key);
+    if ($val !== '' &amp;&amp; !preg_match('/^#[0-9a-fA-F]{6}$/', $val)) {
+      $form_state-&gt;setErrorByName($key, t('%v is not a valid hex color (use #rrggbb).', ['%v' =&gt; $val]));
+    }
+  }
+}
+</code></pre>
+
+<p>Each colour is a hex <strong>textfield</strong> with a native <code>&lt;input type="color"&gt;</code> glued on as the
+prefix. The colour input is just the picker/preview; only the text field actually submits.
+<code>css/color-settings.js</code> keeps the two in sync. <strong>Always validate</strong> — the strict hex regex
+is what prevents CSS injection through a settings value.</p>
+<h3 id="7c-output-the-colours-jarvistheme-preprocess">7c. Output the colours (<code>jarvis.theme</code> preprocess)</h3>
+<pre class="codehilite"><code class="language-php">/**
+ * Implements hook_preprocess_html().
+ * Emit chosen colours as CSS variables in an inline &lt;style&gt;.
+ */
+function jarvis_preprocess_html(array &amp;$variables) {
+  $lines = [];
+  foreach (_jarvis_colors() as $key =&gt; $info) {
+    [$label, $var, $rgb] = $info;
+    $val = theme_get_setting($key);
+    // Re-validate on output too — only emit clean #rrggbb values.
+    if (!is_string($val) || !preg_match('/^#[0-9a-fA-F]{6}$/', $val)) {
+      continue;
+    }
+    $lines[] = &quot;$var:$val;&quot;;
+    if ($rgb) {
+      $r = hexdec(substr($val, 1, 2));
+      $g = hexdec(substr($val, 3, 2));
+      $b = hexdec(substr($val, 5, 2));
+      $lines[] = &quot;{$var}-rgb:$r,$g,$b;&quot;;
+    }
+  }
+  if ($lines) {
+    $variables['#attached']['html_head'][] = [
+      ['#tag' =&gt; 'style', '#value' =&gt; 'html:root{' . implode('', $lines) . '}'],
+      'jarvis-colors',
+    ];
+  }
+}
+</code></pre>
+
+<p>Why <code>html:root</code> instead of plain <code>:root</code>? Specificity. <code>html:root</code> (0,0,1,1) beats
+<code>overrides.css</code>'s <code>:root</code> defaults regardless of stylesheet order, so the admin's choices
+always win. Now, in <code>overrides.css</code>, any region that reads one of those variables re-skins
+itself automatically:</p>
+<pre class="codehilite"><code class="language-css">.jarvis-footer { background: var(--jarvis-footer-bg); color: var(--jarvis-footer-color); }
+.jarvis-page-title { background: var(--jarvis-title-bg); color: var(--jarvis-title-color); }
+h1, h2, h3 { color: var(--jarvis-heading-color); }
+</code></pre>
+
+<p>That's the payoff: <strong>define a variable in the map → consume it in CSS → the region is
+themeable with zero extra PHP.</strong></p>
+<hr />
+<p><a name="step-8-fonts"></a></p>
+<h2 id="step-8-font-settings-self-hosted-google-fonts">Step 8 — Font settings (self-hosted Google Fonts)</h2>
+<p>Same idea, one level fancier. The admin picks a Google font per "slot" (base text,
+headings, nav, site name, blockquote) and targets it with a CSS selector. On <strong>save</strong>, the
+theme <em>downloads</em> those fonts and self-hosts them — so the live site never calls Google
+(better privacy + GDPR + speed).</p>
+<h3 id="8a-a-font-catalogue">8a. A font catalogue</h3>
+<p>Ship a <code>google-fonts.json</code> listing the families and their available weights:</p>
+<pre class="codehilite"><code class="language-json">{
+  &quot;families&quot;: {
+    &quot;Open Sans&quot;: [&quot;300&quot;, &quot;400&quot;, &quot;600&quot;, &quot;700&quot;, &quot;300i&quot;, &quot;400i&quot;],
+    &quot;Inter&quot;:     [&quot;400&quot;, &quot;500&quot;, &quot;600&quot;, &quot;700&quot;],
+    &quot;Playpen Sans&quot;: [&quot;300&quot;, &quot;400&quot;, &quot;500&quot;]
+  }
+}
+</code></pre>
+
+<p>The settings form reads this to populate the family dropdown and per-family weight options.</p>
+<h3 id="8b-font-slots-shared-map-in-jarvistheme">8b. Font slots (shared map, in <code>jarvis.theme</code>)</h3>
+<pre class="codehilite"><code class="language-php">/**
+ * setting-key stem =&gt; [label, default CSS selector].
+ * Each slot stores three settings: _family, _weight, _selector.
+ */
+function _jarvis_fonts() {
+  return [
+    'base'       =&gt; ['Base font', 'body'],
+    'headings'   =&gt; ['Headings', 'h1, h2, h3, h4, h5, h6, .page-title'],
+    'navigation' =&gt; ['Navigation', 'nav, nav ul li, nav a'],
+    'site_name'  =&gt; ['Site name', '.site-name, .navbar-brand'],
+    'blockquote' =&gt; ['Blockquote', 'blockquote, blockquote p'],
+  ];
+}
+</code></pre>
+
+<h3 id="8c-the-form-added-to-the-same-theme_settings_alter">8c. The form (added to the same <code>theme_settings_alter</code>)</h3>
+<p>For each slot: a <strong>family</strong> <code>select</code>, a <strong>weight/style</strong> <code>select</code>, and a <strong>CSS selector</strong>
+textfield, plus a live preview. <code>js/font-settings.js</code> repopulates the weight dropdown when
+the family changes (using the <code>drupalSettings</code> catalogue you attached). The form registers a
+<strong>submit handler</strong>:</p>
+<pre class="codehilite"><code class="language-php">$form['jarvis_fonts']['#attached']['library'][] = 'jarvis/font-settings';
+$form['jarvis_fonts']['#attached']['drupalSettings']['jarvisFonts']['families'] = $families;
+$form['#submit'][] = 'jarvis_font_settings_submit';
+</code></pre>
+
+<h3 id="8d-the-download-and-self-host-submit-handler">8d. The download-and-self-host submit handler</h3>
+<p>On save, for each chosen font: fetch the Google <code>css2</code> payload with a Chrome User-Agent
+(so Google returns modern <code>woff2</code>), download each referenced <code>.woff2</code> into
+<code>public://jarvis-fonts/</code>, rewrite the <code>url()</code> to the local copy, and append a CSS rule that
+applies the family to the slot's selector. Everything is written to one
+<code>jarvis-fonts.css</code>:</p>
+<pre class="codehilite"><code class="language-php">function jarvis_font_settings_submit(array &amp;$form, FormStateInterface $form_state) {
+  $fs = \Drupal::service('file_system');
+  $dir = 'public://jarvis-fonts';
+  $fs-&gt;prepareDirectory($dir, /* CREATE_DIRECTORY | MODIFY_PERMISSIONS */ 3);
+  $client = \Drupal::httpClient();
+  $ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) … Chrome/120.0 Safari/537.36';
+  // for each slot: build the css2 URL, fetch CSS, download every woff2,
+  //   rewrite url() → local, and add a `selector { font-family: … }` rule …
+  // then: $fs-&gt;saveData($generatedCss, &quot;$dir/jarvis-fonts.css&quot;, FileExists::Replace);
+  \Drupal::messenger()-&gt;addStatus(t('Fonts downloaded and self-hosted.'));
+}
+</code></pre>
+
+<h3 id="8e-attach-the-generated-stylesheet-on-every-page">8e. Attach the generated stylesheet on every page</h3>
+<p>Back in <code>jarvis_preprocess_html()</code>, link the generated file if it exists (cache-busted by
+its mtime):</p>
+<pre class="codehilite"><code class="language-php">$css = 'public://jarvis-fonts/jarvis-fonts.css';
+$real = \Drupal::service('file_system')-&gt;realpath($css);
+if ($real &amp;&amp; file_exists($real)) {
+  $url = \Drupal::service('file_url_generator')-&gt;generateString($css);
+  $variables['#attached']['html_head'][] = [
+    ['#tag' =&gt; 'link', '#attributes' =&gt; ['rel' =&gt; 'stylesheet', 'href' =&gt; $url . '?' . filemtime($real)]],
+    'jarvis-fonts',
+  ];
+}
+</code></pre>
+
+<p>The takeaway pattern is identical to colours: <strong>shared map → form → save/output.</strong> Colours
+output inline on every request; fonts are generated once at save time into a file that's
+then attached.</p>
+<hr />
+<p><a name="step-9-canvas"></a></p>
+<h2 id="step-9-wiring-the-theme-into-drupal-canvas">Step 9 — Wiring the theme into Drupal Canvas</h2>
+<p>So far the components work in any SDC context. To let a site builder drag them onto a page
+in <strong>Canvas</strong>, two things must be true:</p>
+<ol>
+<li><strong>Canvas is installed</strong> (<code>ddev drush en canvas canvas_field_component -y</code>).</li>
+<li>Your theme declares <strong>Canvas page regions</strong> — the areas of the page shell that Canvas is
+   allowed to manage.</li>
+</ol>
+<p>A Canvas <strong>page region</strong> is a config entity that mirrors a theme region. Jarvis ships one
+per region as <code>canvas.page_region.jarvis.&lt;region&gt;.yml</code>. Example
+<code>canvas.page_region.jarvis.hero.yml</code>:</p>
+<pre class="codehilite"><code class="language-yaml">langcode: en
+status: false
+dependencies:
+  theme:
+    - jarvis
+id: jarvis.hero
+region: hero
+theme: jarvis
+component_tree: {  }
+</code></pre>
+
+<ul>
+<li><strong><code>id: jarvis.hero</code></strong> and <strong><code>region: hero</code></strong> tie this Canvas region to the theme region
+  named <code>hero</code> from your <code>info.yml</code>.</li>
+<li><strong><code>component_tree: {}</code></strong> starts empty — the builder fills it by dragging components in.</li>
+<li><strong><code>status: false</code></strong> means the region isn't force-enabled by default; enable the ones you
+  want Canvas to own.</li>
+</ul>
+<p>You provide one of these per region you want editable. Once they're imported and cache is
+cleared, opening Canvas shows your <code>category: Jarvis</code> components in the sidebar, and dropping
+one writes its config into that region's <code>component_tree</code>.</p>
+<blockquote>
+<p><strong>Where do these files come from?</strong> You don't hand-write the whole <code>component_tree</code> — you
+build a page in the Canvas UI, then export the resulting config with
+<code>ddev drush config:export</code> (or the Canvas export). The YAML you see in <code>recipe/config/</code> is
+the <em>captured result</em> of arranging components visually, which the recipe replays on a
+fresh site.</p>
+</blockquote>
+<hr />
+<p><a name="step-10-content-templates"></a></p>
+<h2 id="step-10-content-templates-fielded-nodes-components">Step 10 — Content templates (fielded nodes → components)</h2>
+<p>A <strong>content template</strong> answers: "when Drupal renders a <em>Jarvis Sample</em> node, how should its
+fields map onto components?" It's a Canvas layout bound to a content type + view mode.</p>
+<p>Jarvis ships <code>canvas.content_template.node.jarvis_sample.full.yml</code>. The important parts:</p>
+<pre class="codehilite"><code class="language-yaml">id: node.jarvis_sample.full
+content_entity_type_id: node
+content_entity_type_bundle: jarvis_sample
+content_entity_type_view_mode: full
+component_tree:
+  '0:…':
+    component_id: sdc.jarvis.image        # Hero image component
+    inputs:
+      image:
+        sourceType: entity-field
+        expression: 'ℹ︎␜entity:node:jarvis_sample␝field_hero_banner␞…'   # ← binds a field
+      image_style: hero_banner
+      full_width: true
+  '1:…':
+    component_id: sdc.jarvis.section
+    inputs: { width: normal, bg: none }
+  '1:content:0:…':
+    parent_uuid: …                        # nested inside the section's slot
+    slot: content
+    component_id: field_display.field_display
+    inputs:
+      field_name: field_publication_date
+      formatter_id: datetime_default
+  '2:first:0:…':
+    component_id: sdc.jarvis.text
+    inputs:
+      body:
+        sourceType: entity-field
+        expression: 'ℹ︎␜entity:node:jarvis_sample␝field_body␞␟processed'  # body field → Text
+</code></pre>
+
+<p>The concepts a beginner needs:</p>
+<ul>
+<li><strong><code>component_id: sdc.jarvis.image</code></strong> — references your SDC by machine path
+  (<code>sdc.&lt;theme&gt;.&lt;component&gt;</code>).</li>
+<li><strong><code>inputs</code></strong> are the component's props. A static value (<code>image_style: hero_banner</code>) is
+  hard-coded; a <strong><code>sourceType: entity-field</code></strong> input with an <code>expression</code> <em>binds a node
+  field</em> to the prop. That funky <code>ℹ︎␜entity:node…␝field_body␞</code> string is Canvas's field-path
+  syntax — you don't type it by hand, Canvas writes it when you click "link to field" (the
+  🔗 icon) in the UI.</li>
+<li><strong>Nesting</strong> (<code>parent_uuid</code> + <code>slot</code>) is how a component lands <em>inside another component's
+  slot</em> — here, a field display sits inside the Section's <code>content</code> slot.</li>
+<li><strong>Remember the binding rule:</strong> a required prop only exposes the 🔗 link icon when the field
+  it binds to is also required. And for image styles inside a template, use the SDC's own
+  <code>|image_style</code> (via <code>twig_tweak</code>) — content templates can't use Canvas adapters.</li>
+</ul>
+<p>To <em>style a whole content type's fields</em>, you edit its content template (a ContentTemplate
+config entity) — you don't add a "styling field" to the node.</p>
+<hr />
+<p><a name="step-11-recipe"></a></p>
+<h2 id="step-11-package-it-all-as-a-recipe">Step 11 — Package it all as a recipe</h2>
+<p>A <strong>recipe</strong> installs the theme + its dependencies + config + demo content in one command.
+It lives in <code>recipe/</code> and is driven by <code>recipe/recipe.yml</code>.</p>
+<pre class="codehilite"><code class="language-yaml">name: 'Jarvis Theme'
+description: 'Enables the Jarvis theme, required contrib modules, base config, the Jarvis
+  Sample content type, and demo content. Requires Canvas + the Jarvis theme installed and
+  cache rebuilt first (see README).'
+type: 'Theme'
+install:
+  - twig_tweak
+  - focal_point
+  - canvas
+  - canvas_field_component
+  - jarvis
+  - media
+  - media_library
+  - image
+  - menu_ui
+  - menu_link_content
+  - datetime
+  - options
+  - path
+config:
+  actions:
+    system.theme:
+      simpleConfigUpdate:
+        default: jarvis
+    block.block.jarvis_main_menu:
+      simpleConfigUpdate:
+        status: true
+        region: primary_menu
+        settings:
+          id: 'system_menu_block:main'
+          level: 1
+          depth: 2
+          expand_all_items: true
+    block.block.jarvis_site_branding:
+      simpleConfigUpdate:
+        status: true
+        region: primary_menu
+        settings:
+          id: system_branding_block
+          use_site_logo: true
+          use_site_name: false
+    # …more block placements (footer menu, breadcrumbs, messages, page title, …)
+</code></pre>
+
+<p>The three sections:</p>
+<ol>
+<li><strong><code>install:</code></strong> — every module (and the theme itself) to turn on, in dependency order.
+   This is why applying the recipe on a clean site "just works."</li>
+<li><strong><code>config.actions:</code></strong> — surgical config changes. <code>simpleConfigUpdate</code> sets values
+   (e.g. make <code>jarvis</code> the default theme) and <strong>places blocks into regions</strong> — this is what
+   populates your <code>primary_menu</code>, <code>footer</code>, etc. Note the block IDs like
+   <code>jarvis_site_branding</code> and <code>jarvis_main_menu</code> — <em>these are the exact IDs the page
+   template renders by name</em> in Step 3.</li>
+<li><strong>Config &amp; content files</strong> (in <code>recipe/config/</code> and <code>recipe/content/</code>) — everything else
+   is imported wholesale:</li>
+<li><code>recipe/config/</code> holds the field storage/instances, the <code>jarvis_sample</code> node type,
+     image styles (<code>hero_banner</code>, <code>wide</code>), the focal-point crop type, media types, the
+     Canvas page regions (Step 9), the content template (Step 10), and <code>jarvis.settings.yml</code>
+     (the default colours/fonts).</li>
+<li><code>recipe/content/</code> holds demo content as YAML (a Test Blog node, a Test Page Canvas
+     page, media, files, menu links) via <strong>default_content</strong>. UUID-named files are entities;
+     the raw <code>.png</code>/<code>.jpg</code> are the referenced image files.</li>
+</ol>
+<p>To build these config files, you <em>don't</em> write them by hand. You configure everything on a
+working site (create the content type, add fields, set up Canvas, pick colours), then
+export:</p>
+<pre class="codehilite"><code class="language-bash">ddev drush config:export
+# copy the relevant jarvis.*, canvas.*, field.*, node.type.*, image.style.* files
+# into web/themes/custom/jarvis/recipe/config/
+</code></pre>
+
+<p><code>recipe/config/jarvis.settings.yml</code> is worth a peek — it's the exported default theme
+settings, so a fresh install starts with the right brand colours and fonts already chosen:</p>
+<pre class="codehilite"><code class="language-yaml">logo:
+  use_default: 1
+jarvis_color_primary: '#2d6cdf'
+jarvis_color_secondary: '#1b2a4a'
+jarvis_color_title_bg: '#2d6cdf'
+jarvis_color_footer_bg: '#000000'
+jarvis_font_base_family: 'Open Sans'
+jarvis_font_base_weight: '300'
+jarvis_font_headings_family: 'Open Sans'
+jarvis_font_headings_weight: '600'
+# …etc…
+</code></pre>
+
+<hr />
+<p><a name="step-12-install"></a></p>
+<h2 id="step-12-install-apply-and-test">Step 12 — Install, apply, and test</h2>
+<p>Because the recipe's Canvas config references the theme, the <strong>order matters</strong>. On a fresh
+site:</p>
+<pre class="codehilite"><code class="language-bash"># 1. Make the theme discoverable and install Canvas first.
+ddev drush theme:enable jarvis -y
+ddev drush en canvas canvas_field_component -y
+ddev drush cr
+
+# 2. Apply the recipe (path is relative to the Drupal root).
+ddev drush recipe web/themes/custom/jarvis/recipe
+
+# 3. Rebuild caches and log in.
+ddev drush cr
+ddev drush uli
+</code></pre>
+
+<p>Then verify, in order:</p>
+<ol>
+<li><strong>Front end loads</strong> with Bootstrap styling and your logo in the nav. → theme + libraries
+   OK.</li>
+<li><strong><code>/admin/appearance/settings/jarvis</code></strong> shows the Colours and Fonts sections. Change a
+   colour, save, reload → the site re-skins. → Steps 7–8 OK.</li>
+<li><strong>Save the Fonts form</strong> → check <code>sites/default/files/jarvis-fonts/jarvis-fonts.css</code>
+   exists and the site uses the new fonts. → self-hosting OK.</li>
+<li><strong>Edit the Test Page in Canvas</strong> → your <code>Jarvis</code> and <code>Jarvis Layout</code> components appear in
+   the sidebar; drag a Hero in, set its image, save, view the page. → Steps 4–6, 9 OK.</li>
+<li><strong>View the Test Blog node</strong> → its hero field renders as the Hero component, body as Text,
+   per the content template. → Step 10 OK.</li>
+</ol>
+<p>If something's missing, it's almost always caching or order — see below.</p>
+<hr />
+<p><a name="troubleshooting"></a></p>
+<h2 id="troubleshooting-cheat-sheet">Troubleshooting &amp; cheat sheet</h2>
+<p><strong>"My new component / region / setting doesn't appear."</strong>
+→ <code>ddev drush cr</code>. SDC, libraries, regions, and theme settings are all discovery-cached.</p>
+<p><strong>"The recipe failed on a Canvas config import."</strong>
+→ You applied it before Canvas or the theme was installed. Do Step 12 in order: theme →
+Canvas → <code>cr</code> → recipe.</p>
+<p><strong>"A component prop won't bind to a field (no 🔗 icon in Canvas)."</strong>
+→ The SDC prop is <code>required</code> but the target content field is not required. Make the field
+required, or drop <code>required</code> from the prop.</p>
+<p><strong>"The Canvas preview looks broken / clipped."</strong>
+→ You used <code>vh</code>/<code>vw</code> somewhere. Canvas renders in an iframe with no real viewport. Use
+<code>rem</code>/<code>px</code>/<code>%</code>.</p>
+<p><strong>"I need a named image style in a component."</strong>
+→ Pass the raw file URI as a prop and use <code>twig_tweak</code>'s <code>|image_style('hero_banner')</code> in
+the SDC. Don't use a Canvas adapter inside a content template.</p>
+<p><strong>"How do I regenerate the recipe after changing things in the UI?"</strong>
+→ <code>ddev drush config:export</code>, then copy the changed <code>jarvis.* / canvas.* / field.* /
+node.type.* / image.style.*</code> files into <code>recipe/config/</code>.</p>
+<h3 id="the-seven-files-that-define-the-theme">The seven files that define the theme</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Job</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>jarvis.info.yml</code></td>
+<td>Declares the theme + its regions.</td>
+</tr>
+<tr>
+<td><code>jarvis.libraries.yml</code></td>
+<td>Declares CSS/JS bundles (Bootstrap, settings assets).</td>
+</tr>
+<tr>
+<td><code>templates/page.html.twig</code></td>
+<td>The page shell / region layout.</td>
+</tr>
+<tr>
+<td><code>css/overrides.css</code></td>
+<td>Bootstrap-variable theming + <code>jp-</code> spacing utilities.</td>
+</tr>
+<tr>
+<td><code>jarvis.theme</code></td>
+<td>Preprocess hooks: output colours + attach fonts.</td>
+</tr>
+<tr>
+<td><code>theme-settings.php</code></td>
+<td>The colour + font admin form and its handlers.</td>
+</tr>
+<tr>
+<td><code>components/*/</code></td>
+<td>The SDC kit — one folder per component.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-one-pattern-that-repeats-everywhere">The one pattern that repeats everywhere</h3>
+<p>Every Jarvis component is: <strong><code>.component.yml</code> (props via JSON-Schema + <code>enum</code>/<code>meta:enum</code>
+dropdowns, <code>$ref</code> for images, <code>slots</code> for nesting) → <code>.twig</code> (map props onto Bootstrap
+classes, reuse the <code>jp-</code> spacing snippet)</strong>. Learn it once on the Text component, and Hero,
+Card, Image, Video, and the column layouts are all variations on it.</p>
+<p>Happy theming.</p>
+</div>
+</body>
+</html>
