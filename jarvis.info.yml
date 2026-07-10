@@ -4,6 +4,7 @@ base theme: stable9
 core_version_requirement: ^11 || ^12
 description: 'DXPR-style SDC theme with Bootstrap 5, built for Drupal Canvas and Layout Builder.'
 package: Custom
+screenshot: screenshot.jpg
 libraries:
   - jarvis/global
 regions:

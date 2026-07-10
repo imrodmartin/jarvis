@@ -37,6 +37,11 @@ props:
       default: false
       examples:
         - false
+    priority:
+      title: 'Load eagerly (above the fold)'
+      description: 'Disable lazy-loading for images visible without scrolling — better LCP.'
+      type: boolean
+      default: false
     padding:
       title: Padding
       type: string

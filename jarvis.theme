@@ -14,16 +14,16 @@
  */
 function _jarvis_colors() {
   return [
-    'jarvis_color_primary'     => ['Primary', '--bs-primary', TRUE, '#2d6cdf'],
-    'jarvis_color_secondary'   => ['Secondary', '--bs-secondary', FALSE, '#1b2a4a'],
-    'jarvis_color_title_bg'    => ['Title background', '--jarvis-title-bg', FALSE, ''],
-    'jarvis_color_title_text'  => ['Title text', '--jarvis-title-color', FALSE, ''],
-    'jarvis_color_footer_bg'   => ['Footer background', '--jarvis-footer-bg', FALSE, ''],
-    'jarvis_color_footer_text' => ['Footer text', '--jarvis-footer-color', FALSE, ''],
-    'jarvis_color_heading'     => ['Heading color', '--jarvis-heading-color', FALSE, ''],
-    'jarvis_color_header_bg'   => ['Header block region background', '--jarvis-header-bg', FALSE, ''],
-    'jarvis_color_header_text' => ['Header block region text', '--jarvis-header-color', FALSE, ''],
-    'jarvis_color_header_link' => ['Header block region link color', '--jarvis-header-link-color', FALSE, ''],
+    'jarvis_color_primary'     => [t('Primary'), '--bs-primary', TRUE, '#2d6cdf'],
+    'jarvis_color_secondary'   => [t('Secondary'), '--bs-secondary', FALSE, '#1b2a4a'],
+    'jarvis_color_title_bg'    => [t('Title background'), '--jarvis-title-bg', FALSE, ''],
+    'jarvis_color_title_text'  => [t('Title text'), '--jarvis-title-color', FALSE, ''],
+    'jarvis_color_footer_bg'   => [t('Footer background'), '--jarvis-footer-bg', FALSE, ''],
+    'jarvis_color_footer_text' => [t('Footer text'), '--jarvis-footer-color', FALSE, ''],
+    'jarvis_color_heading'     => [t('Heading color'), '--jarvis-heading-color', FALSE, ''],
+    'jarvis_color_header_bg'   => [t('Header block region background'), '--jarvis-header-bg', FALSE, ''],
+    'jarvis_color_header_text' => [t('Header block region text'), '--jarvis-header-color', FALSE, ''],
+    'jarvis_color_header_link' => [t('Header block region link color'), '--jarvis-header-link-color', FALSE, ''],
   ];
 }
 
@@ -85,11 +85,11 @@ function jarvis_preprocess_html(array &$variables) {
  */
 function _jarvis_fonts() {
   return [
-    'base'       => ['Base font', 'body'],
-    'headings'   => ['Headings', 'h1, h2, h3, h4, h5, h6, .field--label, label, .page-title'],
-    'navigation' => ['Navigation', 'nav, nav ul li, nav a'],
-    'site_name'  => ['Site name', '.site-name, .navbar-brand'],
-    'blockquote' => ['Blockquote', 'blockquote, blockquote p'],
+    'base'       => [t('Base font'), 'body'],
+    'headings'   => [t('Headings'), 'h1, h2, h3, h4, h5, h6, .field--label, label, .page-title'],
+    'navigation' => [t('Navigation'), 'nav, nav ul li, nav a'],
+    'site_name'  => [t('Site name'), '.site-name, .navbar-brand'],
+    'blockquote' => [t('Blockquote'), 'blockquote, blockquote p'],
   ];
 }
 

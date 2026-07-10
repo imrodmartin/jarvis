@@ -4,7 +4,8 @@
  * Jarvis 2-column layout. col-12 on mobile -> stacks; col-md-* -> side by side.
  */
 #}
-{% set space = [(padding is defined and padding != 'none') ? 'jp-p-' ~ padding ~ '-' ~ (padding_size|default('medium')) : '', (margin is defined and margin != 'none') ? 'jp-m-' ~ margin ~ '-' ~ (margin_size|default('medium')) : '', (vertical_padding|default(false)) ? 'jp-vpad' : '']|join(' ')|trim %}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), vertical_padding|default(false), no_padding|default(false)) %}
 {% set gap_class = { none: 'g-0', small: 'g-2', normal: 'g-4', large: 'g-5' }[gap|default('normal')] %}
 {% set cols = {
   even: ['col-12 col-md-6', 'col-12 col-md-6'],

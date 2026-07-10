@@ -1,0 +1,20 @@
+{#
+/**
+ * @file
+ * Shared spacing utility-class builder for the Jarvis SDCs.
+ *
+ * Maps the padding/margin/vertical_padding/no_padding props every component
+ * repeats onto the jp-* utility classes in css/overrides.css. Imported as
+ * `{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}` — call sites
+ * pass |default()-guarded props so undefined props are safe under
+ * strict_variables. One source of truth: change spacing behaviour here.
+ */
+#}
+{% macro classes(padding, padding_size, margin, margin_size, vertical_padding, no_padding) -%}
+  {{- [
+    padding != 'none' ? 'jp-p-' ~ padding ~ '-' ~ padding_size : '',
+    margin != 'none' ? 'jp-m-' ~ margin ~ '-' ~ margin_size : '',
+    vertical_padding ? 'jp-vpad' : '',
+    no_padding ? 'jp-nopad' : '',
+  ]|join(' ')|trim -}}
+{%- endmacro %}

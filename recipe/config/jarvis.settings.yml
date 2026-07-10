@@ -5,7 +5,6 @@ features:
   favicon: 1
 logo:
   use_default: 1
-  path: ''
 favicon:
   use_default: 1
 jarvis_color_primary: '#2d6cdf'
@@ -33,5 +32,4 @@ jarvis_font_site_name_selector: '.site-name, .navbar-brand,h4, h5, h6'
 jarvis_font_blockquote_family: 'Playpen Sans'
 jarvis_font_blockquote_weight: '300'
 jarvis_font_blockquote_selector: 'blockquote, blockquote p'
-preview: ''
 

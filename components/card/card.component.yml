@@ -3,6 +3,9 @@ name: Card
 status: stable
 description: 'Flexible card with image at top, left, right, or as background.'
 category: Jarvis
+libraryOverrides:
+  dependencies:
+    - jarvis/contrast
 props:
   type: object
   required:

@@ -6,6 +6,14 @@ global:
       css/overrides.css: {}
   js:
     libraries/bootstrap/js/bootstrap.bundle.min.js: { minified: true, attributes: { defer: true } }
+    js/menu-touch.js: {}
+
+# Shared WCAG overlay auto-contrast for hero + card (see js/contrast.js).
+# Attached per component via libraryOverrides in their component.yml files.
+contrast:
+  version: 1.x
+  js:
+    js/contrast.js: {}
 
 color-settings:
   version: 1.x

@@ -1,13 +1,23 @@
 /**
  * @file
- * Auto-darkens the hero overlay until white text passes WCAG AA contrast.
- * SDC auto-attaches this sibling file as the hero component library.
+ * Shared WCAG contrast engine for the hero and card components: auto-darkens
+ * the black overlay until light text passes WCAG AA (4.5:1) on the sampled
+ * background image. Attached per component via libraryOverrides dependencies
+ * (jarvis/contrast) in hero.component.yml and card.component.yml.
  */
 (function () {
   'use strict';
 
-  var NEED = 4.5;   // WCAG AA, normal text (subheading is the tightest case)
+  var NEED = 4.5;   // WCAG AA, normal text (subheading/body is the tightest case)
   var TEXT = 1;     // relative luminance of #fff text
+
+  // [container selector, overlay selector, dark-text class] per component.
+  // Auto-darkening assumes light text; dark text is handled by each
+  // component's black CSS fallback region instead.
+  var TARGETS = [
+    ['.jarvis-hero[style*="background-image"]', '.jarvis-hero__overlay', 'jarvis-hero--text-dark'],
+    ['.jarvis-card--background[style*="background-image"]', '.jarvis-card__overlay', 'jarvis-card--text-dark']
+  ];
 
   // sRGB channel (0-255) -> linear
   function chan(c) {
@@ -32,14 +42,13 @@
     return a;
   }
 
-  function tune(hero) {
-    if (hero.dataset.jarvisContrast) return;
-    hero.dataset.jarvisContrast = '1';
-    // Auto-darkening assumes white text; dark text is handled by the black region in CSS.
-    if (hero.classList.contains('jarvis-hero--text-dark')) return;
-    var overlay = hero.querySelector('.jarvis-hero__overlay');
+  function tune(el, overlaySel, darkClass) {
+    if (el.dataset.jarvisContrast) return;
+    el.dataset.jarvisContrast = '1';
+    if (el.classList.contains(darkClass)) return;
+    var overlay = el.querySelector(overlaySel);
     if (!overlay) return;
-    var m = (hero.style.backgroundImage || '').match(/url\(["']?(.*?)["']?\)/);
+    var m = (el.style.backgroundImage || '').match(/url\(["']?(.*?)["']?\)/);
     if (!m) return;
 
     var floor = parseFloat(overlay.style.opacity) || 0;
@@ -64,8 +73,10 @@
   }
 
   function run() {
-    var heroes = document.querySelectorAll('.jarvis-hero[style*="background-image"]');
-    for (var i = 0; i < heroes.length; i++) tune(heroes[i]);
+    TARGETS.forEach(function (t) {
+      var els = document.querySelectorAll(t[0]);
+      for (var i = 0; i < els.length; i++) tune(els[i], t[1], t[2]);
+    });
   }
 
   if (typeof document === 'undefined') return;  // node self-check path
@@ -76,7 +87,7 @@
   }
 })();
 
-// ponytail: node self-check for the contrast math. `node hero.js` runs it; browser skips.
+// ponytail: node self-check for the contrast math. `node contrast.js` runs it; browser skips.
 if (typeof module !== 'undefined' && module.exports) {
   var chan = function (c) { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
   var lum = function (r, g, b) { return 0.2126 * chan(r) + 0.7152 * chan(g) + 0.0722 * chan(b); };
@@ -92,5 +103,5 @@ if (typeof module !== 'undefined' && module.exports) {
     assert.ok(contrast(1, lum(c[0] * (1 - a), c[1] * (1 - a), c[2] * (1 - a))) >= 4.5);
   });
   assert.ok(need(230, 225, 210, 0.8) === 0.8);                     // respects user floor when already dark enough
-  console.log('hero contrast self-check ok');
+  console.log('contrast self-check ok');
 }

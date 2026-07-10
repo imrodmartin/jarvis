@@ -82,8 +82,12 @@ body {
    .offcanvas-body (menu first, logo second in the DOM), so target by structure,
    not id. One row: logo left (capped 400px), menu 50px to its right. */
 /* Break the nav row out of the centered .container so it spans the viewport;
-   100px left pad pins the logo near the browser's left edge. */
-.jarvis-primary-menu { max-width: none; padding-left: 100px; }
+   100px left pad pins the logo near the browser's left edge — desktop only,
+   on mobile it would eat a quarter of the screen from the logo/hamburger row. */
+.jarvis-primary-menu { max-width: none; }
+@media (min-width: 992px) {
+  .jarvis-primary-menu { padding-left: 100px; }
+}
 .jarvis-primary-menu .offcanvas-body > div { display: flex; align-items: center; }
 .jarvis-primary-menu .offcanvas-body > div > *:has(img) { order: -1; }
 .jarvis-primary-menu .offcanvas-body a[rel="home"] img { width: 400px; max-width: 100%; height: auto; }
@@ -143,7 +147,8 @@ body {
   z-index: 1000;
 }
 .jarvis-primary-menu li:hover > ul,
-.jarvis-primary-menu li:focus-within > ul {
+.jarvis-primary-menu li:focus-within > ul,
+.jarvis-primary-menu li.jarvis-open > ul {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
@@ -214,7 +219,11 @@ body {
    placed in any region (here it lives in `highlighted`, not `page_title`).
    ponytail: id couples to the jarvis_page_title block machine name; rename the
    block -> update this selector. */
-.jarvis-page-title { padding: 20px 20px 20px 100px; }
+/* 100px left pad aligns the title with the logo — desktop only. */
+.jarvis-page-title { padding: 20px; }
+@media (min-width: 992px) {
+  .jarvis-page-title { padding-left: 100px; }
+}
 .jarvis-page-title,
 #block-jarvis-page-title { background: var(--jarvis-title-bg); }
 .jarvis-page-title,

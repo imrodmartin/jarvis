@@ -31,7 +31,8 @@
 }
 /* Light text -> whole region black for guaranteed contrast. Comes after the
    gradient rule above so it wins the specificity tie. A background image, when
-   present, still paints over this and is handled by the overlay in hero.js. */
+   present, still paints over this and is handled by the overlay tuned in
+   js/contrast.js (jarvis/contrast). */
 .jarvis-hero--text-light {
   background-color: #000;
 }

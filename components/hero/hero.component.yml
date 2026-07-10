@@ -3,6 +3,9 @@ name: Hero
 status: stable
 description: 'Full-width hero banner with heading, subtext, CTA and background image.'
 category: Jarvis
+libraryOverrides:
+  dependencies:
+    - jarvis/contrast
 props:
   type: object
   required:
@@ -13,6 +16,16 @@ props:
       type: string
       examples:
         - 'Build faster with Jarvis'
+    heading_level:
+      title: 'Heading level'
+      description: 'Use H1 only once per page — pick H2 for additional heroes.'
+      type: string
+      enum: [h1, h2, h3]
+      'meta:enum':
+        h1: 'H1 (page title)'
+        h2: H2
+        h3: H3
+      default: h1
     subheading:
       title: Subheading
       type: string

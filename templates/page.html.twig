@@ -58,7 +58,6 @@
       </div>
     </div>
   {% endif %}
-  {{ page.secondary_menu }}
 
   {# Boxed #}
   {% if page.breadcrumb %}
@@ -78,8 +77,6 @@
   {% if page.highlighted %}
     <div class="container jarvis-region jarvis-highlighted">{{ page.highlighted }}</div>
   {% endif %}
-
-  {{ page.help }}
 
   <main role="main">
     <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}

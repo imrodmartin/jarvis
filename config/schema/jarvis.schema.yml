@@ -1,0 +1,81 @@
+# Schema for the Jarvis theme settings.
+# Keys mirror _jarvis_colors() and _jarvis_fonts() in jarvis.theme.
+jarvis.settings:
+  type: theme_settings
+  label: 'Jarvis settings'
+  mapping:
+    jarvis_color_primary:
+      type: string
+      label: 'Primary color'
+    jarvis_color_secondary:
+      type: string
+      label: 'Secondary color'
+    jarvis_color_title_bg:
+      type: string
+      label: 'Title background color'
+    jarvis_color_title_text:
+      type: string
+      label: 'Title text color'
+    jarvis_color_footer_bg:
+      type: string
+      label: 'Footer background color'
+    jarvis_color_footer_text:
+      type: string
+      label: 'Footer text color'
+    jarvis_color_heading:
+      type: string
+      label: 'Heading color'
+    jarvis_color_header_bg:
+      type: string
+      label: 'Header background color'
+    jarvis_color_header_text:
+      type: string
+      label: 'Header text color'
+    jarvis_color_header_link:
+      type: string
+      label: 'Header link color'
+    jarvis_font_base_family:
+      type: string
+      label: 'Base font family'
+    jarvis_font_base_weight:
+      type: string
+      label: 'Base font weight'
+    jarvis_font_base_selector:
+      type: string
+      label: 'Base font CSS selector'
+    jarvis_font_headings_family:
+      type: string
+      label: 'Headings font family'
+    jarvis_font_headings_weight:
+      type: string
+      label: 'Headings font weight'
+    jarvis_font_headings_selector:
+      type: string
+      label: 'Headings font CSS selector'
+    jarvis_font_navigation_family:
+      type: string
+      label: 'Navigation font family'
+    jarvis_font_navigation_weight:
+      type: string
+      label: 'Navigation font weight'
+    jarvis_font_navigation_selector:
+      type: string
+      label: 'Navigation font CSS selector'
+    jarvis_font_site_name_family:
+      type: string
+      label: 'Site name font family'
+    jarvis_font_site_name_weight:
+      type: string
+      label: 'Site name font weight'
+    jarvis_font_site_name_selector:
+      type: string
+      label: 'Site name font CSS selector'
+    jarvis_font_blockquote_family:
+      type: string
+      label: 'Blockquote font family'
+    jarvis_font_blockquote_weight:
+      type: string
+      label: 'Blockquote font weight'
+    jarvis_font_blockquote_selector:
+      type: string
+      label: 'Blockquote font CSS selector'

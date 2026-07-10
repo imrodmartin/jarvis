@@ -32,8 +32,8 @@
   color: var(--bs-primary);
 }
 /* Light text -> black region behind the card for guaranteed contrast. A
-   background image, when present, paints over this; card.js tunes the overlay
-   opacity to keep light text at WCAG AA. */
+   background image, when present, paints over this; js/contrast.js
+   (jarvis/contrast) tunes the overlay opacity to keep light text at WCAG AA. */
 .jarvis-card--background.jarvis-card--text-light {
   background-color: #000;
 }

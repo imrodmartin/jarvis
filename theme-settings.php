@@ -34,7 +34,7 @@ function jarvis_form_system_theme_settings_alter(array &$form, FormStateInterfac
 
     $form['jarvis_colors'][$key] = [
       '#type' => 'textfield',
-      '#title' => t($label),
+      '#title' => $label,
       '#default_value' => $val,
       '#size' => 10,
       '#maxlength' => 7,
@@ -47,7 +47,7 @@ function jarvis_form_system_theme_settings_alter(array &$form, FormStateInterfac
       ],
       '#field_prefix' => Markup::create(
         '<input type="color" class="jarvis-color-pick" aria-label="'
-        . htmlspecialchars($label, ENT_QUOTES) . ' picker" value="'
+        . htmlspecialchars((string) $label, ENT_QUOTES) . ' picker" value="'
         . htmlspecialchars($swatch, ENT_QUOTES) . '">'
       ),
     ];
@@ -100,7 +100,7 @@ function jarvis_form_system_theme_settings_alter(array &$form, FormStateInterfac
     ];
     $form['jarvis_fonts'][$key]["jarvis_font_{$key}_family"] = [
       '#type' => 'select',
-      '#title' => t($label),
+      '#title' => $label,
       '#options' => $family_options,
       '#default_value' => $saved_family,
       '#attributes' => ['class' => ['jarvis-font-family'], 'data-slot' => $key],
@@ -122,7 +122,7 @@ function jarvis_form_system_theme_settings_alter(array &$form, FormStateInterfac
     ];
 
     $preview_rows .= '<div class="jarvis-font-preview-row"><span class="jarvis-font-preview-label">'
-      . htmlspecialchars($label, ENT_QUOTES) . '</span>'
+      . htmlspecialchars((string) $label, ENT_QUOTES) . '</span>'
       . '<span class="jarvis-font-preview-sample" data-slot="' . htmlspecialchars($key, ENT_QUOTES) . '">'
       . 'The quick brown fox jumps over the lazy dog 0123456789</span></div>';
   }
@@ -220,13 +220,55 @@ function jarvis_font_settings_submit(array &$form, FormStateInterface $form_stat
 }
 
 /**
+ * WCAG relative-luminance contrast ratio between two #rrggbb colors.
+ *
+ * Same math as js/contrast.js; used for the non-blocking AA warning below.
+ */
+function _jarvis_contrast_ratio(string $a, string $b): float {
+  $lum = function (string $hex): float {
+    $c = [];
+    foreach ([1, 3, 5] as $i) {
+      $v = hexdec(substr($hex, $i, 2)) / 255;
+      $c[] = $v <= 0.03928 ? $v / 12.92 : (($v + 0.055) / 1.055) ** 2.4;
+    }
+    return 0.2126 * $c[0] + 0.7152 * $c[1] + 0.0722 * $c[2];
+  };
+  $l1 = $lum($a);
+  $l2 = $lum($b);
+  return (max($l1, $l2) + 0.05) / (min($l1, $l2) + 0.05);
+}
+
+/**
  * Validate handler: reject anything that isn't a #rrggbb hex (or empty).
+ *
+ * Also warns (non-blocking) when a text/background pair falls below WCAG AA
+ * (4.5:1) so low-contrast picks are a conscious choice, not an accident.
  */
 function jarvis_color_settings_validate(array &$form, FormStateInterface $form_state) {
   foreach (array_keys(_jarvis_colors()) as $key) {
     $val = (string) $form_state->getValue($key);
     if ($val !== '' && !preg_match('/^#[0-9a-fA-F]{6}$/', $val)) {
       $form_state->setErrorByName($key, t('%v is not a valid hex color (use #rrggbb).', ['%v' => $val]));
+    }
+  }
+
+  $pairs = [
+    ['jarvis_color_title_text', 'jarvis_color_title_bg', 'Title text on title background'],
+    ['jarvis_color_footer_text', 'jarvis_color_footer_bg', 'Footer text on footer background'],
+    ['jarvis_color_header_text', 'jarvis_color_header_bg', 'Header text on header background'],
+    ['jarvis_color_header_link', 'jarvis_color_header_bg', 'Header links on header background'],
+  ];
+  foreach ($pairs as [$fg_key, $bg_key, $label]) {
+    $fg = (string) $form_state->getValue($fg_key);
+    $bg = (string) $form_state->getValue($bg_key);
+    if (preg_match('/^#[0-9a-fA-F]{6}$/', $fg) && preg_match('/^#[0-9a-fA-F]{6}$/', $bg)) {
+      $ratio = _jarvis_contrast_ratio($fg, $bg);
+      if ($ratio < 4.5) {
+        \Drupal::messenger()->addWarning(t('@pair contrast is @ratio:1 — below the WCAG AA minimum of 4.5:1.', [
+          '@pair' => $label,
+          '@ratio' => round($ratio, 1),
+        ]));
+      }
     }
   }
 }
