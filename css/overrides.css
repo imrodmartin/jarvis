@@ -17,6 +17,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Page title bold by default — scoped to beat Bootstrap's heading weight. */
+.jarvis-page-title h1,
+.jarvis-page-title .page-title {
+  font-weight: 700;
+}
+
 .btn-primary {
   --bs-btn-bg: var(--bs-primary);
   --bs-btn-border-color: var(--bs-primary);
@@ -105,6 +111,15 @@ body {
 .jarvis-columns .container-fluid { padding-left: 0; padding-right: 0; }
 .jarvis-columns .container-fluid > .row { margin-left: 0; margin-right: 0; }
 .jarvis-columns .container-fluid > .row > [class*="col"] { padding-left: 0; padding-right: 0; }
+
+/* Bootstrap's vertical gutter puts margin-top:-var(--bs-gutter-y) on .row and a
+   matching padding-top on the cols. That negative margin escapes .jarvis-columns'
+   padding box — pulling the grid up so the wrapper's vertical padding AND bottom
+   margin read as ignored (sections have no .row, so they were fine). Swap the
+   margin/padding hack for row-gap: same between-row spacing when columns wrap on
+   mobile, without the negative margin. */
+.jarvis-columns .row { margin-top: 0; row-gap: var(--bs-gutter-y); }
+.jarvis-columns .row > * { padding-top: 0; }
 
 /* Primary menu: superfish-style dropdowns. Pure CSS hover + :focus-within
    multi-level fly-outs — no jQuery/superfish plugin (native covers it).
@@ -263,3 +278,50 @@ h3, .h3 { font-size: var(--jarvis-fs-h3, 1.75rem); }
 h4, .h4 { font-size: var(--jarvis-fs-h4, 1.5rem); }
 h5, .h5 { font-size: var(--jarvis-fs-h5, 1.25rem); }
 h6, .h6 { font-size: var(--jarvis-fs-h6, 1rem); }
+
+/* Canvas/editor: h2-h4 bold (Bootstrap defaults them to 500). */
+h2, .h2, h3, .h3, h4, .h4 { font-weight: 700; }
+
+/* Media-manager document table (core file_table formatter).
+   Icon per file type + 20px gap between file name and size cell. */
+:root {
+  --jarvis-file-generic: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M6%202h8l4%204v16H6z%27%20fill%3D%27%23fff%27%20stroke%3D%27%23757575%27%20stroke-width%3D%271.6%27%20stroke-linejoin%3D%27round%27%2F%3E%3Cpath%20d%3D%27M14%202v4h4%27%20fill%3D%27none%27%20stroke%3D%27%23757575%27%20stroke-width%3D%271.6%27%20stroke-linejoin%3D%27round%27%2F%3E%3C%2Fsvg%3E");
+  --jarvis-file-pdf: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M6%202h8l4%204v16H6z%27%20fill%3D%27%23fff%27%20stroke%3D%27%23E53935%27%20stroke-width%3D%271.6%27%20stroke-linejoin%3D%27round%27%2F%3E%3Cpath%20d%3D%27M14%202v4h4%27%20fill%3D%27none%27%20stroke%3D%27%23E53935%27%20stroke-width%3D%271.6%27%20stroke-linejoin%3D%27round%27%2F%3E%3Crect%20x%3D%275%27%20y%3D%2712.4%27%20width%3D%2714%27%20height%3D%277%27%20rx%3D%271.2%27%20fill%3D%27%23E53935%27%2F%3E%3Ctext%20x%3D%2712%27%20y%3D%2718.1%27%20font-family%3D%27Arial%2CHelvetica%2Csans-serif%27%20font-size%3D%275%27%20font-weight%3D%27700%27%20fill%3D%27%23fff%27%20text-anchor%3D%27middle%27%3EPDF%3C%2Ftext%3E%3C%2Fsvg%3E");
+  --jarvis-file-doc: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M6%202h8l4%204v16H6z%27%20fill%3D%27%23fff%27%20stroke%3D%27%231E88E5%27%20stroke-width%3D%271.6%27%20stroke-linejoin%3D%27round%27%2F%3E%3Cpath%20d%3D%27M14%202v4h4%27%20fill%3D%27none%27%20stroke%3D%27%231E88E5%27%20stroke-width%3D%271.6%27%20stroke-linejoin%3D%27round%27%2F%3E%3Crect%20x%3D%275%27%20y%3D%2712.4%27%20width%3D%2714%27%20height%3D%277%27%20rx%3D%271.2%27%20fill%3D%27%231E88E5%27%2F%3E%3Ctext%20x%3D%2712%27%20y%3D%2718.1%27%20font-family%3D%27Arial%2CHelvetica%2Csans-serif%27%20font-size%3D%275%27%20font-weight%3D%27700%27%20fill%3D%27%23fff%27%20text-anchor%3D%27middle%27%3EDOC%3C%2Ftext%3E%3C%2Fsvg%3E");
+  --jarvis-file-xls: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M6%202h8l4%204v16H6z%27%20fill%3D%27%23fff%27%20stroke%3D%27%2343A047%27%20stroke-width%3D%271.6%27%20stroke-linejoin%3D%27round%27%2F%3E%3Cpath%20d%3D%27M14%202v4h4%27%20fill%3D%27none%27%20stroke%3D%27%2343A047%27%20stroke-width%3D%271.6%27%20stroke-linejoin%3D%27round%27%2F%3E%3Crect%20x%3D%275%27%20y%3D%2712.4%27%20width%3D%2714%27%20height%3D%277%27%20rx%3D%271.2%27%20fill%3D%27%2343A047%27%2F%3E%3Ctext%20x%3D%2712%27%20y%3D%2718.1%27%20font-family%3D%27Arial%2CHelvetica%2Csans-serif%27%20font-size%3D%275%27%20font-weight%3D%27700%27%20fill%3D%27%23fff%27%20text-anchor%3D%27middle%27%3EXLS%3C%2Ftext%3E%3C%2Fsvg%3E");
+  --jarvis-file-ppt: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M6%202h8l4%204v16H6z%27%20fill%3D%27%23fff%27%20stroke%3D%27%23FB8C00%27%20stroke-width%3D%271.6%27%20stroke-linejoin%3D%27round%27%2F%3E%3Cpath%20d%3D%27M14%202v4h4%27%20fill%3D%27none%27%20stroke%3D%27%23FB8C00%27%20stroke-width%3D%271.6%27%20stroke-linejoin%3D%27round%27%2F%3E%3Crect%20x%3D%275%27%20y%3D%2712.4%27%20width%3D%2714%27%20height%3D%277%27%20rx%3D%271.2%27%20fill%3D%27%23FB8C00%27%2F%3E%3Ctext%20x%3D%2712%27%20y%3D%2718.1%27%20font-family%3D%27Arial%2CHelvetica%2Csans-serif%27%20font-size%3D%275%27%20font-weight%3D%27700%27%20fill%3D%27%23fff%27%20text-anchor%3D%27middle%27%3EPPT%3C%2Ftext%3E%3C%2Fsvg%3E");
+}
+span.file {
+  display: inline-flex;
+  align-items: center;
+}
+span.file::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 1.15em;
+  height: 1.15em;
+  margin-right: 0.4em;
+  background: var(--jarvis-file-generic) center / contain no-repeat;
+}
+span.file.file--application-pdf::before { background-image: var(--jarvis-file-pdf); }
+span.file.file--x-office-document::before { background-image: var(--jarvis-file-doc); }
+span.file.file--x-office-spreadsheet::before { background-image: var(--jarvis-file-xls); }
+span.file.file--x-office-presentation::before { background-image: var(--jarvis-file-ppt); }
+/* 20px gap between the name column and the size column. */
+td:has(> span.file) { padding-right: 20px; }
+
+/* oEmbed video: fill container width, native aspect-ratio height.
+   Target the iframe directly — CKEditor media embeds render it with no
+   .field--name-field-media-oembed-video wrapper and fixed width/height attrs
+   (e.g. width="200"). width:100% + aspect-ratio is self-contained. */
+.media-oembed-content {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  display: block;
+  border: 0;
+}
+.video-frame {
+  padding: 10px;
+  filter: drop-shadow(grey 0.5rem 0.5rem 5px);
+}

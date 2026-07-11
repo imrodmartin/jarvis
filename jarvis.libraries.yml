@@ -16,6 +16,19 @@ contrast:
   js:
     js/contrast.js: {}
 
+# Loaded onto the Canvas editor via libraries-extend (see jarvis.info.yml).
+# Widens the right settings tray while a CKEditor field is focused.
+canvas-tray-autoexpand:
+  version: 1.x
+  css:
+    theme:
+      css/canvas-tray.css: {}
+  js:
+    js/canvas-tray.js: {}
+  dependencies:
+    - core/once
+    - core/drupal
+
 color-settings:
   version: 1.x
   css:

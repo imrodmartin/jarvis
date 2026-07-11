@@ -1,0 +1,7 @@
+.jarvis-wysiwyg :last-child {
+  margin-bottom: 0;
+}
+.jarvis-wysiwyg--readable {
+  max-width: 65ch;
+  margin-inline: auto;
+}

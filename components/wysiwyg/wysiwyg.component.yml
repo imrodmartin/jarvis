@@ -1,0 +1,80 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: WYSIWYG
+status: stable
+description: 'Freeform CKEditor rich-text block. Full-width by default, with an optional readable measure.'
+category: Jarvis
+props:
+  type: object
+  required:
+    - body
+  properties:
+    body:
+      title: Body
+      type: string
+      contentMediaType: text/html
+      'x-formatting-context': block
+      examples:
+        - '<h2>Freeform heading</h2><p>Edit this with the full CKEditor toolbar, including <strong>bold</strong>, lists, and links.</p>'
+    measure:
+      title: 'Text measure'
+      type: string
+      enum: [full, readable]
+      'meta:enum':
+        full: 'Full width'
+        readable: 'Readable (max 65ch)'
+      default: full
+    align:
+      title: Alignment
+      type: string
+      enum: [start, center, end]
+      'meta:enum':
+        start: Left
+        center: Center
+        end: Right
+      default: start
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: false

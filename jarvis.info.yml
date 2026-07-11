@@ -7,6 +7,9 @@ package: Custom
 screenshot: screenshot.jpg
 libraries:
   - jarvis/global
+libraries-extend:
+  canvas/canvas-ui:
+    - jarvis/canvas-tray-autoexpand
 regions:
   header: Header
   primary_menu: 'Primary menu'

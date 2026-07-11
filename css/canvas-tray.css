@@ -1,0 +1,13 @@
+/**
+ * Widens the Canvas right settings tray while a wide-content field is focused.
+ * js/canvas-tray.js sets data-jarvis-wide on the tray's width-bearing element on
+ * focus (a data attribute, so React does not strip it on re-render).
+ *
+ * !important beats Canvas's inline React-set width (drag cap is 640px; this exceeds
+ * it only while focused). Bump 820px to taste. px only — vw is unreliable in Canvas.
+ */
+[data-jarvis-wide] {
+  width: 820px !important;
+  max-width: 820px !important;
+  transition: width 0.15s ease-out;
+}
