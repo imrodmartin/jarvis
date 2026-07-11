@@ -1,0 +1,38 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Card Full Image'
+status: stable
+description: 'Full-width 2-column band: an image that fills its half edge-to-edge beside a rich-text column.'
+category: 'Jarvis Layout'
+props:
+  type: object
+  properties:
+    image_right:
+      title: 'Image on right'
+      type: boolean
+      default: false
+    fade_edge:
+      title: 'Fade image edge next to text'
+      type: boolean
+      default: false
+    background:
+      title: 'Background colour'
+      type: string
+      enum: [none, primary, secondary, bg1, bg2, dark, light]
+      'meta:enum':
+        none: None
+        primary: Primary
+        secondary: Secondary
+        bg1: 'Background 1'
+        bg2: 'Background 2'
+        dark: 'Dark (#1a1a1a)'
+        light: 'Light (#f5f5f5)'
+      default: none
+      examples:
+        - none
+slots:
+  media:
+    title: Image
+    description: 'Drop an Image component here. It fills the column on all sides.'
+  content:
+    title: Content
+    description: 'Drop a Text / WYSIWYG component here. Gets 20px left/right padding.'

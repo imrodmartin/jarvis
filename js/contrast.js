@@ -45,7 +45,9 @@
   function tune(el, overlaySel, darkClass) {
     if (el.dataset.jarvisContrast) return;
     el.dataset.jarvisContrast = '1';
-    if (el.classList.contains(darkClass)) return;
+    // Dark AND black text sit on the bare image — skip auto-darkening for both.
+    var blackClass = darkClass.replace('--text-dark', '--text-black');
+    if (el.classList.contains(darkClass) || el.classList.contains(blackClass)) return;
     var overlay = el.querySelector(overlaySel);
     if (!overlay) return;
     var m = (el.style.backgroundImage || '').match(/url\(["']?(.*?)["']?\)/);

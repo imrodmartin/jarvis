@@ -8,8 +8,9 @@
 {% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), vertical_padding|default(false), no_padding|default(false)) %}
 {% set variant = variant|default('image-top') %}
 {% set has_image = image.src is defined and image.src %}
-{% set overlay = overlay|default(40) %}
 {% set text_color = text_color|default('light') %}
+{# Black text sits on the bare image — no darkening overlay. #}
+{% set overlay = text_color == 'black' ? 0 : overlay|default(40) %}
 {% set base = 'jarvis-card card h-100 jarvis-card--' ~ variant ~ ' ' ~ space %}
 {% if variant == 'background' %}
   <div class="{{ base }} jarvis-card--text-{{ text_color }} position-relative overflow-hidden border-0"{% if has_image %} style="background-image: url('{{ image.src }}');"{% endif %}>

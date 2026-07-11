@@ -10,9 +10,9 @@
 {% set container = (width|default('boxed')) == 'full' ? 'container-fluid' : 'container' %}
 {% set bg = background|default('none') %}
 {% set has_media = background_image.src is defined and background_image.src %}
-{# Image renders only when explicitly chosen, so picking a colour or None always
-   hides it — even if a deselected media reference lingers in stored config. #}
-{% set bg_img = bg == 'image' and has_media %}
+{# Media picked shows as the background by default. Choosing a solid colour wins
+   (hides the image without clearing the media); clear the media to remove it. #}
+{% set bg_img = has_media and (bg == 'none' or bg == 'image') %}
 {% set overlay = overlay|default(45) %}
 {% set bg_class = bg_img ? 'jarvis-bg jarvis-bg--image' : (bg not in ['none', 'image'] ? 'jarvis-bg jarvis-bg--' ~ bg : '') %}
 {% set tc = text_color|default('inherit') %}
@@ -23,8 +23,8 @@
   none: ['primary', 'secondary', 'black'],
   primary: ['white'],
   secondary: ['white'],
-  orange: ['black'],
-  lavender: ['secondary', 'black'],
+  bg1: [],
+  bg2: [],
   dark: ['white'],
   light: ['secondary', 'black'],
   image: ['white'],

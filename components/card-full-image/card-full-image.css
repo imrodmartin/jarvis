@@ -1,0 +1,39 @@
+/* Content column: 20px left/right padding, vertically centred beside the image. */
+.jarvis-card-full-image__content {
+  padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Desktop: image fills its half on all sides and matches the content height.
+   The Bootstrap row already makes both columns equal height (flex stretch);
+   here the figure + <img> stretch to fill that height. */
+@media (min-width: 768px) {
+  .jarvis-card-full-image__media {
+    display: flex;
+  }
+  .jarvis-card-full-image__media .jarvis-image,
+  .jarvis-card-full-image__media figure {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+  }
+  .jarvis-card-full-image__media .jarvis-image__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Soft-fade the image edge that meets the text (~40px). Default = image left,
+     so fade its right edge; flipped = image right, so fade its left edge.
+     Desktop only — mobile stacks, so no fade. */
+  .jarvis-card-full-image--fade .jarvis-card-full-image__media .jarvis-image__img {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 80px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 80px), transparent);
+  }
+  .jarvis-card-full-image--fade.jarvis-card-full-image--flip .jarvis-card-full-image__media .jarvis-image__img {
+    -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 80px), transparent);
+    mask-image: linear-gradient(to left, #000 calc(100% - 80px), transparent);
+  }
+}

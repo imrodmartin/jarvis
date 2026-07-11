@@ -21,6 +21,8 @@ function _jarvis_colors() {
     'jarvis_color_footer_bg'   => [t('Footer background'), '--jarvis-footer-bg', FALSE, ''],
     'jarvis_color_footer_text' => [t('Footer text'), '--jarvis-footer-color', FALSE, ''],
     'jarvis_color_heading'     => [t('Heading color'), '--jarvis-heading-color', FALSE, ''],
+    'jarvis_color_bg_1'        => [t('Background 1'), '--jarvis-bg-1', FALSE, ''],
+    'jarvis_color_bg_2'        => [t('Background 2'), '--jarvis-bg-2', FALSE, ''],
     'jarvis_color_header_bg'   => [t('Header block region background'), '--jarvis-header-bg', FALSE, ''],
     'jarvis_color_header_text' => [t('Header block region text'), '--jarvis-header-color', FALSE, ''],
     'jarvis_color_header_link' => [t('Header block region link color'), '--jarvis-header-link-color', FALSE, ''],
@@ -71,6 +73,28 @@ function jarvis_preprocess_html(array &$variables) {
       $b = hexdec(substr($val, 5, 2));
       $lines[] = "{$var}-rgb:$r,$g,$b;";
     }
+  }
+  // Background 1/2 are arbitrary user colours, so the ADA-safe text colour can't
+  // be hardcoded. Compute it here (black or white, whichever wins WCAG contrast)
+  // and emit a companion var the section CSS reads for text/heading/link colour.
+  foreach (['jarvis_color_bg_1' => '--jarvis-bg-1', 'jarvis_color_bg_2' => '--jarvis-bg-2'] as $key => $var) {
+    $val = theme_get_setting($key);
+    if (!is_string($val) || !preg_match('/^#[0-9a-fA-F]{6}$/', $val)) {
+      continue;
+    }
+    $lin = static function ($c) {
+      $c /= 255;
+      return $c <= 0.03928 ? $c / 12.92 : pow(($c + 0.055) / 1.055, 2.4);
+    };
+    $l = 0.2126 * $lin(hexdec(substr($val, 1, 2)))
+      + 0.7152 * $lin(hexdec(substr($val, 3, 2)))
+      + 0.0722 * $lin(hexdec(substr($val, 5, 2)));
+    // Contrast vs white = 1.05 / (L + 0.05); vs black = (L + 0.05) / 0.05.
+    $on_white = 1.05 / ($l + 0.05);
+    $on_black = ($l + 0.05) / 0.05;
+    $light = $on_white >= $on_black;
+    $lines[] = "{$var}-text:" . ($light ? '#fff' : '#000') . ';';
+    $lines[] = "{$var}-text-rgb:" . ($light ? '255,255,255' : '0,0,0') . ';';
   }
   if ($lines) {
     $variables['#attached']['html_head'][] = [

@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * Jarvis Card Full Image. Full-width row, no gutter so the image bleeds to the
+ * column edge. flex-md-row-reverse flips sides at desktop while keeping the
+ * image on top when stacked on mobile.
+ */
+#}
+{% set bg = background|default('none') %}
+{# Reuse the section colour classes for background + ADA-safe text vars, but WITHOUT
+   the .jarvis-bg padding wrapper so the image still bleeds to the edges. #}
+{% set bg_class = bg != 'none' ? 'jarvis-bg--' ~ bg : '' %}
+{% set flip = image_right|default(false) %}
+{% set fade_class = fade_edge|default(false) ? 'jarvis-card-full-image--fade' : '' %}
+{% set flip_class = flip ? 'jarvis-card-full-image--flip' : '' %}
+<div class="jarvis-card-full-image {{ bg_class }} {{ fade_class }} {{ flip_class }}">
+  <div class="row g-0 {{ flip ? 'flex-md-row-reverse' : '' }}">
+    <div class="col-12 col-md-6 jarvis-card-full-image__media">
+      {{ media }}
+    </div>
+    <div class="col-12 col-md-6 jarvis-card-full-image__content">
+      {{ content }}
+    </div>
+  </div>
+</div>

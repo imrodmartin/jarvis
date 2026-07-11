@@ -17,13 +17,13 @@ props:
     background:
       title: 'Background colour'
       type: string
-      enum: [none, primary, secondary, orange, lavender, dark, light, image]
+      enum: [none, primary, secondary, bg1, bg2, dark, light, image]
       'meta:enum':
         none: None
         primary: Primary
         secondary: Secondary
-        orange: 'Orange (#cf6e2d)'
-        lavender: 'Lavender (#e0d4f0)'
+        bg1: 'Background 1'
+        bg2: 'Background 2'
         dark: 'Dark (#1a1a1a)'
         light: 'Light (#f5f5f5)'
         image: 'Image (select below)'

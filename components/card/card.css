@@ -31,6 +31,10 @@
 .jarvis-card--text-dark :is(.card-title, .card-text) {
   color: var(--bs-primary);
 }
+.jarvis-card--text-black,
+.jarvis-card--text-black :is(.card-title, .card-text) {
+  color: #000;
+}
 /* Light text -> black region behind the card for guaranteed contrast. A
    background image, when present, paints over this; js/contrast.js
    (jarvis/contrast) tunes the overlay opacity to keep light text at WCAG AA. */

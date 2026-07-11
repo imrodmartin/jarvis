@@ -32,10 +32,11 @@ props:
     text_color:
       title: 'Text color'
       type: string
-      enum: [light, dark]
+      enum: [light, dark, black]
       'meta:enum':
         light: 'Light (#ffffff)'
         dark: 'Dark (primary color)'
+        black: 'Black (#000000)'
       default: light
       examples:
         - light

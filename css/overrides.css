@@ -328,10 +328,9 @@ td:has(> span.file) { padding-right: 20px; }
 
 /* Section background colours (1/2/3-column components).
    Text + Bootstrap colour vars are overridden so ANY child component inherits
-   ADA-compliant text. Contrast ratios (WCAG 2.1) at current brand values:
-   primary #2d6cdf/#fff 4.86 · secondary #1b2a4a/#fff 14.22 · #cf6e2d/#000 5.92
-   · #e0d4f0/#000 14.85 · #1a1a1a/#fff 17.40 · #f5f5f5/#000 19.26 — all ≥ AA 4.5.
-   Orange REQUIRES pure #000 (5.92); #1a1a1a on orange is only 3.47 and fails. */
+   ADA-compliant text. Fixed brand backgrounds use hardcoded #000/#fff text;
+   the arbitrary Background 1/2 colours use a text colour computed for WCAG AA in
+   jarvis_preprocess_html(). */
 .jarvis-bg {
   padding-block: 2rem; /* breathing room so text isn't flush to the colour band edge */
 }
@@ -341,11 +340,31 @@ td:has(> span.file) { padding-right: 20px; }
 .jarvis-bg--secondary {
   background: var(--bs-secondary, #1b2a4a);
 }
-.jarvis-bg--orange {
-  background: #cf6e2d;
+/* Background 1/2: arbitrary theme-setting colours. Text/heading/link colour come
+   from the ADA-safe companion var computed in jarvis_preprocess_html(). */
+.jarvis-bg--bg1 {
+  background: var(--jarvis-bg-1);
+  color: var(--jarvis-bg-1-text);
+  --bs-body-color: var(--jarvis-bg-1-text);
+  --bs-body-color-rgb: var(--jarvis-bg-1-text-rgb);
+  --bs-heading-color: var(--jarvis-bg-1-text);
+  --jarvis-heading-color: var(--jarvis-bg-1-text);
+  --bs-emphasis-color: var(--jarvis-bg-1-text);
+  --bs-link-color: var(--jarvis-bg-1-text);
+  --bs-link-color-rgb: var(--jarvis-bg-1-text-rgb);
+  --bs-link-hover-color: var(--jarvis-bg-1-text);
 }
-.jarvis-bg--lavender {
-  background: #e0d4f0;
+.jarvis-bg--bg2 {
+  background: var(--jarvis-bg-2);
+  color: var(--jarvis-bg-2-text);
+  --bs-body-color: var(--jarvis-bg-2-text);
+  --bs-body-color-rgb: var(--jarvis-bg-2-text-rgb);
+  --bs-heading-color: var(--jarvis-bg-2-text);
+  --jarvis-heading-color: var(--jarvis-bg-2-text);
+  --bs-emphasis-color: var(--jarvis-bg-2-text);
+  --bs-link-color: var(--jarvis-bg-2-text);
+  --bs-link-color-rgb: var(--jarvis-bg-2-text-rgb);
+  --bs-link-hover-color: var(--jarvis-bg-2-text);
 }
 .jarvis-bg--dark {
   background: #1a1a1a;
@@ -367,9 +386,7 @@ td:has(> span.file) { padding-right: 20px; }
   --bs-link-color-rgb: 255, 255, 255;
   --bs-link-hover-color: #e6e6e6;
 }
-/* Black text on the light backgrounds (#000 mandatory for the orange ratio). */
-.jarvis-bg--orange,
-.jarvis-bg--lavender,
+/* Black text on the light background. */
 .jarvis-bg--light {
   color: #000;
   --bs-body-color: #000;
