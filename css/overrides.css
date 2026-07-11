@@ -325,3 +325,158 @@ td:has(> span.file) { padding-right: 20px; }
   padding: 10px;
   filter: drop-shadow(grey 0.5rem 0.5rem 5px);
 }
+
+/* Section background colours (1/2/3-column components).
+   Text + Bootstrap colour vars are overridden so ANY child component inherits
+   ADA-compliant text. Contrast ratios (WCAG 2.1) at current brand values:
+   primary #2d6cdf/#fff 4.86 · secondary #1b2a4a/#fff 14.22 · #cf6e2d/#000 5.92
+   · #e0d4f0/#000 14.85 · #1a1a1a/#fff 17.40 · #f5f5f5/#000 19.26 — all ≥ AA 4.5.
+   Orange REQUIRES pure #000 (5.92); #1a1a1a on orange is only 3.47 and fails. */
+.jarvis-bg {
+  padding-block: 2rem; /* breathing room so text isn't flush to the colour band edge */
+}
+.jarvis-bg--primary {
+  background: var(--bs-primary, #2d6cdf);
+}
+.jarvis-bg--secondary {
+  background: var(--bs-secondary, #1b2a4a);
+}
+.jarvis-bg--orange {
+  background: #cf6e2d;
+}
+.jarvis-bg--lavender {
+  background: #e0d4f0;
+}
+.jarvis-bg--dark {
+  background: #1a1a1a;
+}
+.jarvis-bg--light {
+  background: #f5f5f5;
+}
+/* White text on the dark backgrounds. */
+.jarvis-bg--primary,
+.jarvis-bg--secondary,
+.jarvis-bg--dark {
+  color: #fff;
+  --bs-body-color: #fff;
+  --bs-body-color-rgb: 255, 255, 255;
+  --bs-heading-color: #fff;
+  --jarvis-heading-color: #fff; /* theme headings read this var, not --bs-heading-color */
+  --bs-emphasis-color: #fff;
+  --bs-link-color: #fff;
+  --bs-link-color-rgb: 255, 255, 255;
+  --bs-link-hover-color: #e6e6e6;
+}
+/* Black text on the light backgrounds (#000 mandatory for the orange ratio). */
+.jarvis-bg--orange,
+.jarvis-bg--lavender,
+.jarvis-bg--light {
+  color: #000;
+  --bs-body-color: #000;
+  --bs-body-color-rgb: 0, 0, 0;
+  --bs-heading-color: #000;
+  --jarvis-heading-color: #000; /* theme headings read this var, not --bs-heading-color */
+  --bs-emphasis-color: #000;
+  --bs-link-color: #000;
+  --bs-link-color-rgb: 0, 0, 0;
+  --bs-link-hover-color: #333333;
+}
+/* Media image background: cover the section, darken with an adjustable overlay
+   so light text stays ADA-readable regardless of the photo. */
+.jarvis-bg--image {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  --bs-body-color: #fff;
+  --bs-body-color-rgb: 255, 255, 255;
+  --bs-heading-color: #fff;
+  --jarvis-heading-color: #fff;
+  --bs-emphasis-color: #fff;
+  --bs-link-color: #fff;
+  --bs-link-color-rgb: 255, 255, 255;
+  --bs-link-hover-color: #e6e6e6;
+}
+.jarvis-bg--image > .jarvis-bg__overlay {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  pointer-events: none;
+}
+/* Light overlay: used when the section's text is dark, so dark text stays
+   readable over a bright image (mirror of the default dark overlay). */
+.jarvis-bg--image > .jarvis-bg__overlay--light {
+  background: #fff;
+}
+/* Keep the content above the overlay. */
+.jarvis-bg--image > .container,
+.jarvis-bg--image > .container-fluid {
+  position: relative;
+  z-index: 1;
+}
+
+/* Components with their own (light) background must keep dark text even inside a
+   coloured section — otherwise the inherited white text is invisible on them.
+   Reset the colour vars back to the light-surface defaults. */
+.jarvis-columns .jarvis-person--card,
+.jarvis-columns .jarvis-card:not(.jarvis-card--background) {
+  color: #1a1a1a;
+  --bs-body-color: #1a1a1a;
+  --bs-body-color-rgb: 26, 26, 26;
+  --bs-heading-color: #1a1a1a;
+  --jarvis-heading-color: #1a1a1a;
+  --bs-emphasis-color: #1a1a1a;
+  --bs-link-color: var(--bs-primary);
+  --bs-link-color-rgb: var(--bs-primary-rgb);
+  --bs-link-hover-color: var(--bs-primary);
+}
+
+/* Site-wide: links have no underline. */
+a {
+  text-decoration: none;
+}
+
+/* Section text-colour override: cascades to every child component (text, wysiwyg,
+   etc.) via the colour vars. Components with their own background (person card,
+   standard card) reset above under .jarvis-columns, so they are unaffected.
+   Manual override — NOT auto-checked for ADA contrast against the section bg. */
+.jarvis-text-color--primary {
+  color: var(--bs-primary);
+  --bs-body-color: var(--bs-primary);
+  --bs-heading-color: var(--bs-primary);
+  --jarvis-heading-color: var(--bs-primary);
+  --bs-emphasis-color: var(--bs-primary);
+  --bs-link-color: var(--bs-primary);
+  --bs-link-color-rgb: var(--bs-primary-rgb);
+  --bs-link-hover-color: var(--bs-primary);
+}
+.jarvis-text-color--secondary {
+  color: var(--bs-secondary);
+  --bs-body-color: var(--bs-secondary);
+  --bs-heading-color: var(--bs-secondary);
+  --jarvis-heading-color: var(--bs-secondary);
+  --bs-emphasis-color: var(--bs-secondary);
+  --bs-link-color: var(--bs-secondary);
+  --bs-link-color-rgb: var(--bs-secondary-rgb);
+  --bs-link-hover-color: var(--bs-secondary);
+}
+.jarvis-text-color--black {
+  color: #000;
+  --bs-body-color: #000;
+  --bs-heading-color: #000;
+  --jarvis-heading-color: #000;
+  --bs-emphasis-color: #000;
+  --bs-link-color: #000;
+  --bs-link-color-rgb: 0, 0, 0;
+  --bs-link-hover-color: #000;
+}
+.jarvis-text-color--white {
+  color: #fff;
+  --bs-body-color: #fff;
+  --bs-heading-color: #fff;
+  --jarvis-heading-color: #fff;
+  --bs-emphasis-color: #fff;
+  --bs-link-color: #fff;
+  --bs-link-color-rgb: 255, 255, 255;
+  --bs-link-hover-color: #fff;
+}

@@ -1,3 +1,24 @@
 .jarvis-text :last-child {
   margin-bottom: 0;
 }
+/* Text colour: drives body copy AND headings (headings read --jarvis-heading-color). */
+.jarvis-text--primary {
+  color: var(--bs-primary);
+  --jarvis-heading-color: var(--bs-primary);
+  --bs-heading-color: var(--bs-primary);
+}
+.jarvis-text--secondary {
+  color: var(--bs-secondary);
+  --jarvis-heading-color: var(--bs-secondary);
+  --bs-heading-color: var(--bs-secondary);
+}
+.jarvis-text--black {
+  color: #000;
+  --jarvis-heading-color: #000;
+  --bs-heading-color: #000;
+}
+.jarvis-text--white {
+  color: #fff;
+  --jarvis-heading-color: #fff;
+  --bs-heading-color: #fff;
+}

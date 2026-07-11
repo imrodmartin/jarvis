@@ -1,0 +1,16 @@
+.jarvis-stat__icon {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+.jarvis-stat__number {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.jarvis-stat__body {
+  color: var(--bs-body-color);
+}
+.jarvis-stat__body > :last-child {
+  margin-bottom: 0;
+}

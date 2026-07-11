@@ -1,0 +1,11 @@
+.jarvis-cta__subtitle {
+  font-size: 0.875rem;
+  letter-spacing: 0.15em;
+}
+/* On a colored bg, text-bg-* sets a WCAG-contrast color on the container.
+   The global `h1-h6 { color: --jarvis-heading-color }` rule (overrides.css)
+   would otherwise repaint the heading primary — force it to inherit the
+   contrast color instead. */
+.jarvis-cta[class*="text-bg-"] :is(h1, h2, h3, h4, h5, h6) {
+  color: inherit;
+}

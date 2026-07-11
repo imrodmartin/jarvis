@@ -1,0 +1,98 @@
+.jarvis-person {
+  text-align: center;
+}
+/* Card: framed, lifts on hover. */
+.jarvis-person--card {
+  padding: 1rem;
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+/* Photo bleeds to card edges; card padding stays for text below. */
+.jarvis-person--card .jarvis-person__photo {
+  width: calc(100% + 2rem);
+  max-width: none;
+  margin: -1rem -1rem 1rem;
+  border-radius: 0;
+}
+.jarvis-person--card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+/* Image left: photo beside details, left-aligned. */
+.jarvis-person--image-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: left;
+}
+.jarvis-person--image-left .jarvis-person__photo {
+  flex: 0 0 40%;
+  max-width: 40%;
+  margin-bottom: 0;
+}
+.jarvis-person--image-left .jarvis-person__details {
+  flex: 1;
+}
+.jarvis-person--image-left .jarvis-person__social {
+  justify-content: flex-start;
+}
+.jarvis-person__photo {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.jarvis-person__name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.jarvis-person__position {
+  font-size: 1rem;
+  color: var(--bs-body-color);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+}
+/* Contact lines: quieter than the name, tighter stack. */
+.jarvis-person__phone,
+.jarvis-person__email {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.jarvis-person a {
+  text-decoration: none;
+}
+.jarvis-person__social {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.jarvis-person__social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--bs-body-color);
+  background: var(--bs-secondary-bg);
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.jarvis-person__social-link:hover {
+  color: #fff;
+  background: var(--bs-primary);
+}
+.jarvis-person__phone a,
+.jarvis-person__email a {
+  color: var(--bs-body-color);
+}
+.jarvis-person__phone a:hover,
+.jarvis-person__email a:hover {
+  color: var(--bs-primary);
+}

@@ -13,7 +13,36 @@
   'wide-right': ['col-12 col-md-4', 'col-12 col-md-8'],
 }[ratio|default('even')] %}
 {% set container = (width|default('boxed')) == 'full' ? 'container-fluid' : 'container' %}
-<div class="jarvis-columns jarvis-columns--2 {{ space }}">
+{% set bg = background|default('none') %}
+{% set has_media = background_image.src is defined and background_image.src %}
+{# Image renders only when explicitly chosen, so picking a colour or None always
+   hides it — even if a deselected media reference lingers in stored config. #}
+{% set bg_img = bg == 'image' and has_media %}
+{% set overlay = overlay|default(45) %}
+{% set bg_class = bg_img ? 'jarvis-bg jarvis-bg--image' : (bg not in ['none', 'image'] ? 'jarvis-bg jarvis-bg--' ~ bg : '') %}
+{% set tc = text_color|default('inherit') %}
+{# ADA guard: only apply the override when it meets WCAG AA against this section's
+   own background; otherwise fall back to the background's auto-safe text colour. #}
+{% set bg_key = bg_img ? 'image' : bg %}
+{% set ada_ok = {
+  none: ['primary', 'secondary', 'black'],
+  primary: ['white'],
+  secondary: ['white'],
+  orange: ['black'],
+  lavender: ['secondary', 'black'],
+  dark: ['white'],
+  light: ['secondary', 'black'],
+  image: ['white'],
+}[bg_key]|default([]) %}
+{# Over an image the photo's brightness is unknown, so honour the editor's pick
+   (best-effort, like the card) rather than forcing white. On solid backgrounds
+   the pick must pass the AA matrix above. #}
+{% set text_color_class = (tc != 'inherit' and (bg_img or tc in ada_ok)) ? 'jarvis-text-color--' ~ tc : '' %}
+{# Overlay darkens for light text, lightens for dark text, keeping the chosen
+   colour readable regardless of the image. Inherit over an image = white text. #}
+{% set light_text = (tc == 'white') or (tc == 'inherit') %}
+<div class="jarvis-columns jarvis-columns--2 {{ space }} {{ bg_class }} {{ text_color_class }}"{% if bg_img %} style="background-image: url('{{ background_image.src }}');"{% endif %}>
+  {% if bg_img %}<div class="jarvis-bg__overlay{{ light_text ? '' : ' jarvis-bg__overlay--light' }}" style="opacity: {{ overlay / 100 }};" aria-hidden="true"></div>{% endif %}
   <div class="{{ container }}">
     <div class="row {{ gap_class }}">
       <div class="{{ cols[0] }}">

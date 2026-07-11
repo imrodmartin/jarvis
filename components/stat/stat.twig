@@ -1,0 +1,14 @@
+{#
+/**
+ * @file
+ * Jarvis stat card SDC — centered icon, big number, description.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), vertical_padding|default(false), no_padding|default(false)) %}
+{% set has_icon = icon.src is defined and icon.src %}
+<div class="jarvis-stat text-center {{ space }}">
+  {% if has_icon %}<img src="{{ icon.src }}" alt="{{ icon.alt }}" class="jarvis-stat__icon mb-3">{% endif %}
+  {% if title %}<div class="jarvis-stat__number text-{{ number_color|default('primary') }}"{% if count_up %} data-count-up{% endif %}>{{ title }}</div>{% endif %}
+  {% if body %}<div class="jarvis-stat__body">{{ body|raw }}</div>{% endif %}
+</div>

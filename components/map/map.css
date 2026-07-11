@@ -1,0 +1,9 @@
+.jarvis-map__frame {
+  display: block;
+  width: 100%;
+  border: 0;
+}
+
+.jarvis-map__link {
+  margin-top: 0.5rem;
+}

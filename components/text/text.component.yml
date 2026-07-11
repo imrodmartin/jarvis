@@ -37,6 +37,19 @@ props:
       default: start
       examples:
         - start
+    color:
+      title: 'Text colour'
+      type: string
+      enum: [inherit, primary, secondary, black, white]
+      'meta:enum':
+        inherit: Default
+        primary: Primary
+        secondary: Secondary
+        black: Black
+        white: White
+      default: inherit
+      examples:
+        - inherit
     padding:
       title: Padding
       type: string

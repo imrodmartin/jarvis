@@ -1,0 +1,137 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Person
+status: stable
+description: 'Portrait, name, position, phone, email, and a link.'
+category: Jarvis
+props:
+  type: object
+  properties:
+    variant:
+      title: Layout
+      type: string
+      enum: [card, plain, image-left]
+      'meta:enum':
+        card: 'Card (framed, centered)'
+        plain: 'Plain (no frame, centered)'
+        image-left: 'Image left (row)'
+      default: card
+      # Palette preview renders from examples (ignores default); without this it passes '' and fails enum validation.
+      examples:
+        - card
+    image:
+      title: Photo
+      $ref: json-schema-definitions://canvas.module/image
+    image_uri:
+      title: 'Image source URI (internal)'
+      # Original stream-wrapper URI; required for image_style to build the Portrait derivative.
+      type: string
+    name:
+      title: Name
+      type: string
+      default: 'Jane Doe'
+      examples:
+        - 'Jane Doe'
+    position:
+      title: Position
+      type: string
+      examples:
+        - 'Chief Executive Officer'
+    phone:
+      title: Phone
+      type: string
+      examples:
+        - '+1 555 123 4567'
+    email:
+      title: Email
+      type: string
+      examples:
+        - 'jane@example.com'
+    link_text:
+      title: 'Link text'
+      type: string
+      examples:
+        - 'View profile'
+    link_href:
+      title: 'Link URL'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/1'
+    linkedin:
+      title: 'LinkedIn URL'
+      type: string
+      format: uri-reference
+    x:
+      title: 'X (Twitter) URL'
+      type: string
+      format: uri-reference
+    facebook:
+      title: 'Facebook URL'
+      type: string
+      format: uri-reference
+    instagram:
+      title: 'Instagram URL'
+      type: string
+      format: uri-reference
+    youtube:
+      title: 'YouTube URL'
+      type: string
+      format: uri-reference
+    github:
+      title: 'GitHub URL'
+      type: string
+      format: uri-reference
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+      examples:
+        - none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+      examples:
+        - medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+      examples:
+        - none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+      examples:
+        - medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: false
