@@ -1,0 +1,51 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Button
+status: stable
+description: 'A single call-to-action button (Bootstrap styles).'
+category: Jarvis
+props:
+  type: object
+  required:
+    - text
+  properties:
+    text:
+      title: Text
+      type: string
+      default: 'Get started'
+      examples:
+        - 'Get started'
+    href:
+      title: 'Link URL'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/1'
+    variant:
+      title: Style
+      type: string
+      enum: [primary, secondary, outline-primary, outline-secondary, light, dark]
+      'meta:enum':
+        primary: Primary
+        secondary: Secondary
+        outline-primary: 'Outline primary'
+        outline-secondary: 'Outline secondary'
+        light: Light
+        dark: Dark
+      default: primary
+      examples:
+        - primary
+    size:
+      title: Size
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: Small
+        medium: Medium
+        large: Large
+      default: medium
+      examples:
+        - medium
+    new_tab:
+      title: 'Open in new tab'
+      type: boolean
+      default: false

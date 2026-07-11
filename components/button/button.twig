@@ -1,0 +1,12 @@
+{#
+/**
+ * @file
+ * Jarvis button SDC. Bootstrap button rendered as a link.
+ */
+#}
+{% set variant = variant|default('primary') %}
+{% set size = size|default('medium') %}
+{% set size_class = { small: 'btn-sm', medium: '', large: 'btn-lg' }[size] %}
+{% if text %}
+  <a href="{{ href|default('#') }}" class="btn btn-{{ variant }} {{ size_class }}"{% if new_tab|default(false) %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ text }}</a>
+{% endif %}

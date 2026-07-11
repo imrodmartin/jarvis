@@ -80,4 +80,4 @@ props:
     vertical_padding:
       title: 'Vertical padding (30px)'
       type: boolean
-      default: false
+      default: true
