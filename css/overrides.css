@@ -99,7 +99,7 @@ body {
 .jarvis-branding-wrap { min-width: 0; }
 .jarvis-branding-wrap img { width: 400px; max-width: 100%; height: auto; }
 .jarvis-primary-menu .offcanvas-body > div { display: flex; align-items: center; }
-.jarvis-primary-menu .offcanvas-body nav[role="navigation"] { margin-left: 50px; }
+.jarvis-primary-menu .offcanvas-body nav { margin-left: 50px; }
 
 /* Full-width columns: kill container-fluid gutter, row negative margins, AND
    the Bootstrap col padding so the section reaches the screen edge. Without the

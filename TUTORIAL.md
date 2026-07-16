@@ -80,7 +80,7 @@ web/themes/custom/jarvis/
 
 | Term | What it means for this tutorial |
 |------|--------------------------------|
-| **Theme** | The folder that controls how your site *looks*. Jarvis is a *base theme* extending Drupal's `stable9`. |
+| **Theme** | The folder that controls how your site *looks*. Jarvis stands alone — it inherits from no other theme. |
 | **Region** | A named drop-zone in the page (Header, Footer, Content…). Blocks and menus get placed into regions. |
 | **Twig** | Drupal's templating language (`{{ variable }}`, `{% if %}`). HTML with holes you fill in. |
 | **Library** | A named bundle of CSS + JS. Drupal only loads a library when something asks for it. |
@@ -145,7 +145,7 @@ Every theme needs a `*.info.yml`. The filename's prefix (`jarvis`) is the theme'
 ```yaml
 name: Jarvis
 type: theme
-base theme: stable9
+base theme: false
 core_version_requirement: ^11 || ^12
 description: 'DXPR-style SDC theme with Bootstrap 5, built for Drupal Canvas and Layout Builder.'
 package: Custom
@@ -168,9 +168,10 @@ regions:
 
 Line by line:
 
-- **`base theme: stable9`** — we inherit Drupal's clean, markup-light base theme rather
-  than starting from zero. We get sensible core templates for free and override only what
-  we care about.
+- **`base theme: false`** — we inherit from no other theme. Drupal falls back to each
+  module's own default templates, so we still get sensible core markup for free and
+  override only what we care about. This is what Olivero and Claro do, and it is the
+  direction core is heading: `stable9` is marked deprecated.
 - **`core_version_requirement`** — works on Drupal 11 and 12.
 - **`libraries: - jarvis/global`** — load the `global` library (defined next) on *every*
   page. That's how Bootstrap gets onto the page.
