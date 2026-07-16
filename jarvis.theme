@@ -6,7 +6,7 @@
  */
 
 /**
- * Color settings: setting key => [label, CSS custom property, needs -rgb, default].
+ * Color settings: key => [label, CSS custom property, needs -rgb, default].
  *
  * Shared by theme-settings.php (the form) and hook_preprocess_html (the output)
  * so both stay in sync. overrides.css consumes these vars, so a region is
@@ -54,14 +54,15 @@ function _jarvis_font_sizes() {
  * Implements hook_preprocess_html().
  *
  * Emits the chosen colors as CSS variables in an inline <style>. Uses html:root
- * (specificity 0,0,1,1) so it beats overrides.css's :root defaults regardless of
- * head order. Only valid #rrggbb values are emitted — this closes CSS injection
- * via the setting value.
+ * (specificity 0,0,1,1) so it beats overrides.css's :root defaults regardless
+ * of head order. Only valid #rrggbb values are emitted — this closes CSS
+ * injection via the setting value.
  */
 function jarvis_preprocess_html(array &$variables) {
   $lines = [];
   foreach (_jarvis_colors() as $key => $info) {
-    [$label, $var, $rgb] = $info;
+    // The label is only used by the settings form; skip it here.
+    [, $var, $rgb] = $info;
     $val = theme_get_setting($key);
     if (!is_string($val) || !preg_match('/^#[0-9a-fA-F]{6}$/', $val)) {
       continue;
@@ -74,10 +75,15 @@ function jarvis_preprocess_html(array &$variables) {
       $lines[] = "{$var}-rgb:$r,$g,$b;";
     }
   }
-  // Background 1/2 are arbitrary user colours, so the ADA-safe text colour can't
-  // be hardcoded. Compute it here (black or white, whichever wins WCAG contrast)
-  // and emit a companion var the section CSS reads for text/heading/link colour.
-  foreach (['jarvis_color_bg_1' => '--jarvis-bg-1', 'jarvis_color_bg_2' => '--jarvis-bg-2'] as $key => $var) {
+  // Background 1/2 are arbitrary user colours, so the ADA-safe text colour
+  // can't be hardcoded. Compute it here (black or white, whichever wins WCAG
+  // contrast) and emit a companion var the section CSS reads for
+  // text/heading/link colour.
+  $backgrounds = [
+    'jarvis_color_bg_1' => '--jarvis-bg-1',
+    'jarvis_color_bg_2' => '--jarvis-bg-2',
+  ];
+  foreach ($backgrounds as $key => $var) {
     $val = theme_get_setting($key);
     if (!is_string($val) || !preg_match('/^#[0-9a-fA-F]{6}$/', $val)) {
       continue;
@@ -124,7 +130,7 @@ function jarvis_preprocess_html(array &$variables) {
     [
       '#tag' => 'style',
       '#value' => 'html:root{' . implode('', $desktop) . '}'
-        . '@media (max-width:767.98px){html:root{' . implode('', $mobile) . '}}',
+      . '@media (max-width:767.98px){html:root{' . implode('', $mobile) . '}}',
     ],
     'jarvis-font-sizes',
   ];
@@ -164,7 +170,7 @@ function _jarvis_fonts() {
 /**
  * Implements hook_preprocess_page().
  *
- * Render the collapse-when-empty regions (hero, sidebars) once and flag
+ * Render the collapse-when-empty regions (header, hero, sidebars) once and flag
  * whether they hold real content. In the Canvas editor every enabled
  * PageRegion emits HTML comment markers even when empty, so a plain
  * `|render|trim` test in the template reads empty regions as full — the hero
@@ -174,7 +180,7 @@ function _jarvis_fonts() {
  */
 function jarvis_preprocess_page(array &$variables) {
   $renderer = \Drupal::service('renderer');
-  foreach (['hero', 'sidebar_left', 'sidebar_right'] as $region) {
+  foreach (['header', 'hero', 'sidebar_left', 'sidebar_right'] as $region) {
     $markup = !empty($variables['page'][$region])
       ? (string) $renderer->render($variables['page'][$region])
       : '';

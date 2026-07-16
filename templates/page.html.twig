@@ -18,11 +18,17 @@
 #}
 <div class="layout-container">
 
-  {# Full-width #}
-  {% if page.header %}
+  {# Full-width. header_markup / header_empty come from jarvis_preprocess_page():
+     an enabled-but-empty Canvas PageRegion still emits comment markers, so a
+     plain `{% if page.header %}` test prints an empty <header> band. When empty
+     we skip the styled wrapper (no bg/padding band) but still print the raw
+     markers so the Canvas editor keeps its region map. #}
+  {% if not header_empty %}
     <header role="banner" class="jarvis-region jarvis-region--full jarvis-header">
-      {{ page.header }}
+      {{ header_markup|raw }}
     </header>
+  {% else %}
+    {{ header_markup|raw }}
   {% endif %}
 
   {# Boxed nav row: branding left, menu right. On <lg the menu is a Bootstrap

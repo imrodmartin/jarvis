@@ -186,9 +186,10 @@ function jarvis_form_system_theme_settings_alter(array &$form, FormStateInterfac
  * Submit handler: download the chosen Google fonts and write the stylesheet.
  *
  * For each slot we fetch the css2 payload (Chrome UA → woff2 with unicode-range
- * subsets), download every referenced woff2 into public://jarvis-fonts/, rewrite
- * the url() to the local copy, and append a selector rule. Everything is written
- * to jarvis-fonts.css, which hook_preprocess_html attaches on the live site.
+ * subsets), download every referenced woff2 into public://jarvis-fonts/,
+ * rewrite the url() to the local copy, and append a selector rule. Everything
+ * is written to jarvis-fonts.css, which hook_preprocess_html attaches on the
+ * live site.
  */
 function jarvis_font_settings_submit(array &$form, FormStateInterface $form_state) {
   /** @var \Drupal\Core\File\FileSystemInterface $fs */
@@ -233,7 +234,10 @@ function jarvis_font_settings_submit(array &$form, FormStateInterface $form_stat
       ])->getBody();
     }
     catch (\Throwable $e) {
-      \Drupal::messenger()->addWarning(t('Could not fetch %f from Google Fonts: @m', ['%f' => $family, '@m' => $e->getMessage()]));
+      \Drupal::messenger()->addWarning(t('Could not fetch %f from Google Fonts: @m', [
+        '%f' => $family,
+        '@m' => $e->getMessage(),
+      ]));
       continue;
     }
 
