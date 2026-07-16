@@ -123,7 +123,7 @@ end you'll understand <em>why</em> each piece exists, not just <em>what</em> to 
 <tbody>
 <tr>
 <td><strong>Theme</strong></td>
-<td>The folder that controls how your site <em>looks</em>. Jarvis is a <em>base theme</em> extending Drupal's <code>stable9</code>.</td>
+<td>The folder that controls how your site <em>looks</em>. Jarvis stands alone — it inherits from no other theme.</td>
 </tr>
 <tr>
 <td><strong>Region</strong></td>
@@ -200,7 +200,7 @@ cd web/themes/custom/jarvis
 <strong>machine name</strong> and must match the folder name.</p>
 <pre class="codehilite"><code class="language-yaml">name: Jarvis
 type: theme
-base theme: stable9
+base theme: false
 core_version_requirement: ^11 || ^12
 description: 'DXPR-style SDC theme with Bootstrap 5, built for Drupal Canvas and Layout Builder.'
 package: Custom
@@ -223,9 +223,10 @@ regions:
 
 <p>Line by line:</p>
 <ul>
-<li><strong><code>base theme: stable9</code></strong> — we inherit Drupal's clean, markup-light base theme rather
-  than starting from zero. We get sensible core templates for free and override only what
-  we care about.</li>
+<li><strong><code>base theme: false</code></strong> — we inherit from no other theme. Drupal falls back to each
+  module's own default templates, so we still get sensible core markup for free and
+  override only what we care about. This is what Olivero and Claro do, and it is the
+  direction core is heading: <code>stable9</code> is marked deprecated.</li>
 <li><strong><code>core_version_requirement</code></strong> — works on Drupal 11 and 12.</li>
 <li><strong><code>libraries: - jarvis/global</code></strong> — load the <code>global</code> library (defined next) on <em>every</em>
   page. That's how Bootstrap gets onto the page.</li>
