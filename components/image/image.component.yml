@@ -29,14 +29,16 @@ props:
     caption:
       title: Caption
       type: string
-      examples:
-        - 'Photo caption goes here.'
     full_width:
       title: 'Full width'
       type: boolean
       default: false
       examples:
         - false
+    rounded:
+      title: 'Rounded corners'
+      type: boolean
+      default: true
     priority:
       title: 'Load eagerly (above the fold)'
       description: 'Disable lazy-loading for images visible without scrolling — better LCP.'

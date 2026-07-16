@@ -133,7 +133,11 @@ body {
 .jarvis-primary-menu nav > ul { display: flex; flex-wrap: wrap; }
 
 .jarvis-primary-menu li { position: relative; }
-.jarvis-primary-menu a {
+/* <nolink> menu items render as <span>, not <a> (e.g. dropdown-parent titles
+   with no URL) — style both identically so they sit on the bar, bold, like real
+   links. Scoped to nav so the hamburger's <span> bars aren't caught. */
+.jarvis-primary-menu nav a,
+.jarvis-primary-menu nav span {
   display: block;
   padding: 0.75rem 1rem;
   color: var(--bs-body-color);
@@ -141,11 +145,12 @@ body {
   white-space: nowrap;
   font-weight: 600;
 }
-.jarvis-primary-menu a:hover,
-.jarvis-primary-menu a:focus { color: var(--bs-primary); }
+.jarvis-primary-menu nav a:hover,
+.jarvis-primary-menu nav a:focus { color: var(--bs-primary); }
 
 /* Caret on parents (items that contain a submenu). */
-.jarvis-primary-menu li:has(> ul) > a::after { content: " \25be"; opacity: 0.6; }
+.jarvis-primary-menu li:has(> ul) > a::after,
+.jarvis-primary-menu li:has(> ul) > span::after { content: " \25be"; opacity: 0.6; }
 
 /* Submenus (nested ul): hidden, revealed on hover/focus. */
 .jarvis-primary-menu li > ul {

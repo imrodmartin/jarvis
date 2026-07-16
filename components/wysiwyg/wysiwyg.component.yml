@@ -25,7 +25,7 @@ props:
       enum: [full, readable]
       'meta:enum':
         full: 'Full width'
-        readable: 'Readable (max 65ch)'
+        readable: 'Readable (max 85ch)'
       default: full
     align:
       title: Alignment
