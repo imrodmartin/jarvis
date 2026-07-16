@@ -77,3 +77,15 @@ template and Canvas page pin the component versions of *this* theme release.
 ## License
 
 GPL-2.0-or-later
+
+### Bundled third-party assets
+
+This theme bundles Bootstrap v5.3.8 under `libraries/bootstrap/`:
+
+- Bootstrap — Copyright 2011-2025 The Bootstrap Authors, licensed under the
+  [MIT License](https://github.com/twbs/bootstrap/blob/main/LICENSE), which is
+  GPLv2-compatible. Source: https://getbootstrap.com/
+
+No other third-party assets are bundled. Fonts are fetched from Google Fonts at
+the site owner's request via the theme settings form and stored locally under
+`public://jarvis-fonts/`; none ship with the theme.
