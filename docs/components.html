@@ -1,0 +1,3911 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jarvis Component Reference</title>
+<style>
+  :root {
+    --accent: #2d6cdf;
+    --accent-strong: #1e4fb0;
+    --accent-soft: #eaf1fd;
+    --ink: #171b22;
+    --ink-soft: #55606f;
+    --ink-faint: #8892a1;
+    --paper: #fbfcfe;
+    --panel: #ffffff;
+    --panel-2: #f5f7fc;
+    --rule: #e3e8f1;
+    --rule-strong: #ccd5e5;
+    --code-bg: #f3f6fc;
+    --code-ink: #263043;
+    --ok: #1b7f5a;
+    --warn: #9a6a12;
+    --shadow: 0 1px 2px rgba(23,27,34,.04), 0 8px 24px rgba(23,27,34,.05);
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --measure: 72ch;
+    --sidebar: 264px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --accent: #6ea0ff;
+      --accent-strong: #a3c1ff;
+      --accent-soft: #16233b;
+      --ink: #e7eaf1;
+      --ink-soft: #9aa4b4;
+      --ink-faint: #6d7889;
+      --paper: #0e1116;
+      --panel: #151a22;
+      --panel-2: #10151d;
+      --rule: #232a35;
+      --rule-strong: #313a48;
+      --code-bg: #10151d;
+      --code-ink: #d4dbe7;
+      --ok: #4fd0a0;
+      --warn: #e0b25c;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"] {
+    --accent: #2d6cdf; --accent-strong: #1e4fb0; --accent-soft: #eaf1fd;
+    --ink: #171b22; --ink-soft: #55606f; --ink-faint: #8892a1;
+    --paper: #fbfcfe; --panel: #ffffff; --panel-2: #f5f7fc;
+    --rule: #e3e8f1; --rule-strong: #ccd5e5; --code-bg: #f3f6fc; --code-ink: #263043;
+    --ok: #1b7f5a; --warn: #9a6a12;
+    --shadow: 0 1px 2px rgba(23,27,34,.04), 0 8px 24px rgba(23,27,34,.05);
+  }
+  :root[data-theme="dark"] {
+    --accent: #6ea0ff; --accent-strong: #a3c1ff; --accent-soft: #16233b;
+    --ink: #e7eaf1; --ink-soft: #9aa4b4; --ink-faint: #6d7889;
+    --paper: #0e1116; --panel: #151a22; --panel-2: #10151d;
+    --rule: #232a35; --rule-strong: #313a48; --code-bg: #10151d; --code-ink: #d4dbe7;
+    --ok: #4fd0a0; --warn: #e0b25c;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ---------- Shell ---------- */
+  .shell { display: grid; grid-template-columns: var(--sidebar) minmax(0, 1fr); align-items: start; }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    border-right: 1px solid var(--rule);
+    background: var(--panel-2);
+    padding: 26px 20px 40px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .brand__mark {
+    width: 30px; height: 30px; border-radius: 8px; flex: none;
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 15px;
+    box-shadow: var(--shadow);
+  }
+  .brand__name { font-weight: 700; font-size: 15px; letter-spacing: -.01em; }
+  .brand__sub { font-size: 11.5px; color: var(--ink-faint); margin: 0 0 22px 40px; }
+  .nav-group { margin-bottom: 20px; }
+  .nav-group__title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em;
+    color: var(--ink-faint); margin: 0 0 8px 6px;
+  }
+  .nav a {
+    display: block; padding: 5px 10px; border-radius: 7px; margin: 1px 0;
+    color: var(--ink-soft); text-decoration: none; font-size: 13.5px; line-height: 1.35;
+    border-left: 2px solid transparent;
+  }
+  .nav a:hover { color: var(--ink); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+  .nav a.is-active { color: var(--accent-strong); background: var(--accent-soft); font-weight: 600; }
+  .nav code { font-family: var(--font-mono); font-size: 12px; }
+
+  /* ---------- Main ---------- */
+  .main { padding: 0 clamp(20px, 5vw, 64px) 96px; min-width: 0; }
+  .wrap { max-width: 940px; margin: 0 auto; }
+  .prose { max-width: var(--measure); }
+
+  header.page {
+    padding: 60px 0 34px; border-bottom: 1px solid var(--rule); margin-bottom: 40px;
+  }
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 14px;
+  }
+  h1 {
+    font-size: clamp(2.1rem, 4.5vw, 3rem); line-height: 1.05; letter-spacing: -.025em;
+    font-weight: 800; margin: 0 0 16px; text-wrap: balance;
+  }
+  .lede { font-size: 1.14rem; color: var(--ink-soft); max-width: 62ch; margin: 0; line-height: 1.55; }
+  .meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
+  .pill {
+    font-size: 12.5px; font-weight: 600; padding: 5px 11px; border-radius: 999px;
+    background: var(--panel); border: 1px solid var(--rule-strong); color: var(--ink-soft);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .pill b { color: var(--ink); font-weight: 700; }
+
+  h2 {
+    font-size: 1.75rem; letter-spacing: -.02em; font-weight: 750; margin: 68px 0 8px;
+    padding-top: 20px; scroll-margin-top: 24px; line-height: 1.15;
+  }
+  h2:first-of-type { margin-top: 8px; }
+  .section-tag { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); display: block; margin-bottom: 4px; }
+  h3 { font-size: 1.15rem; font-weight: 700; letter-spacing: -.01em; margin: 34px 0 10px; scroll-margin-top: 24px; }
+  p { margin: 0 0 16px; }
+  a { color: var(--accent-strong); text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent); text-underline-offset: 2px; }
+  strong { font-weight: 680; color: var(--ink); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+  code {
+    font-family: var(--font-mono); font-size: .86em;
+    background: var(--code-bg); color: var(--code-ink);
+    padding: .12em .4em; border-radius: 5px; border: 1px solid var(--rule);
+  }
+  .prose ul { margin: 0 0 16px; padding-left: 1.2em; }
+  .prose li { margin: 4px 0; }
+
+  /* ---------- Callouts ---------- */
+  .note {
+    display: grid; grid-template-columns: auto 1fr; gap: 12px;
+    background: var(--panel-2); border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent); border-radius: 10px;
+    padding: 14px 16px; margin: 18px 0; font-size: 14.5px; color: var(--ink-soft);
+    max-width: 80ch;
+  }
+  .note--tip { border-left-color: var(--ok); }
+  .note--watch { border-left-color: var(--warn); }
+  .note__icon { font-family: var(--font-mono); font-weight: 700; color: var(--accent); font-size: 13px; padding-top: 1px; }
+  .note--tip .note__icon { color: var(--ok); }
+  .note--watch .note__icon { color: var(--warn); }
+  .note b { color: var(--ink); }
+
+  /* ---------- Component card ---------- */
+  .comp {
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 14px;
+    padding: 26px 26px 8px; margin: 22px 0; box-shadow: var(--shadow); scroll-margin-top: 20px;
+  }
+  .comp__head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px 12px; margin-bottom: 2px; }
+  .comp__name { font-size: 1.3rem; font-weight: 760; letter-spacing: -.015em; margin: 0; }
+  .comp__id {
+    font-family: var(--font-mono); font-size: 12.5px; color: var(--accent-strong);
+    background: var(--accent-soft); padding: 3px 8px; border-radius: 6px; font-weight: 600;
+  }
+  .chip {
+    font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 999px; border: 1px solid var(--rule-strong); color: var(--ink-soft);
+  }
+  .chip--content { border-color: color-mix(in srgb, var(--accent) 40%, var(--rule-strong)); color: var(--accent-strong); background: var(--accent-soft); }
+  .chip--layout { border-style: dashed; }
+  .comp__desc { color: var(--ink-soft); margin: 8px 0 4px; font-size: 15px; max-width: 68ch; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 2px; }
+  .badge {
+    font-size: 12px; font-weight: 600; color: var(--ink-soft);
+    background: var(--panel-2); border: 1px solid var(--rule); border-radius: 7px; padding: 3px 9px;
+    display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+  }
+  a.badge:hover { border-color: var(--accent); color: var(--accent-strong); }
+  .badge code { border: none; background: none; padding: 0; color: inherit; font-size: 12px; }
+
+  /* ---------- Tables ---------- */
+  .table-scroll { overflow-x: auto; margin: 16px 0 20px; border: 1px solid var(--rule); border-radius: 11px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 560px; }
+  thead th {
+    text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--ink-faint); font-weight: 700; padding: 11px 14px; background: var(--panel-2);
+    border-bottom: 1px solid var(--rule); white-space: nowrap;
+  }
+  tbody td { padding: 11px 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: color-mix(in srgb, var(--accent) 3.5%, transparent); }
+  td.prop { white-space: nowrap; }
+  .pname { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink); font-weight: 600; }
+  .req { color: #d6455f; font-weight: 700; margin-left: 3px; cursor: help; }
+  :root[data-theme="dark"] .req { color: #ff7a90; }
+  @media (prefers-color-scheme: dark) { .req { color: #ff7a90; } }
+  .ptype { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); white-space: nowrap; }
+  .pdef { font-family: var(--font-mono); font-size: 12px; color: var(--ok); white-space: nowrap; }
+  .pdef--none { color: var(--ink-faint); }
+  td .opts { display: block; margin-top: 5px; font-size: 12px; color: var(--ink-faint); }
+  td .opts code { font-size: 11.5px; padding: .05em .35em; background: var(--panel-2); }
+  .desc-cell { min-width: 200px; }
+
+  .enum-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; align-items: baseline; }
+  .enum {
+    font-family: var(--font-mono); font-size: 11.5px; padding: 2px 7px; border-radius: 5px;
+    background: var(--panel-2); border: 1px solid var(--rule); color: var(--ink-soft);
+  }
+  .enum--def { background: color-mix(in srgb, var(--ok) 14%, transparent); border-color: color-mix(in srgb, var(--ok) 40%, transparent); color: var(--ok); }
+
+  .slots { display: grid; gap: 10px; margin: 4px 0 20px; }
+  .slot {
+    display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: baseline;
+    background: var(--panel-2); border: 1px dashed var(--rule-strong); border-radius: 9px; padding: 11px 14px;
+  }
+  .slot__name { font-family: var(--font-mono); font-size: 12.5px; font-weight: 600; color: var(--accent-strong); }
+  .slot__desc { font-size: 13.5px; color: var(--ink-soft); }
+
+  .subhead { font-size: 12px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-faint); margin: 20px 0 2px; }
+
+  /* ---------- Theme toggle ---------- */
+  .toggle {
+    position: fixed; top: 16px; right: 18px; z-index: 20;
+    background: var(--panel); border: 1px solid var(--rule-strong); color: var(--ink-soft);
+    border-radius: 999px; padding: 7px 13px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 7px; box-shadow: var(--shadow); font-family: inherit;
+  }
+  .toggle:hover { color: var(--ink); border-color: var(--accent); }
+
+  .foot { margin-top: 60px; padding-top: 26px; border-top: 1px solid var(--rule); color: var(--ink-faint); font-size: 13px; }
+  .foot code { font-size: 12px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; }
+    .sidebar {
+      position: static; height: auto; border-right: none; border-bottom: 1px solid var(--rule);
+      padding: 20px 20px 8px;
+    }
+    .nav { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 2px 14px; }
+    .nav-group { margin-bottom: 12px; }
+    .brand__sub { display: none; }
+    .toggle { top: 12px; }
+  }
+
+  /* ---------- Source dropdowns ---------- */
+  details.src { margin: 12px 0 20px; border: 1px solid var(--rule); border-radius: 11px; background: var(--panel-2); overflow: hidden; }
+  details.src > summary {
+    cursor: pointer; padding: 11px 16px; font-weight: 600; font-size: 13px; color: var(--ink-soft);
+    list-style: none; display: flex; align-items: center; gap: 9px; user-select: none;
+    font-family: var(--font-mono); letter-spacing: -.01em;
+  }
+  details.src > summary::-webkit-details-marker { display: none; }
+  details.src > summary::before { content: "\25b8"; color: var(--accent); font-size: 11px; transition: transform .15s ease; }
+  @media (prefers-reduced-motion: reduce) { details.src > summary::before { transition: none; } }
+  details.src[open] > summary::before { transform: rotate(90deg); }
+  details.src > summary:hover { color: var(--ink); }
+  details.src[open] > summary { border-bottom: 1px solid var(--rule); }
+  .srcfile + .srcfile { border-top: 1px solid var(--rule); }
+  .srcfile__name { font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); padding: 9px 16px 0; }
+  pre.code { margin: 0; padding: 12px 16px 16px; overflow-x: auto; background: var(--code-bg); }
+  pre.code code {
+    font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6; color: var(--code-ink);
+    background: none; border: none; padding: 0; white-space: pre; display: block; tab-size: 2;
+  }
+</style>
+</head>
+<body>
+
+<button class="toggle" id="themeToggle" aria-label="Toggle colour theme">
+  <span id="toggleIcon" aria-hidden="true">◐</span><span id="toggleLabel">Theme</span>
+</button>
+
+<div class="shell">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand__mark">J</div>
+      <div class="brand__name">Jarvis</div>
+    </div>
+    <p class="brand__sub">Component reference</p>
+
+    <nav class="nav" id="nav">
+      <div class="nav-group">
+        <p class="nav-group__title">Start here</p>
+        <a href="#intro">What is this?</a>
+        <a href="#reading">How to read it</a>
+      </div>
+      <div class="nav-group">
+        <p class="nav-group__title">Foundations</p>
+        <a href="#spacing">Spacing controls</a>
+        <a href="#backgrounds">Backgrounds &amp; contrast</a>
+        <a href="#images">Images in Canvas</a>
+      </div>
+      <div class="nav-group">
+        <p class="nav-group__title">Layout &amp; structure</p>
+        <a href="#section">Section</a>
+        <a href="#one-column">1 Column</a>
+        <a href="#two-column">2 Columns</a>
+        <a href="#three-column">3 Columns</a>
+        <a href="#card-full-image">Card Full Image</a>
+      </div>
+      <div class="nav-group">
+        <p class="nav-group__title">Content</p>
+        <a href="#hero">Hero</a>
+        <a href="#cta">Call to Action</a>
+        <a href="#text">Text</a>
+        <a href="#wysiwyg">WYSIWYG</a>
+        <a href="#button">Button</a>
+        <a href="#card">Card</a>
+        <a href="#image">Image</a>
+        <a href="#video">Video</a>
+        <a href="#map">Map</a>
+        <a href="#person">Person</a>
+        <a href="#stat">Stat card</a>
+      </div>
+      <div class="nav-group">
+        <p class="nav-group__title">Modules</p>
+        <a href="#jarvis-blocks">Jarvis Blocks</a>
+        <a href="#jarvis-canvas">Jarvis Canvas</a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <div class="wrap">
+      <header class="page">
+        <p class="eyebrow">Jarvis Theme · Drupal 11 / 12</p>
+        <h1>The Jarvis component reference</h1>
+        <p class="lede">Every building block that ships with the Jarvis theme, explained in plain language — the 16 components you drag into a page, plus the two small modules that make them work. Written for site builders who are new to Single Directory Components but comfortable in Drupal.</p>
+        <div class="meta-row">
+          <span class="pill"><b>16</b> components</span>
+          <span class="pill"><b>2</b> custom modules</span>
+          <span class="pill">Bootstrap <b>5</b></span>
+          <span class="pill">Drupal Canvas <span aria-hidden="true">·</span> Layout Builder</span>
+        </div>
+      </header>
+
+      <!-- ===== INTRO ===== -->
+      <section class="prose">
+        <h2 id="intro"><span class="section-tag">Start here</span>What are these components?</h2>
+        <p>Jarvis is built out of <strong>Single Directory Components</strong> — SDCs for short. If the term is new: an SDC is a small, self-contained piece of a page (a hero banner, a card, a two-column row) that lives in its own folder inside the theme. Each folder holds three things — a <code>.component.yml</code> file that lists the settings the component accepts, a <code>.twig</code> template that renders the HTML, and its own CSS. Drupal core discovers them automatically. Nothing to install.</p>
+        <p>The practical payoff: an editor can drop a "Hero" onto a page and fill in a heading, a background image, and a button — without touching code — and always get the same tidy, accessible markup. The settings an editor fills in are called <strong>props</strong> (short for properties). Some components also have <strong>slots</strong>, which are drop-zones where you nest <em>other</em> components; that's how the layout pieces hold your content.</p>
+        <p>You'll meet Jarvis's components in two places. <strong>Drupal Canvas</strong> is the visual, drag-and-drop page builder — that's the primary home for these. <strong>Layout Builder</strong> is Drupal's older layout tool; the two custom modules at the end of this page let the same components work there too.</p>
+
+        <h3 id="reading">How to read this page</h3>
+        <p>Start with <a href="#spacing">Foundations</a>. Almost every component shares the same spacing controls, the same background-and-contrast behaviour, and the same approach to images. Learning those three patterns once means every component table afterward is short — it only lists what makes that component different.</p>
+        <div class="note">
+          <span class="note__icon">i</span>
+          <div>Throughout the tables: <span class="req" title="required">✳</span> marks a <b>required</b> prop, the green value is the <b>default</b>, and a green-outlined chip in an option list is that prop's default choice. Props are the machine names you'll also see in each component's <code>.yml</code> file.</div>
+        </div>
+      </section>
+
+      <!-- ===== FOUNDATIONS ===== -->
+      <section class="prose">
+        <h2 id="spacing"><span class="section-tag">Foundations</span>The shared spacing controls</h2>
+        <p>Fifteen of the sixteen components (everything except <a href="#button">Button</a>) expose the same set of spacing props. Rather than repeat them in every table below, here they are once. When a component's badge says <em>"＋ standard spacing controls,"</em> it means this set.</p>
+        <p>Under the hood they all funnel through one shared Twig helper, <code>jarvis-spacing.html.twig</code>, which turns your choices into utility classes (<code>jp-p-*</code>, <code>jp-m-*</code>, <code>jp-vpad</code>) defined in the theme's <code>overrides.css</code>. One source of truth — change spacing behaviour there and every component follows.</p>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="prop"><span class="pname">padding</span></td>
+                <td><span class="ptype">enum</span></td>
+                <td><span class="pdef">none</span></td>
+                <td class="desc-cell">Which side(s) get inner padding.<span class="enum-list"><span class="enum enum--def">none</span><span class="enum">all</span><span class="enum">top</span><span class="enum">bottom</span><span class="enum">left</span><span class="enum">right</span></span></td>
+              </tr>
+              <tr>
+                <td class="prop"><span class="pname">padding_size</span></td>
+                <td><span class="ptype">enum</span></td>
+                <td><span class="pdef">medium</span></td>
+                <td class="desc-cell">How much padding, once a side is chosen.<span class="opts"><code>small</code> 10px · <code>medium</code> 20px · <code>large</code> 30px</span></td>
+              </tr>
+              <tr>
+                <td class="prop"><span class="pname">margin</span></td>
+                <td><span class="ptype">enum</span></td>
+                <td><span class="pdef">none</span></td>
+                <td class="desc-cell">Which side(s) get outer margin (space <em>around</em> the component). Same six choices as padding.</td>
+              </tr>
+              <tr>
+                <td class="prop"><span class="pname">margin_size</span></td>
+                <td><span class="ptype">enum</span></td>
+                <td><span class="pdef">medium</span></td>
+                <td class="desc-cell">How much margin. <code>small</code> 10px · <code>medium</code> 20px · <code>large</code> 30px.</td>
+              </tr>
+              <tr>
+                <td class="prop"><span class="pname">vertical_padding</span></td>
+                <td><span class="ptype">boolean</span></td>
+                <td><span class="pdef">true</span></td>
+                <td class="desc-cell">Adds a comfortable 30px top-and-bottom breathing room. On by default; turn off to let a component sit flush against its neighbours.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note note--tip">
+          <span class="note__icon">✓</span>
+          <div><b>The <a href="#section">Section</a> component adds one more:</b> <code>no_padding</code> (boolean, default <code>false</code>) — remove all inner padding so its contents can touch the edges, useful for full-bleed bands.</div>
+        </div>
+
+        <details class="src">
+<summary>&lt;/&gt; Source · 1 file</summary>
+<div class="srcfile"><div class="srcfile__name">jarvis-spacing.html.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Shared spacing utility-class builder for the Jarvis SDCs.
+ *
+ * Maps the padding/margin/vertical_padding/no_padding props every component
+ * repeats onto the jp-* utility classes in css/overrides.css. Imported as
+ * `{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}` — call sites
+ * pass |default()-guarded props so undefined props are safe under
+ * strict_variables. One source of truth: change spacing behaviour here.
+ */
+#}
+{% macro classes(padding, padding_size, margin, margin_size, vertical_padding, no_padding) -%}
+  {{- [
+    padding != 'none' ? 'jp-p-' ~ padding ~ '-' ~ padding_size : '',
+    margin != 'none' ? 'jp-m-' ~ margin ~ '-' ~ margin_size : '',
+    vertical_padding ? 'jp-vpad' : '',
+    no_padding ? 'jp-nopad' : '',
+  ]|join(' ')|trim -}}
+{%- endmacro %}
+</code></pre></div>
+</details>
+<h2 id="backgrounds"><span class="section-tag">Foundations</span>Backgrounds &amp; the contrast guard</h2>
+        <p>The four layout containers — <a href="#one-column">1&nbsp;Column</a>, <a href="#two-column">2&nbsp;Columns</a>, <a href="#three-column">3&nbsp;Columns</a>, and <a href="#card-full-image">Card&nbsp;Full&nbsp;Image</a> — share a background system. Rather than repeat it, here's how it works.</p>
+        <p>You can give a container a solid colour <em>or</em> a background image. If you pick a colour <strong>and</strong> an image, the <strong>colour wins</strong> — the image is hidden but not deleted, so you can flip back by choosing "None" again. Over an image, an adjustable dark (or light) <strong>overlay</strong> keeps text readable.</p>
+        <p>The clever part is the <strong>contrast guard</strong>. You can force a text colour on a whole section with <code>text_color</code>, but Jarvis won't let you pick an unreadable combination. It checks your choice against the section's own background using WCAG AA (the accessibility contrast standard). If it passes, your colour is used; if it fails, Jarvis quietly falls back to a colour it knows is legible. Over a <em>photo</em> — where brightness is unknowable — it honours your pick and leans on the overlay to carry readability.</p>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">width</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">boxed</span></td><td class="desc-cell"><code>boxed</code> centres content in a container; <code>full</code> stretches edge to edge.</td></tr>
+              <tr><td class="prop"><span class="pname">background</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">none</span></td><td class="desc-cell">Solid colour, or "Image".<span class="enum-list"><span class="enum enum--def">none</span><span class="enum">primary</span><span class="enum">secondary</span><span class="enum">bg1</span><span class="enum">bg2</span><span class="enum">dark</span><span class="enum">light</span><span class="enum">image</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">background_image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The image to show behind the content (used when <code>background</code> is <code>none</code> or <code>image</code>).</td></tr>
+              <tr><td class="prop"><span class="pname">overlay</span></td><td><span class="ptype">int 0–100</span></td><td><span class="pdef">45</span></td><td class="desc-cell">Opacity of the readability overlay over a background image, as a percentage.</td></tr>
+              <tr><td class="prop"><span class="pname">text_color</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">inherit</span></td><td class="desc-cell">Force a text colour for everything inside — subject to the contrast guard above.<span class="enum-list"><span class="enum enum--def">inherit</span><span class="enum">primary</span><span class="enum">secondary</span><span class="enum">black</span><span class="enum">white</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">gap</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">normal</span></td><td class="desc-cell">Space between columns.<span class="enum-list"><span class="enum">none</span><span class="enum">small</span><span class="enum enum--def">normal</span><span class="enum">large</span></span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">
+          <span class="note__icon">i</span>
+          <div><b>Reading the colour names:</b> <code>primary</code> is the Jarvis brand blue (<code>#2d6cdf</code>). <code>bg1</code> / <code>bg2</code> are theme-configurable background slots. <code>dark</code> is <code>#1a1a1a</code>, <code>light</code> is <code>#f5f5f5</code>. These come from the theme's colour settings, so they follow site branding.</div>
+        </div>
+
+        <h2 id="images"><span class="section-tag">Foundations</span>How images work in Canvas</h2>
+        <p>Several components accept an image (Hero, Card, Image, Person, Stat…). In Canvas, an image prop arrives as a small bundle of values — a ready-to-use <code>src</code> URL, an <code>alt</code> text, and often <code>width</code>/<code>height</code>. You pick the file in the editor; Jarvis handles the markup, lazy-loading, and sizing.</p>
+        <p>One wrinkle worth knowing about, because it explains a couple of otherwise-mysterious props. Drupal <strong>image styles</strong> (named crops like "Thumbnail" or "Wide") normally need a file's internal address (<code>public://…</code>), but Canvas only hands components a finished public URL. So Jarvis ships a small helper — the <code>jarvis_image_style</code> Twig filter, in the <a href="#jarvis-canvas">Jarvis Canvas</a> module — that looks the file back up by its name and applies the style anyway. That's why the <a href="#image">Image</a> component has an <code>image_style</code> picker, and why <a href="#person">Person</a> has a hidden <code>image_uri</code> prop feeding its portrait crop.</p>
+      </section>
+
+      <!-- ===== LAYOUT COMPONENTS ===== -->
+      <section>
+        <h2 style="max-width:var(--measure)"><span class="section-tag">Reference</span>Layout &amp; structure</h2>
+        <p class="prose" style="color:var(--ink-soft)">These components hold other components. They give the page its skeleton: sections, columns, and full-bleed bands. Each has one or more <strong>slots</strong> — the drop-zones where your content goes.</p>
+
+        <!-- SECTION -->
+        <article class="comp" id="section">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Section</h3>
+            <span class="comp__id">jarvis:section</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">The simplest wrapper: a container that holds other components in its slot. Reach for it when you just need a band with a background or some breathing room around a group of components.</p>
+          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a><span class="badge">＋ <code>no_padding</code></span></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">width</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">normal</span></td><td class="desc-cell"><code>normal</code> = contained; <code>full</code> = full width.</td></tr>
+              <tr><td class="prop"><span class="pname">bg</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">none</span></td><td class="desc-cell">Background colour.<span class="enum-list"><span class="enum enum--def">none</span><span class="enum">light</span><span class="enum">dark</span><span class="enum">primary</span><span class="enum">body-tertiary</span></span>Dark and primary backgrounds automatically switch text to white.</td></tr>
+            </tbody>
+          </table></div>
+          <p class="subhead">Slots</p>
+          <div class="slots"><div class="slot"><span class="slot__name">content</span><span class="slot__desc">Components placed inside this section.</span></div></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 3 files</summary>
+<div class="srcfile"><div class="srcfile__name">section.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Section
+status: stable
+description: 'Container/section wrapper that holds other components in its slot.'
+category: Jarvis
+props:
+  type: object
+  properties:
+    width:
+      title: Width
+      type: string
+      enum: [normal, full]
+      'meta:enum':
+        normal: 'Contained'
+        full: 'Full width'
+      default: normal
+      examples:
+        - normal
+    bg:
+      title: 'Background'
+      type: string
+      enum: [none, light, dark, primary, body-tertiary]
+      'meta:enum':
+        none: None
+        light: Light
+        dark: Dark
+        primary: Primary
+        body-tertiary: 'Subtle grey'
+      default: none
+      examples:
+        - none
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
+    no_padding:
+      title: 'Remove padding (let content touch)'
+      type: boolean
+      default: false
+slots:
+  content:
+    title: Content
+    description: 'Components placed inside this section.'
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">section.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis section wrapper SDC with a `content` slot.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set width = width|default('normal') %}
+{% set bg = bg|default('none') %}
+{% set bg_class = bg != 'none' ? 'bg-' ~ bg : '' %}
+{% set text_class = (bg == 'dark' or bg == 'primary') ? 'text-white' : '' %}
+{% set container = width == 'full' ? 'container-fluid' : 'container' %}
+&lt;section class="jarvis-section {{ bg_class }} {{ text_class }} {{ space }}"&gt;
+  &lt;div class="{{ container }}"&gt;
+    {{ content }}
+  &lt;/div&gt;
+&lt;/section&gt;
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">section.css</div><pre class="code"><code>.jarvis-py-6 {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+</code></pre></div>
+</details>
+        </article>
+
+        <!-- ONE COLUMN -->
+        <article class="comp" id="one-column">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">1 Column</h3>
+            <span class="comp__id">jarvis:one-column</span>
+            <span class="chip chip--layout">Jarvis Layout</span>
+          </div>
+          <p class="comp__desc">A single, full-width column. The workhorse for a plain content row that still wants a background colour, a background image, or a forced text colour.</p>
+          <div class="badges"><a class="badge" href="#backgrounds">＋ background &amp; contrast system</a><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">Props</p>
+          <p class="comp__desc" style="margin-top:0">All of its props come from the shared <a href="#backgrounds">background &amp; contrast</a> set — <code>width</code>, <code>background</code>, <code>background_image</code>, <code>overlay</code>, <code>text_color</code>, <code>gap</code> — plus the standard spacing controls. No unique props of its own.</p>
+          <p class="subhead">Slots</p>
+          <div class="slots"><div class="slot"><span class="slot__name">first</span><span class="slot__desc">The components placed in this column.</span></div></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 2 files</summary>
+<div class="srcfile"><div class="srcfile__name">one-column.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: '1 Column'
+status: stable
+description: 'Single-column row. Content spans the full width.'
+category: 'Jarvis Layout'
+props:
+  type: object
+  properties:
+    width:
+      title: 'Section width'
+      type: string
+      enum: [boxed, full]
+      'meta:enum':
+        boxed: 'Boxed (centred)'
+        full: 'Full width'
+      default: boxed
+    background:
+      title: 'Background colour'
+      type: string
+      enum: [none, primary, secondary, bg1, bg2, dark, light, image]
+      'meta:enum':
+        none: None
+        primary: Primary
+        secondary: Secondary
+        bg1: 'Background 1'
+        bg2: 'Background 2'
+        dark: 'Dark (#1a1a1a)'
+        light: 'Light (#f5f5f5)'
+        image: 'Image (select below)'
+      default: none
+      examples:
+        - none
+    background_image:
+      title: 'Background image'
+      $ref: json-schema-definitions://canvas.module/image
+    overlay:
+      title: 'Image overlay opacity (%)'
+      type: integer
+      minimum: 0
+      maximum: 100
+      default: 45
+    text_color:
+      title: 'Text colour (overrides child components)'
+      type: string
+      enum: [inherit, primary, secondary, black, white]
+      'meta:enum':
+        inherit: Default
+        primary: Primary
+        secondary: Secondary
+        black: Black
+        white: White
+      default: inherit
+      examples:
+        - inherit
+    gap:
+      title: 'Column gap'
+      type: string
+      enum: [none, small, normal, large]
+      'meta:enum':
+        none: None
+        small: Small
+        normal: Normal
+        large: Large
+      default: normal
+      examples:
+        - normal
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
+slots:
+  first:
+    title: Column
+    description: 'Components placed in this column.'
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">one-column.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis 1-column layout. Bootstrap row so it composes with the grid.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set gap_class = { none: 'g-0', small: 'g-2', normal: 'g-4', large: 'g-5' }[gap|default('normal')] %}
+{% set container = (width|default('boxed')) == 'full' ? 'container-fluid' : 'container' %}
+{% set bg = background|default('none') %}
+{% set has_media = background_image.src is defined and background_image.src %}
+{# Media picked shows as the background by default. Choosing a solid colour wins
+   (hides the image without clearing the media); clear the media to remove it. #}
+{% set bg_img = has_media and (bg == 'none' or bg == 'image') %}
+{% set overlay = overlay|default(45) %}
+{% set bg_class = bg_img ? 'jarvis-bg jarvis-bg--image' : (bg not in ['none', 'image'] ? 'jarvis-bg jarvis-bg--' ~ bg : '') %}
+{% set tc = text_color|default('inherit') %}
+{# ADA guard: only apply the override when it meets WCAG AA against this section's
+   own background; otherwise fall back to the background's auto-safe text colour. #}
+{% set bg_key = bg_img ? 'image' : bg %}
+{% set ada_ok = {
+  none: ['primary', 'secondary', 'black'],
+  primary: ['white'],
+  secondary: ['white'],
+  bg1: [],
+  bg2: [],
+  dark: ['white'],
+  light: ['secondary', 'black'],
+  image: ['white'],
+}[bg_key]|default([]) %}
+{# Over an image the photo's brightness is unknown, so honour the editor's pick
+   (best-effort, like the card) rather than forcing white. On solid backgrounds
+   the pick must pass the AA matrix above. #}
+{% set text_color_class = (tc != 'inherit' and (bg_img or tc in ada_ok)) ? 'jarvis-text-color--' ~ tc : '' %}
+{# Overlay darkens for light text, lightens for dark text, keeping the chosen
+   colour readable regardless of the image. Inherit over an image = white text. #}
+{% set light_text = (tc == 'white') or (tc == 'inherit') %}
+&lt;div class="jarvis-columns jarvis-columns--1 {{ space }} {{ bg_class }} {{ text_color_class }}"{% if bg_img %} style="background-image: url('{{ background_image.src }}');"{% endif %}&gt;
+  {% if bg_img %}&lt;div class="jarvis-bg__overlay{{ light_text ? '' : ' jarvis-bg__overlay--light' }}" style="opacity: {{ overlay / 100 }};" aria-hidden="true"&gt;&lt;/div&gt;{% endif %}
+  &lt;div class="{{ container }}"&gt;
+    &lt;div class="row {{ gap_class }}"&gt;
+      &lt;div class="col-12"&gt;
+        {{ first }}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre></div>
+</details>
+        </article>
+
+        <!-- TWO COLUMN -->
+        <article class="comp" id="two-column">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">2 Columns</h3>
+            <span class="comp__id">jarvis:two-column</span>
+            <span class="chip chip--layout">Jarvis Layout</span>
+          </div>
+          <p class="comp__desc">Two columns side by side on desktop; they stack to full width on mobile. Adds a ratio control so the split doesn't have to be even.</p>
+          <div class="badges"><a class="badge" href="#backgrounds">＋ background &amp; contrast system</a><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">Unique prop</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">ratio</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">even</span></td><td class="desc-cell">Relative column widths.<span class="enum-list"><span class="enum enum--def">even</span> 1:1<span class="enum">wide-left</span> 2:1<span class="enum">wide-right</span> 1:2</span></td></tr>
+            </tbody>
+          </table></div>
+          <p class="comp__desc" style="margin-top:-6px">Plus the full <a href="#backgrounds">background &amp; contrast</a> set and standard spacing.</p>
+          <p class="subhead">Slots</p>
+          <div class="slots">
+            <div class="slot"><span class="slot__name">first</span><span class="slot__desc">Left / top column.</span></div>
+            <div class="slot"><span class="slot__name">second</span><span class="slot__desc">Right / bottom column.</span></div>
+          </div>
+<details class="src">
+<summary>&lt;/&gt; Source · 2 files</summary>
+<div class="srcfile"><div class="srcfile__name">two-column.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: '2 Columns'
+status: stable
+description: 'Two columns side by side on desktop, stacked full-width on mobile.'
+category: 'Jarvis Layout'
+props:
+  type: object
+  properties:
+    width:
+      title: 'Section width'
+      type: string
+      enum: [boxed, full]
+      'meta:enum':
+        boxed: 'Boxed (centred)'
+        full: 'Full width'
+      default: boxed
+    background:
+      title: 'Background colour'
+      type: string
+      enum: [none, primary, secondary, bg1, bg2, dark, light, image]
+      'meta:enum':
+        none: None
+        primary: Primary
+        secondary: Secondary
+        bg1: 'Background 1'
+        bg2: 'Background 2'
+        dark: 'Dark (#1a1a1a)'
+        light: 'Light (#f5f5f5)'
+        image: 'Image (select below)'
+      default: none
+      examples:
+        - none
+    background_image:
+      title: 'Background image'
+      $ref: json-schema-definitions://canvas.module/image
+    overlay:
+      title: 'Image overlay opacity (%)'
+      type: integer
+      minimum: 0
+      maximum: 100
+      default: 45
+    text_color:
+      title: 'Text colour (overrides child components)'
+      type: string
+      enum: [inherit, primary, secondary, black, white]
+      'meta:enum':
+        inherit: Default
+        primary: Primary
+        secondary: Secondary
+        black: Black
+        white: White
+      default: inherit
+      examples:
+        - inherit
+    gap:
+      title: 'Column gap'
+      type: string
+      enum: [none, small, normal, large]
+      'meta:enum':
+        none: None
+        small: Small
+        normal: Normal
+        large: Large
+      default: normal
+      examples:
+        - normal
+    ratio:
+      title: 'Column ratio'
+      type: string
+      enum: [even, wide-left, wide-right]
+      'meta:enum':
+        even: 'Even (1:1)'
+        wide-left: 'Wide left (2:1)'
+        wide-right: 'Wide right (1:2)'
+      default: even
+      examples:
+        - even
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
+slots:
+  first:
+    title: 'Column 1'
+    description: 'Left / top column.'
+  second:
+    title: 'Column 2'
+    description: 'Right / bottom column.'
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">two-column.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis 2-column layout. col-12 on mobile -&gt; stacks; col-md-* -&gt; side by side.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set gap_class = { none: 'g-0', small: 'g-2', normal: 'g-4', large: 'g-5' }[gap|default('normal')] %}
+{% set cols = {
+  even: ['col-12 col-md-6', 'col-12 col-md-6'],
+  'wide-left': ['col-12 col-md-8', 'col-12 col-md-4'],
+  'wide-right': ['col-12 col-md-4', 'col-12 col-md-8'],
+}[ratio|default('even')] %}
+{% set container = (width|default('boxed')) == 'full' ? 'container-fluid' : 'container' %}
+{% set bg = background|default('none') %}
+{% set has_media = background_image.src is defined and background_image.src %}
+{# Media picked shows as the background by default. Choosing a solid colour wins
+   (hides the image without clearing the media); clear the media to remove it. #}
+{% set bg_img = has_media and (bg == 'none' or bg == 'image') %}
+{% set overlay = overlay|default(45) %}
+{% set bg_class = bg_img ? 'jarvis-bg jarvis-bg--image' : (bg not in ['none', 'image'] ? 'jarvis-bg jarvis-bg--' ~ bg : '') %}
+{% set tc = text_color|default('inherit') %}
+{# ADA guard: only apply the override when it meets WCAG AA against this section's
+   own background; otherwise fall back to the background's auto-safe text colour. #}
+{% set bg_key = bg_img ? 'image' : bg %}
+{% set ada_ok = {
+  none: ['primary', 'secondary', 'black'],
+  primary: ['white'],
+  secondary: ['white'],
+  bg1: [],
+  bg2: [],
+  dark: ['white'],
+  light: ['secondary', 'black'],
+  image: ['white'],
+}[bg_key]|default([]) %}
+{# Over an image the photo's brightness is unknown, so honour the editor's pick
+   (best-effort, like the card) rather than forcing white. On solid backgrounds
+   the pick must pass the AA matrix above. #}
+{% set text_color_class = (tc != 'inherit' and (bg_img or tc in ada_ok)) ? 'jarvis-text-color--' ~ tc : '' %}
+{# Overlay darkens for light text, lightens for dark text, keeping the chosen
+   colour readable regardless of the image. Inherit over an image = white text. #}
+{% set light_text = (tc == 'white') or (tc == 'inherit') %}
+&lt;div class="jarvis-columns jarvis-columns--2 {{ space }} {{ bg_class }} {{ text_color_class }}"{% if bg_img %} style="background-image: url('{{ background_image.src }}');"{% endif %}&gt;
+  {% if bg_img %}&lt;div class="jarvis-bg__overlay{{ light_text ? '' : ' jarvis-bg__overlay--light' }}" style="opacity: {{ overlay / 100 }};" aria-hidden="true"&gt;&lt;/div&gt;{% endif %}
+  &lt;div class="{{ container }}"&gt;
+    &lt;div class="row {{ gap_class }}"&gt;
+      &lt;div class="{{ cols[0] }}"&gt;
+        {{ first }}
+      &lt;/div&gt;
+      &lt;div class="{{ cols[1] }}"&gt;
+        {{ second }}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre></div>
+</details>
+        </article>
+
+        <!-- THREE COLUMN -->
+        <article class="comp" id="three-column">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">3 Columns</h3>
+            <span class="comp__id">jarvis:three-column</span>
+            <span class="chip chip--layout">Jarvis Layout</span>
+          </div>
+          <p class="comp__desc">Three columns on desktop, two on tablet, stacked full-width on mobile — the responsive stepping is automatic. Same background system as the other columns.</p>
+          <div class="badges"><a class="badge" href="#backgrounds">＋ background &amp; contrast system</a><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">Props</p>
+          <p class="comp__desc" style="margin-top:0">Uses the shared <a href="#backgrounds">background &amp; contrast</a> props and standard spacing — no unique props.</p>
+          <p class="subhead">Slots</p>
+          <div class="slots">
+            <div class="slot"><span class="slot__name">first</span><span class="slot__desc">First column.</span></div>
+            <div class="slot"><span class="slot__name">second</span><span class="slot__desc">Second column.</span></div>
+            <div class="slot"><span class="slot__name">third</span><span class="slot__desc">Third column.</span></div>
+          </div>
+<details class="src">
+<summary>&lt;/&gt; Source · 2 files</summary>
+<div class="srcfile"><div class="srcfile__name">three-column.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: '3 Columns'
+status: stable
+description: 'Three columns on desktop, two on tablet, stacked full-width on mobile.'
+category: 'Jarvis Layout'
+props:
+  type: object
+  properties:
+    width:
+      title: 'Section width'
+      type: string
+      enum: [boxed, full]
+      'meta:enum':
+        boxed: 'Boxed (centred)'
+        full: 'Full width'
+      default: boxed
+    background:
+      title: 'Background colour'
+      type: string
+      enum: [none, primary, secondary, bg1, bg2, dark, light, image]
+      'meta:enum':
+        none: None
+        primary: Primary
+        secondary: Secondary
+        bg1: 'Background 1'
+        bg2: 'Background 2'
+        dark: 'Dark (#1a1a1a)'
+        light: 'Light (#f5f5f5)'
+        image: 'Image (select below)'
+      default: none
+      examples:
+        - none
+    background_image:
+      title: 'Background image'
+      $ref: json-schema-definitions://canvas.module/image
+    overlay:
+      title: 'Image overlay opacity (%)'
+      type: integer
+      minimum: 0
+      maximum: 100
+      default: 45
+    text_color:
+      title: 'Text colour (overrides child components)'
+      type: string
+      enum: [inherit, primary, secondary, black, white]
+      'meta:enum':
+        inherit: Default
+        primary: Primary
+        secondary: Secondary
+        black: Black
+        white: White
+      default: inherit
+      examples:
+        - inherit
+    gap:
+      title: 'Column gap'
+      type: string
+      enum: [none, small, normal, large]
+      'meta:enum':
+        none: None
+        small: Small
+        normal: Normal
+        large: Large
+      default: normal
+      examples:
+        - normal
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
+slots:
+  first:
+    title: 'Column 1'
+    description: 'First column.'
+  second:
+    title: 'Column 2'
+    description: 'Second column.'
+  third:
+    title: 'Column 3'
+    description: 'Third column.'
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">three-column.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis 3-column layout. col-12 mobile -&gt; stack; col-sm-6 tablet -&gt; 2-up;
+ * col-lg-4 desktop -&gt; 3-up. Everything placed inside wraps at each breakpoint.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set gap_class = { none: 'g-0', small: 'g-2', normal: 'g-4', large: 'g-5' }[gap|default('normal')] %}
+{% set container = (width|default('boxed')) == 'full' ? 'container-fluid' : 'container' %}
+{% set bg = background|default('none') %}
+{% set has_media = background_image.src is defined and background_image.src %}
+{# Media picked shows as the background by default. Choosing a solid colour wins
+   (hides the image without clearing the media); clear the media to remove it. #}
+{% set bg_img = has_media and (bg == 'none' or bg == 'image') %}
+{% set overlay = overlay|default(45) %}
+{% set bg_class = bg_img ? 'jarvis-bg jarvis-bg--image' : (bg not in ['none', 'image'] ? 'jarvis-bg jarvis-bg--' ~ bg : '') %}
+{% set tc = text_color|default('inherit') %}
+{# ADA guard: only apply the override when it meets WCAG AA against this section's
+   own background; otherwise fall back to the background's auto-safe text colour. #}
+{% set bg_key = bg_img ? 'image' : bg %}
+{% set ada_ok = {
+  none: ['primary', 'secondary', 'black'],
+  primary: ['white'],
+  secondary: ['white'],
+  bg1: [],
+  bg2: [],
+  dark: ['white'],
+  light: ['secondary', 'black'],
+  image: ['white'],
+}[bg_key]|default([]) %}
+{# Over an image the photo's brightness is unknown, so honour the editor's pick
+   (best-effort, like the card) rather than forcing white. On solid backgrounds
+   the pick must pass the AA matrix above. #}
+{% set text_color_class = (tc != 'inherit' and (bg_img or tc in ada_ok)) ? 'jarvis-text-color--' ~ tc : '' %}
+{# Overlay darkens for light text, lightens for dark text, keeping the chosen
+   colour readable regardless of the image. Inherit over an image = white text. #}
+{% set light_text = (tc == 'white') or (tc == 'inherit') %}
+&lt;div class="jarvis-columns jarvis-columns--3 {{ space }} {{ bg_class }} {{ text_color_class }}"{% if bg_img %} style="background-image: url('{{ background_image.src }}');"{% endif %}&gt;
+  {% if bg_img %}&lt;div class="jarvis-bg__overlay{{ light_text ? '' : ' jarvis-bg__overlay--light' }}" style="opacity: {{ overlay / 100 }};" aria-hidden="true"&gt;&lt;/div&gt;{% endif %}
+  &lt;div class="{{ container }}"&gt;
+    &lt;div class="row {{ gap_class }}"&gt;
+      &lt;div class="col-12 col-sm-6 col-lg-4"&gt;
+        {{ first }}
+      &lt;/div&gt;
+      &lt;div class="col-12 col-sm-6 col-lg-4"&gt;
+        {{ second }}
+      &lt;/div&gt;
+      &lt;div class="col-12 col-sm-6 col-lg-4"&gt;
+        {{ third }}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre></div>
+</details>
+        </article>
+
+        <!-- CARD FULL IMAGE -->
+        <article class="comp" id="card-full-image">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Card Full Image</h3>
+            <span class="comp__id">jarvis:card-full-image</span>
+            <span class="chip chip--layout">Jarvis Layout</span>
+          </div>
+          <p class="comp__desc">A full-width, two-part band: an image that fills its half edge-to-edge, beside a rich-text column. The classic "image on one side, words on the other" block. It uses two slots rather than image/text props, so you compose it from an <a href="#image">Image</a> and a <a href="#text">Text</a> (or WYSIWYG) component.</p>
+          <div class="note note--watch" style="margin-top:12px"><span class="note__icon">!</span><div>This component does <b>not</b> use the standard spacing controls — it's meant to bleed to the edges. Wrap it in a <a href="#section">Section</a> if you need surrounding space.</div></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">image_right</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Put the image on the right at desktop width. On mobile the image always sits on top.</td></tr>
+              <tr><td class="prop"><span class="pname">fade_edge</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Softly fade the image's inner edge into the text column.</td></tr>
+              <tr><td class="prop"><span class="pname">background</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">none</span></td><td class="desc-cell">Band background colour (reuses the section colours, with ADA-safe text).<span class="enum-list"><span class="enum enum--def">none</span><span class="enum">primary</span><span class="enum">secondary</span><span class="enum">bg1</span><span class="enum">bg2</span><span class="enum">dark</span><span class="enum">light</span></span></td></tr>
+            </tbody>
+          </table></div>
+          <p class="subhead">Slots</p>
+          <div class="slots">
+            <div class="slot"><span class="slot__name">media</span><span class="slot__desc">Drop an Image component here. It fills the column on all sides.</span></div>
+            <div class="slot"><span class="slot__name">content</span><span class="slot__desc">Drop a Text / WYSIWYG component here. It gets 20px left/right padding.</span></div>
+          </div>
+<details class="src">
+<summary>&lt;/&gt; Source · 3 files</summary>
+<div class="srcfile"><div class="srcfile__name">card-full-image.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Card Full Image'
+status: stable
+description: 'Full-width 2-column band: an image that fills its half edge-to-edge beside a rich-text column.'
+category: 'Jarvis Layout'
+props:
+  type: object
+  properties:
+    image_right:
+      title: 'Image on right'
+      type: boolean
+      default: false
+    fade_edge:
+      title: 'Fade image edge next to text'
+      type: boolean
+      default: false
+    background:
+      title: 'Background colour'
+      type: string
+      enum: [none, primary, secondary, bg1, bg2, dark, light]
+      'meta:enum':
+        none: None
+        primary: Primary
+        secondary: Secondary
+        bg1: 'Background 1'
+        bg2: 'Background 2'
+        dark: 'Dark (#1a1a1a)'
+        light: 'Light (#f5f5f5)'
+      default: none
+      examples:
+        - none
+slots:
+  media:
+    title: Image
+    description: 'Drop an Image component here. It fills the column on all sides.'
+  content:
+    title: Content
+    description: 'Drop a Text / WYSIWYG component here. Gets 20px left/right padding.'
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">card-full-image.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis Card Full Image. Full-width row, no gutter so the image bleeds to the
+ * column edge. flex-md-row-reverse flips sides at desktop while keeping the
+ * image on top when stacked on mobile.
+ */
+#}
+{% set bg = background|default('none') %}
+{# Reuse the section colour classes for background + ADA-safe text vars, but WITHOUT
+   the .jarvis-bg padding wrapper so the image still bleeds to the edges. #}
+{% set bg_class = bg != 'none' ? 'jarvis-bg--' ~ bg : '' %}
+{% set flip = image_right|default(false) %}
+{% set fade_class = fade_edge|default(false) ? 'jarvis-card-full-image--fade' : '' %}
+{% set flip_class = flip ? 'jarvis-card-full-image--flip' : '' %}
+&lt;div class="jarvis-card-full-image {{ bg_class }} {{ fade_class }} {{ flip_class }}"&gt;
+  &lt;div class="row g-0 {{ flip ? 'flex-md-row-reverse' : '' }}"&gt;
+    &lt;div class="col-12 col-md-6 jarvis-card-full-image__media"&gt;
+      {{ media }}
+    &lt;/div&gt;
+    &lt;div class="col-12 col-md-6 jarvis-card-full-image__content"&gt;
+      {{ content }}
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">card-full-image.css</div><pre class="code"><code>/* Content column: 20px left/right padding, vertically centred beside the image. */
+.jarvis-card-full-image__content {
+  padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Desktop: image fills its half on all sides and matches the content height.
+   The Bootstrap row already makes both columns equal height (flex stretch), so
+   the media column takes the content column's height. The &lt;img&gt; is absolutely
+   positioned to fill that column — this ignores the height of any wrapper divs
+   the {{ media }} slot injects, which would otherwise break a height:100% chain.
+   ponytail: absolute-fill, not a height:100% cascade — robust to slot wrappers. */
+@media (min-width: 768px) {
+  .jarvis-card-full-image__media {
+    position: relative;
+    overflow: hidden;
+  }
+  .jarvis-card-full-image__media .jarvis-image,
+  .jarvis-card-full-image__media figure {
+    margin: 0;
+  }
+  .jarvis-card-full-image__media .jarvis-image__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Soft-fade the image edge that meets the text (~40px). Default = image left,
+     so fade its right edge; flipped = image right, so fade its left edge.
+     Desktop only — mobile stacks, so no fade. */
+  .jarvis-card-full-image--fade .jarvis-card-full-image__media .jarvis-image__img {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 80px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 80px), transparent);
+  }
+  .jarvis-card-full-image--fade.jarvis-card-full-image--flip .jarvis-card-full-image__media .jarvis-image__img {
+    -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 80px), transparent);
+    mask-image: linear-gradient(to left, #000 calc(100% - 80px), transparent);
+  }
+}
+</code></pre></div>
+</details>
+        </article>
+      </section>
+
+      <!-- ===== CONTENT COMPONENTS ===== -->
+      <section>
+        <h2 style="max-width:var(--measure)"><span class="section-tag">Reference</span>Content components</h2>
+        <p class="prose" style="color:var(--ink-soft)">The pieces that carry actual content — headings, buttons, media, people, numbers. Drop these into the layout slots above, or straight into a Canvas page.</p>
+
+        <!-- HERO -->
+        <article class="comp" id="hero">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Hero</h3>
+            <span class="comp__id">jarvis:hero</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">A full-width banner: heading, subtext, one call-to-action button, and an optional background image with a readability overlay. The big first impression at the top of a page.</p>
+          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">heading</span><span class="req" title="required">✳</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The main banner headline. Required.</td></tr>
+              <tr><td class="prop"><span class="pname">heading_level</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">h1</span></td><td class="desc-cell">The HTML heading tag.<span class="enum-list"><span class="enum enum--def">h1</span><span class="enum">h2</span><span class="enum">h3</span></span>Use H1 only once per page — pick H2 for a second hero.</td></tr>
+              <tr><td class="prop"><span class="pname">subheading</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Supporting line under the heading.</td></tr>
+              <tr><td class="prop"><span class="pname">cta_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Button label. Both text and link must be set for the button to show.</td></tr>
+              <tr><td class="prop"><span class="pname">cta_href</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Button destination.</td></tr>
+              <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Background image.</td></tr>
+              <tr><td class="prop"><span class="pname">overlay</span></td><td><span class="ptype">integer</span></td><td><span class="pdef">40</span></td><td class="desc-cell">Overlay opacity (%) over the image. This is a <em>floor</em> — see the note below.</td></tr>
+              <tr><td class="prop"><span class="pname">align</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">center</span></td><td class="desc-cell">Text alignment.<span class="enum-list"><span class="enum">start</span> left<span class="enum enum--def">center</span><span class="enum">end</span> right</span></td></tr>
+              <tr><td class="prop"><span class="pname">text_color</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">light</span></td><td class="desc-cell"><code>light</code> (white) or <code>dark</code> (brand blue).</td></tr>
+            </tbody>
+          </table></div>
+          <div class="note note--tip"><span class="note__icon">✓</span><div><b>Automatic contrast:</b> your <code>overlay</code> value is a minimum. If white text would fail the accessibility contrast test against the image, Jarvis's <code>contrast.js</code> raises the overlay until it passes — so text stays readable on any photo.</div></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 3 files</summary>
+<div class="srcfile"><div class="srcfile__name">hero.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Hero
+status: stable
+description: 'Full-width hero banner with heading, subtext, CTA and background image.'
+category: Jarvis
+libraryOverrides:
+  dependencies:
+    - jarvis/contrast
+props:
+  type: object
+  required:
+    - heading
+  properties:
+    heading:
+      title: Heading
+      type: string
+      examples:
+        - 'Build faster with Jarvis'
+    heading_level:
+      title: 'Heading level'
+      description: 'Use H1 only once per page — pick H2 for additional heroes.'
+      type: string
+      enum: [h1, h2, h3]
+      'meta:enum':
+        h1: 'H1 (page title)'
+        h2: H2
+        h3: H3
+      default: h1
+    subheading:
+      title: Subheading
+      type: string
+      examples:
+        - 'A component-driven Drupal theme for Canvas and Layout Builder.'
+    cta_text:
+      title: 'CTA text'
+      type: string
+      examples:
+        - 'Get started'
+    cta_href:
+      title: 'CTA link'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/1'
+        - 'https://example.com'
+    image:
+      title: 'Background image'
+      $ref: json-schema-definitions://canvas.module/image
+    overlay:
+      title: 'Overlay opacity (%)'
+      type: integer
+      default: 40
+      examples:
+        - 40
+    align:
+      title: 'Text alignment'
+      type: string
+      enum: [start, center, end]
+      'meta:enum':
+        start: Left
+        center: Center
+        end: Right
+      default: center
+      examples:
+        - center
+    text_color:
+      title: 'Text color'
+      type: string
+      enum: [light, dark]
+      'meta:enum':
+        light: 'Light (#ffffff)'
+        dark: 'Dark (#2d6cdf)'
+      default: light
+      examples:
+        - light
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">hero.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis hero banner SDC.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set align = align|default('center') %}
+{% set align_class = { start: 'text-start', center: 'text-center', end: 'text-end' }[align] %}
+{% set justify_class = { start: 'justify-content-start', center: 'justify-content-center', end: 'justify-content-end' }[align] %}
+{% set has_image = image.src is defined and image.src %}
+{% set overlay = overlay|default(40) %}
+{% set text_color = text_color|default('light') %}
+&lt;section class="jarvis-hero jarvis-hero--text-{{ text_color }} position-relative d-flex align-items-center {{ align_class }} {{ space }}"{% if has_image %} style="background-image: url('{{ image.src }}');"{% endif %}&gt;
+  {% if has_image %}
+    {# opacity is the user floor; js/contrast.js raises it when white text fails WCAG AA contrast #}
+    &lt;div class="jarvis-hero__overlay" style="opacity: {{ overlay / 100 }};" aria-hidden="true"&gt;&lt;/div&gt;
+  {% endif %}
+  &lt;div class="container position-relative jarvis-hero__inner py-5"&gt;
+    &lt;div class="row {{ justify_class }}"&gt;
+      &lt;div class="jarvis-hero__content"&gt;
+        {% set h = heading_level|default('h1') %}
+        {% if heading %}&lt;{{ h }} class="jarvis-hero__heading display-3 fw-bold mb-3"&gt;{{ heading }}&lt;/{{ h }}&gt;{% endif %}
+        {% if subheading %}&lt;p class="jarvis-hero__subheading lead mb-4"&gt;{{ subheading }}&lt;/p&gt;{% endif %}
+        {% if cta_text and cta_href %}&lt;a href="{{ cta_href }}" class="btn btn-primary btn-lg"&gt;{{ cta_text }}&lt;/a&gt;{% endif %}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">hero.css</div><pre class="code"><code>.jarvis-hero {
+  /* Fixed min-height, NOT vh: Canvas renders in an auto-height preview iframe
+     where viewport units feed back into the iframe height and break scrolling. */
+  min-height: 420px;
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+}
+.jarvis-hero:not([style*="background-image"]) {
+  background: linear-gradient(135deg, var(--bs-primary), var(--bs-secondary, #1b2a4a));
+}
+.jarvis-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  z-index: 0;
+}
+.jarvis-hero__inner {
+  z-index: 1;
+}
+/* Text column: full width on small screens, 85% from lg up (was Bootstrap
+   col-lg-9/col-xl-8 = 75%/66%, too narrow). Plain width, not a col- class,
+   because the grid has no 85% step. */
+.jarvis-hero__content {
+  width: 100%;
+}
+@media (min-width: 992px) {
+  .jarvis-hero__content {
+    width: 85%;
+  }
+}
+/* Text color: light (#fff) or dark (#2d6cdf), from the text_color prop. */
+.jarvis-hero--text-light,
+.jarvis-hero--text-light .jarvis-hero__heading,
+.jarvis-hero--text-light .jarvis-hero__subheading {
+  color: #fff;
+}
+.jarvis-hero--text-dark,
+.jarvis-hero--text-dark .jarvis-hero__heading,
+.jarvis-hero--text-dark .jarvis-hero__subheading {
+  color: var(--bs-primary);
+}
+/* Light text -&gt; whole region black for guaranteed contrast. Comes after the
+   gradient rule above so it wins the specificity tie. A background image, when
+   present, still paints over this and is handled by the overlay tuned in
+   js/contrast.js (jarvis/contrast). */
+.jarvis-hero--text-light {
+  background-color: #000;
+}
+.jarvis-hero--text-light:not([style*="background-image"]) {
+  background: #000;
+}
+</code></pre></div>
+</details>
+        </article>
+
+        <!-- CTA -->
+        <article class="comp" id="cta">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Call to Action</h3>
+            <span class="comp__id">jarvis:cta</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">A centred prompt: a small overline, a big heading, a line of text, and a button. Built for the "Ready to get started?" moment near the bottom of a page.</p>
+          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">heading</span><span class="req" title="required">✳</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The main heading. Required.</td></tr>
+              <tr><td class="prop"><span class="pname">heading_level</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">h2</span></td><td class="desc-cell"><code>h2</code> · <code>h3</code> · <code>h4</code>.</td></tr>
+              <tr><td class="prop"><span class="pname">subtitle</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Small uppercase overline above the heading.</td></tr>
+              <tr><td class="prop"><span class="pname">text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Supporting paragraph.</td></tr>
+              <tr><td class="prop"><span class="pname">button_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Button label (needs a link too).</td></tr>
+              <tr><td class="prop"><span class="pname">button_href</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Button destination.</td></tr>
+              <tr><td class="prop"><span class="pname">bg</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">none</span></td><td class="desc-cell">Background colour: <code>none</code> · <code>primary</code> · <code>secondary</code>. On a coloured background the button turns light and text auto-contrasts.</td></tr>
+            </tbody>
+          </table></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 3 files</summary>
+<div class="srcfile"><div class="srcfile__name">cta.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Call to Action'
+status: stable
+description: 'Centered call-to-action: overline subtitle, heading, text and a buttons slot.'
+category: Jarvis
+props:
+  type: object
+  required:
+    - heading
+  properties:
+    subtitle:
+      title: Subtitle
+      description: 'Small overline above the heading.'
+      type: string
+      examples:
+        - 'Get started'
+    heading:
+      title: Heading
+      type: string
+      examples:
+        - 'Ready to Get Started?'
+    heading_level:
+      title: 'Heading level'
+      type: string
+      enum: [h2, h3, h4]
+      'meta:enum':
+        h2: H2
+        h3: H3
+        h4: H4
+      default: h2
+    text:
+      title: Text
+      type: string
+      examples:
+        - 'Take the next step and discover how we can help you achieve your goals.'
+    button_text:
+      title: 'Button text'
+      type: string
+      examples:
+        - 'Get started'
+    button_href:
+      title: 'Button link'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/1'
+        - 'https://example.com'
+    bg:
+      title: 'Background color'
+      type: string
+      enum: [none, primary, secondary]
+      'meta:enum':
+        none: None
+        primary: Primary
+        secondary: Secondary
+      default: none
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">cta.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis Call to Action SDC. Centered subtitle + heading + text + built-in button.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set h = heading_level|default('h2') ?: 'h2' %}
+{% set bg = bg|default('none') %}
+{# text-bg-* sets the background AND a WCAG-contrast (white/black) foreground,
+   computed by Bootstrap's color-contrast(). Heading/text inherit it. #}
+{% set bg_class = bg != 'none' ? 'text-bg-' ~ bg : '' %}
+{% set btn_variant = bg != 'none' ? 'light' : 'primary' %}
+&lt;div class="jarvis-cta text-center {{ bg_class }} {{ space }}"&gt;
+  {% if subtitle %}&lt;p class="jarvis-cta__subtitle text-uppercase fw-bold mb-2"&gt;{{ subtitle }}&lt;/p&gt;{% endif %}
+  {% if heading %}&lt;{{ h }} class="jarvis-cta__heading display-4 fw-bold mb-3"&gt;{{ heading }}&lt;/{{ h }}&gt;{% endif %}
+  {% if text %}&lt;p class="jarvis-cta__text lead mb-4"&gt;{{ text }}&lt;/p&gt;{% endif %}
+  {% if button_text and button_href %}
+    &lt;div class="jarvis-cta__buttons d-flex flex-wrap justify-content-center gap-2"&gt;
+      &lt;a href="{{ button_href }}" class="btn btn-{{ btn_variant }} btn-lg"&gt;{{ button_text }}&lt;/a&gt;
+    &lt;/div&gt;
+  {% endif %}
+&lt;/div&gt;
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">cta.css</div><pre class="code"><code>.jarvis-cta__subtitle {
+  font-size: 0.875rem;
+  letter-spacing: 0.15em;
+}
+/* On a colored bg, text-bg-* sets a WCAG-contrast color on the container.
+   The global `h1-h6 { color: --jarvis-heading-color }` rule (overrides.css)
+   would otherwise repaint the heading primary — force it to inherit the
+   contrast color instead. */
+.jarvis-cta[class*="text-bg-"] :is(h1, h2, h3, h4, h5, h6) {
+  color: inherit;
+}
+</code></pre></div>
+</details>
+        </article>
+
+        <!-- TEXT -->
+        <article class="comp" id="text">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Text</h3>
+            <span class="comp__id">jarvis:text</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">A rich-text block with width and alignment controls. This is your everyday paragraph-and-heading content, kept to a comfortable reading measure by default.</p>
+          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">body</span><span class="req" title="required">✳</span></td><td><span class="ptype">html</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The rich-text content. Required.</td></tr>
+              <tr><td class="prop"><span class="pname">width</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">normal</span></td><td class="desc-cell">Reading measure.<span class="enum-list"><span class="enum">narrow</span><span class="enum enum--def">normal</span><span class="enum">wide</span> full</span></td></tr>
+              <tr><td class="prop"><span class="pname">align</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">start</span></td><td class="desc-cell"><code>start</code> left · <code>center</code> · <code>end</code> right.</td></tr>
+              <tr><td class="prop"><span class="pname">color</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">inherit</span></td><td class="desc-cell">Force a text colour.<span class="enum-list"><span class="enum enum--def">inherit</span><span class="enum">primary</span><span class="enum">secondary</span><span class="enum">black</span><span class="enum">white</span></span></td></tr>
+            </tbody>
+          </table></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 3 files</summary>
+<div class="srcfile"><div class="srcfile__name">text.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Text
+status: stable
+description: 'Rich text block with width and alignment controls.'
+category: Jarvis
+props:
+  type: object
+  required:
+    - body
+  properties:
+    body:
+      title: Body
+      type: string
+      contentMediaType: text/html
+      'x-formatting-context': block
+      examples:
+        - '&lt;h2&gt;Section heading&lt;/h2&gt;&lt;p&gt;Body copy with &lt;strong&gt;rich text&lt;/strong&gt; support.&lt;/p&gt;'
+    width:
+      title: Width
+      type: string
+      enum: [narrow, normal, wide]
+      'meta:enum':
+        narrow: Narrow
+        normal: Normal
+        wide: Wide
+      default: normal
+      examples:
+        - normal
+    align:
+      title: Alignment
+      type: string
+      enum: [start, center, end]
+      'meta:enum':
+        start: Left
+        center: Center
+        end: Right
+      default: start
+      examples:
+        - start
+    color:
+      title: 'Text colour'
+      type: string
+      enum: [inherit, primary, secondary, black, white]
+      'meta:enum':
+        inherit: Default
+        primary: Primary
+        secondary: Secondary
+        black: Black
+        white: White
+      default: inherit
+      examples:
+        - inherit
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">text.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis rich-text SDC.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set width = width|default('normal') %}
+{% set align = align|default('start') %}
+{% set col = { narrow: 'col-lg-6', normal: 'col-lg-8', wide: 'col-12' }[width] %}
+{% set align_class = { start: 'text-start', center: 'text-center', end: 'text-end' }[align] %}
+{% set color = color|default('inherit') %}
+{% set color_class = color != 'inherit' ? 'jarvis-text--' ~ color : '' %}
+&lt;div class="jarvis-text container {{ space }} {{ color_class }}"&gt;
+  &lt;div class="row justify-content-center"&gt;
+    &lt;div class="{{ col }} {{ align_class }}"&gt;
+      {{ body|raw }}
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">text.css</div><pre class="code"><code>.jarvis-text :last-child {
+  margin-bottom: 0;
+}
+/* Text colour: drives body copy AND headings (headings read --jarvis-heading-color). */
+.jarvis-text--primary {
+  color: var(--bs-primary);
+  --jarvis-heading-color: var(--bs-primary);
+  --bs-heading-color: var(--bs-primary);
+}
+.jarvis-text--secondary {
+  color: var(--bs-secondary);
+  --jarvis-heading-color: var(--bs-secondary);
+  --bs-heading-color: var(--bs-secondary);
+}
+.jarvis-text--black {
+  color: #000;
+  --jarvis-heading-color: #000;
+  --bs-heading-color: #000;
+}
+.jarvis-text--white {
+  color: #fff;
+  --jarvis-heading-color: #fff;
+  --bs-heading-color: #fff;
+}
+</code></pre></div>
+</details>
+        </article>
+
+        <!-- WYSIWYG -->
+        <article class="comp" id="wysiwyg">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">WYSIWYG</h3>
+            <span class="comp__id">jarvis:wysiwyg</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">A freeform rich-text block. It looks a lot like Text, but it's special: it's the one component wired to the site's real <strong>Basic HTML / Full HTML</strong> editor, so you get the complete CKEditor toolbar — bold, lists, links, media — instead of Canvas's locked-down editor.</p>
+          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">body</span><span class="req" title="required">✳</span></td><td><span class="ptype">html</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The rich-text content, edited with the full CKEditor toolbar. Required.</td></tr>
+              <tr><td class="prop"><span class="pname">measure</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">full</span></td><td class="desc-cell"><code>full</code> width, or <code>readable</code> (capped at 85 characters for comfortable reading).</td></tr>
+              <tr><td class="prop"><span class="pname">align</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">start</span></td><td class="desc-cell"><code>start</code> · <code>center</code> · <code>end</code>.</td></tr>
+            </tbody>
+          </table></div>
+          <div class="note"><span class="note__icon">i</span><div><b>Why it's the only one:</b> the <code>body</code> prop carries a hidden marker (<code>x-jarvis-html-format</code>) that the <a href="#jarvis-canvas">Jarvis Canvas</a> module watches for. That marker is what unlocks the Basic/Full HTML picker. Every other rich-text prop lacks it and keeps Canvas's default editor.</div></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 3 files</summary>
+<div class="srcfile"><div class="srcfile__name">wysiwyg.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: WYSIWYG
+status: stable
+description: 'Freeform CKEditor rich-text block. Full-width by default, with an optional readable measure.'
+category: Jarvis
+props:
+  type: object
+  required:
+    - body
+  properties:
+    body:
+      title: Body
+      type: string
+      contentMediaType: text/html
+      'x-formatting-context': block
+      # Marker: opts THIS prop into the Basic/Full HTML text-format picker via
+      # jarvis_canvas_canvas_storable_prop_shape_alter(). Every other rich-text
+      # prop (no marker) keeps Canvas's default locked editor.
+      'x-jarvis-html-format': true
+      examples:
+        - '&lt;h2&gt;Freeform heading&lt;/h2&gt;&lt;p&gt;Edit this with the full CKEditor toolbar, including &lt;strong&gt;bold&lt;/strong&gt;, lists, and links.&lt;/p&gt;'
+    measure:
+      title: 'Text measure'
+      type: string
+      enum: [full, readable]
+      'meta:enum':
+        full: 'Full width'
+        readable: 'Readable (max 85ch)'
+      default: full
+    align:
+      title: Alignment
+      type: string
+      enum: [start, center, end]
+      'meta:enum':
+        start: Left
+        center: Center
+        end: Right
+      default: start
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">wysiwyg.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis freeform WYSIWYG SDC.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set align_class = { start: 'text-start', center: 'text-center', end: 'text-end' }[align|default('start')] %}
+{% set measure_class = measure|default('full') == 'readable' ? 'jarvis-wysiwyg--readable' : '' %}
+&lt;div class="jarvis-wysiwyg {{ align_class }} {{ measure_class }} {{ space }}"&gt;
+  {{ body|raw }}
+&lt;/div&gt;
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">wysiwyg.css</div><pre class="code"><code>.jarvis-wysiwyg :last-child {
+  margin-bottom: 0;
+}
+.jarvis-wysiwyg--readable {
+  max-width: 85ch;
+  margin-inline: auto;
+}
+</code></pre></div>
+</details>
+        </article>
+
+        <!-- BUTTON -->
+        <article class="comp" id="button">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Button</h3>
+            <span class="comp__id">jarvis:button</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">A single call-to-action button, styled with Bootstrap. It renders as a link (an <code>&lt;a&gt;</code> tag), so it's for navigating somewhere — not for form submits. The one component with no spacing controls.</p>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">text</span><span class="req" title="required">✳</span></td><td><span class="ptype">string</span></td><td><span class="pdef">Get started</span></td><td class="desc-cell">Button label. Required.</td></tr>
+              <tr><td class="prop"><span class="pname">href</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">#</span></td><td class="desc-cell">Where the button links. Defaults to <code>#</code> if left blank.</td></tr>
+              <tr><td class="prop"><span class="pname">variant</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">primary</span></td><td class="desc-cell">Bootstrap button style.<span class="enum-list"><span class="enum enum--def">primary</span><span class="enum">secondary</span><span class="enum">outline-primary</span><span class="enum">outline-secondary</span><span class="enum">light</span><span class="enum">dark</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">size</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">medium</span></td><td class="desc-cell"><code>small</code> · <code>medium</code> · <code>large</code>.</td></tr>
+              <tr><td class="prop"><span class="pname">new_tab</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Open in a new tab (adds a safe <code>rel="noopener noreferrer"</code>).</td></tr>
+            </tbody>
+          </table></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 2 files</summary>
+<div class="srcfile"><div class="srcfile__name">button.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Button
+status: stable
+description: 'A single call-to-action button (Bootstrap styles).'
+category: Jarvis
+props:
+  type: object
+  required:
+    - text
+  properties:
+    text:
+      title: Text
+      type: string
+      default: 'Get started'
+      examples:
+        - 'Get started'
+    href:
+      title: 'Link URL'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/1'
+    variant:
+      title: Style
+      type: string
+      enum: [primary, secondary, outline-primary, outline-secondary, light, dark]
+      'meta:enum':
+        primary: Primary
+        secondary: Secondary
+        outline-primary: 'Outline primary'
+        outline-secondary: 'Outline secondary'
+        light: Light
+        dark: Dark
+      default: primary
+      examples:
+        - primary
+    size:
+      title: Size
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: Small
+        medium: Medium
+        large: Large
+      default: medium
+      examples:
+        - medium
+    new_tab:
+      title: 'Open in new tab'
+      type: boolean
+      default: false
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">button.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis button SDC. Bootstrap button rendered as a link.
+ */
+#}
+{% set variant = variant|default('primary') %}
+{% set size = size|default('medium') %}
+{% set size_class = { small: 'btn-sm', medium: '', large: 'btn-lg' }[size] %}
+{% if text %}
+  &lt;a href="{{ href|default('#') }}" class="btn btn-{{ variant }} {{ size_class }}"{% if new_tab|default(false) %} target="_blank" rel="noopener noreferrer"{% endif %}&gt;{{ text }}&lt;/a&gt;
+{% endif %}
+</code></pre></div>
+</details>
+        </article>
+
+        <!-- CARD -->
+        <article class="comp" id="card">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Card</h3>
+            <span class="comp__id">jarvis:card</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">A flexible card — image, title, body, and an optional link — with four layouts controlled by one prop. The image can sit on top, on the left or right, or fill the whole card as a background with text over it.</p>
+          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">title</span><span class="req" title="required">✳</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Card heading. Required.</td></tr>
+              <tr><td class="prop"><span class="pname">variant</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">image-top</span></td><td class="desc-cell">Where the image goes.<span class="enum-list"><span class="enum enum--def">image-top</span><span class="enum">image-left</span><span class="enum">image-right</span><span class="enum">background</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The card image.</td></tr>
+              <tr><td class="prop"><span class="pname">body</span></td><td><span class="ptype">html</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Short supporting copy.</td></tr>
+              <tr><td class="prop"><span class="pname">link_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Link label (needs a URL too).</td></tr>
+              <tr><td class="prop"><span class="pname">link_href</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Link destination.</td></tr>
+              <tr><td class="prop"><span class="pname">overlay</span></td><td><span class="ptype">integer</span></td><td><span class="pdef">40</span></td><td class="desc-cell">Darkening overlay (%) — only used by the <code>background</code> variant.</td></tr>
+              <tr><td class="prop"><span class="pname">text_color</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">light</span></td><td class="desc-cell">Text colour over a background image: <code>light</code> · <code>dark</code> · <code>black</code>. Choosing <code>black</code> removes the overlay so text sits on the bare image.</td></tr>
+            </tbody>
+          </table></div>
+          <div class="note"><span class="note__icon">i</span><div>Card also exposes its own fine-grained <code>padding</code> / <code>padding_size</code> / <code>margin</code> / <code>margin_size</code> and a <code>vertical_padding</code> toggle — the same shape as the shared spacing set, applied to the card box itself.</div></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 3 files</summary>
+<div class="srcfile"><div class="srcfile__name">card.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Card
+status: stable
+description: 'Flexible card with image at top, left, right, or as background.'
+category: Jarvis
+libraryOverrides:
+  dependencies:
+    - jarvis/contrast
+props:
+  type: object
+  required:
+    - title
+  properties:
+    variant:
+      title: 'Image position'
+      type: string
+      enum: [image-top, image-left, image-right, background]
+      'meta:enum':
+        image-top: 'Image on top'
+        image-left: 'Image on left'
+        image-right: 'Image on right'
+        background: 'Image as background'
+      default: image-top
+      examples:
+        - image-top
+    overlay:
+      title: 'Overlay opacity (%)'
+      type: integer
+      default: 40
+      examples:
+        - 40
+    text_color:
+      title: 'Text color'
+      type: string
+      enum: [light, dark, black]
+      'meta:enum':
+        light: 'Light (#ffffff)'
+        dark: 'Dark (primary color)'
+        black: 'Black (#000000)'
+      default: light
+      examples:
+        - light
+    image:
+      title: Image
+      $ref: json-schema-definitions://canvas.module/image
+    title:
+      title: Title
+      type: string
+      examples:
+        - 'Card title'
+    body:
+      title: Body
+      type: string
+      contentMediaType: text/html
+      'x-formatting-context': block
+      examples:
+        - '&lt;p&gt;Short supporting copy for this card.&lt;/p&gt;'
+    link_text:
+      title: 'Link text'
+      type: string
+      examples:
+        - 'Learn more'
+    link_href:
+      title: 'Link URL'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/1'
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">card.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis card SDC — four image layouts via the `variant` prop.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set variant = variant|default('image-top') %}
+{% set has_image = image.src is defined and image.src %}
+{% set text_color = text_color|default('light') %}
+{# Black text sits on the bare image — no darkening overlay. #}
+{% set overlay = text_color == 'black' ? 0 : overlay|default(40) %}
+{% set base = 'jarvis-card card h-100 jarvis-card--' ~ variant ~ ' ' ~ space %}
+{% if variant == 'background' %}
+  &lt;div class="{{ base }} jarvis-card--text-{{ text_color }} position-relative overflow-hidden border-0"{% if has_image %} style="background-image: url('{{ image.src }}');"{% endif %}&gt;
+    {% if has_image %}&lt;div class="jarvis-card__overlay" style="opacity: {{ overlay / 100 }};" aria-hidden="true"&gt;&lt;/div&gt;{% endif %}
+    &lt;div class="card-img-overlay d-flex flex-column justify-content-end position-relative"&gt;
+      {% if title %}&lt;h3 class="card-title h4"&gt;{{ title }}&lt;/h3&gt;{% endif %}
+      {% if body %}&lt;div class="card-text"&gt;{{ body|raw }}&lt;/div&gt;{% endif %}
+      {% if link_text and link_href %}&lt;a href="{{ link_href }}" class="btn btn-light btn-sm mt-2 align-self-start"&gt;{{ link_text }}&lt;/a&gt;{% endif %}
+    &lt;/div&gt;
+  &lt;/div&gt;
+{% elseif variant == 'image-left' or variant == 'image-right' %}
+  &lt;div class="{{ base }}"&gt;
+    &lt;div class="row g-0 {{ variant == 'image-right' ? 'flex-md-row-reverse' : '' }}"&gt;
+      {% if has_image %}
+        &lt;div class="col-md-5"&gt;
+          &lt;img src="{{ image.src }}" alt="{{ image.alt }}" class="jarvis-card__img jarvis-card__img--side w-100 h-100"&gt;
+        &lt;/div&gt;
+      {% endif %}
+      &lt;div class="{{ has_image ? 'col-md-7' : 'col-12' }}"&gt;
+        &lt;div class="card-body"&gt;
+          {% if title %}&lt;h3 class="card-title h4"&gt;{{ title }}&lt;/h3&gt;{% endif %}
+          {% if body %}&lt;div class="card-text"&gt;{{ body|raw }}&lt;/div&gt;{% endif %}
+          {% if link_text and link_href %}&lt;a href="{{ link_href }}" class="btn btn-primary btn-sm mt-2"&gt;{{ link_text }}&lt;/a&gt;{% endif %}
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+{% else %}
+  &lt;div class="{{ base }}"&gt;
+    {% if has_image %}&lt;img src="{{ image.src }}" alt="{{ image.alt }}" class="card-img-top jarvis-card__img"&gt;{% endif %}
+    &lt;div class="card-body"&gt;
+      {% if title %}&lt;h3 class="card-title h4"&gt;{{ title }}&lt;/h3&gt;{% endif %}
+      {% if body %}&lt;div class="card-text"&gt;{{ body|raw }}&lt;/div&gt;{% endif %}
+      {% if link_text and link_href %}&lt;a href="{{ link_href }}" class="btn btn-primary btn-sm mt-2"&gt;{{ link_text }}&lt;/a&gt;{% endif %}
+    &lt;/div&gt;
+  &lt;/div&gt;
+{% endif %}
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">card.css</div><pre class="code"><code>.jarvis-card {
+  overflow: hidden;
+}
+.jarvis-card__img {
+  object-fit: cover;
+}
+/* ponytail: fixed aspect keeps image-top cards even when source images differ in size */
+.jarvis-card--image-top .jarvis-card__img {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+}
+.jarvis-card__img--side {
+  min-height: 220px;
+}
+.jarvis-card--background {
+  min-height: 320px;
+  background-size: cover;
+  background-position: center;
+}
+.jarvis-card--background .jarvis-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: #000;
+}
+/* Text color (background variant): light (#fff) or dark (primary). */
+.jarvis-card--text-light,
+.jarvis-card--text-light :is(.card-title, .card-text) {
+  color: #fff;
+}
+.jarvis-card--text-dark,
+.jarvis-card--text-dark :is(.card-title, .card-text) {
+  color: var(--bs-primary);
+}
+.jarvis-card--text-black,
+.jarvis-card--text-black :is(.card-title, .card-text) {
+  color: #000;
+}
+/* Light text -&gt; black region behind the card for guaranteed contrast. A
+   background image, when present, paints over this; js/contrast.js
+   (jarvis/contrast) tunes the overlay opacity to keep light text at WCAG AA. */
+.jarvis-card--background.jarvis-card--text-light {
+  background-color: #000;
+}
+</code></pre></div>
+</details>
+        </article>
+
+        <!-- IMAGE -->
+        <article class="comp" id="image">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Image</h3>
+            <span class="comp__id">jarvis:image</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">A responsive image with an optional caption, a named image-style crop, rounded corners, and a full-width option. Handles lazy-loading for you, with an escape hatch for above-the-fold images.</p>
+          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a><a class="badge" href="#images">↳ see "Images in Canvas"</a></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The image file.</td></tr>
+              <tr><td class="prop"><span class="pname">image_style</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">original</span></td><td class="desc-cell">Named crop to apply.<span class="enum-list"><span class="enum enum--def">original</span><span class="enum">thumbnail</span><span class="enum">medium</span><span class="enum">large</span><span class="enum">wide</span><span class="enum">hero_banner</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">image_uri</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Internal — the original file address, used to build a styled crop. Set automatically.</td></tr>
+              <tr><td class="prop"><span class="pname">caption</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Caption shown beneath the image.</td></tr>
+              <tr><td class="prop"><span class="pname">full_width</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Break out to full width instead of the contained measure.</td></tr>
+              <tr><td class="prop"><span class="pname">rounded</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">true</span></td><td class="desc-cell">Rounded corners.</td></tr>
+              <tr><td class="prop"><span class="pname">priority</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Load eagerly (turns off lazy-loading). Switch on for images visible without scrolling — better for the Largest Contentful Paint metric.</td></tr>
+            </tbody>
+          </table></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 3 files</summary>
+<div class="srcfile"><div class="srcfile__name">image.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Image
+status: stable
+description: 'Responsive image with optional caption, full-width option.'
+category: Jarvis
+props:
+  type: object
+  properties:
+    image:
+      title: Image
+      $ref: json-schema-definitions://canvas.module/image
+    image_style:
+      title: 'Image style'
+      # ponytail: hardcoded enum of site image styles; regenerate if styles change.
+      type: string
+      enum: [original, thumbnail, medium, large, wide, hero_banner]
+      'meta:enum':
+        original: 'Original (responsive)'
+        thumbnail: Thumbnail
+        medium: Medium
+        large: Large
+        wide: Wide
+        hero_banner: 'Hero banner'
+      default: original
+    image_uri:
+      title: 'Image source URI (internal)'
+      # Original stream-wrapper URI; required for image_style to build a derivative.
+      type: string
+    caption:
+      title: Caption
+      type: string
+    full_width:
+      title: 'Full width'
+      type: boolean
+      default: false
+      examples:
+        - false
+    rounded:
+      title: 'Rounded corners'
+      type: boolean
+      default: true
+    priority:
+      title: 'Load eagerly (above the fold)'
+      description: 'Disable lazy-loading for images visible without scrolling — better LCP.'
+      type: boolean
+      default: false
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">image.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis image SDC.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set has_image = image.src is defined and image.src %}
+{# Apply a named image style when chosen. jarvis_image_style resolves the file
+   from image.src (a public URL) since Canvas gives no stream-wrapper URI here. #}
+{% set styled = (image_style is defined and image_style and image_style != 'original') ? image.src|jarvis_image_style(image_style) : null %}
+{% set img_src = styled ?: image.src %}
+{% set wrapper = full_width ? 'jarvis-image jarvis-image--full' : 'jarvis-image container' %}
+{# ponytail: rounded is its own toggle now, decoupled from full_width/padding. #}
+{% set round_class = rounded|default(true) ? 'jarvis-image--rounded' : '' %}
+&lt;figure class="{{ wrapper }} {{ round_class }} mb-0 {{ space }}"&gt;
+  {% if has_image %}
+    &lt;img src="{{ img_src }}" alt="{{ image.alt }}"{% if not styled and image.width %} width="{{ image.width }}"{% endif %}{% if not styled and image.height %} height="{{ image.height }}"{% endif %} class="img-fluid w-100 jarvis-image__img"{{ priority|default(false) ? ' fetchpriority="high"' : ' loading="lazy"' }}&gt;
+  {% endif %}
+  {% if caption %}&lt;figcaption class="jarvis-image__caption text-body-secondary small mt-2"&gt;{{ caption }}&lt;/figcaption&gt;{% endif %}
+&lt;/figure&gt;
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">image.css</div><pre class="code"><code>/* Rounded corners are opt-in via the `rounded` prop (default on). Full-width
+   images always bleed square regardless of the toggle. */
+.jarvis-image--rounded .jarvis-image__img {
+  border-radius: var(--bs-border-radius-lg, 1rem);
+}
+.jarvis-image--full .jarvis-image__img {
+  border-radius: 0;
+}
+</code></pre></div>
+</details>
+        </article>
+
+        <!-- VIDEO -->
+        <article class="comp" id="video">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Video</h3>
+            <span class="comp__id">jarvis:video</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">A responsive video. Paste almost any YouTube or Vimeo URL — regular watch links, short links, share links — and Jarvis converts it to the right embed. Or point it at a direct <code>.mp4</code>/<code>.webm</code> file and it renders a native player.</p>
+          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">video_url</span><span class="req" title="required">✳</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">YouTube/Vimeo URL, or a direct video file URL. Required.</td></tr>
+              <tr><td class="prop"><span class="pname">title</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Accessible title — describes the video for screen-reader users.</td></tr>
+              <tr><td class="prop"><span class="pname">aspect</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">16x9</span></td><td class="desc-cell">Aspect ratio.<span class="enum-list"><span class="enum enum--def">16x9</span><span class="enum">4x3</span><span class="enum">21x9</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">full_width</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Break out to full width.</td></tr>
+              <tr><td class="prop"><span class="pname">autoplay</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Autoplay — direct files only.</td></tr>
+              <tr><td class="prop"><span class="pname">muted</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Start muted — direct files only.</td></tr>
+            </tbody>
+          </table></div>
+          <div class="note note--watch"><span class="note__icon">!</span><div><b>Autoplay implies muted.</b> Browsers block unmuted autoplay, so switching on <code>autoplay</code> forces the video to start muted regardless of the <code>muted</code> setting.</div></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 3 files</summary>
+<div class="srcfile"><div class="srcfile__name">video.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Video
+status: stable
+description: 'Responsive video — an embed URL (YouTube/Vimeo) or a direct video file.'
+category: Jarvis
+props:
+  type: object
+  required:
+    - video_url
+  properties:
+    video_url:
+      title: 'Video URL'
+      description: 'YouTube/Vimeo embed URL, or a direct .mp4/.webm file URL.'
+      type: string
+      format: uri-reference
+      examples:
+        - 'https://www.youtube.com/embed/aqz-KE-bpKQ'
+        - '/sites/default/files/demo.mp4'
+    title:
+      title: 'Accessible title'
+      description: 'Describes the video for screen-reader users (iframe title attribute).'
+      type: string
+      examples:
+        - 'Product demo video'
+    aspect:
+      title: 'Aspect ratio'
+      type: string
+      enum: ['16x9', '4x3', '21x9']
+      'meta:enum':
+        '16x9': '16:9'
+        '4x3': '4:3'
+        '21x9': '21:9'
+      default: '16x9'
+      examples:
+        - '16x9'
+    full_width:
+      title: 'Full width'
+      type: boolean
+      default: false
+      examples:
+        - false
+    autoplay:
+      title: 'Autoplay (files only)'
+      type: boolean
+      default: false
+      examples:
+        - false
+    muted:
+      title: 'Muted (files only)'
+      type: boolean
+      default: false
+      examples:
+        - false
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">video.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis video SDC — iframe embed or native &lt;video&gt; for file URLs.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set aspect = aspect|default('16x9') %}
+{% set ratio_class = { '16x9': 'ratio-16x9', '4x3': 'ratio-4x3', '21x9': 'ratio-21x9' }[aspect] %}
+{% set container = full_width ? 'jarvis-video jarvis-video--full' : 'jarvis-video container' %}
+{% set _u = (video_url|default(''))|lower %}
+{% set is_file = '.mp4' in _u or '.webm' in _u or '.ogv' in _u or '.ogg' in _u %}
+{# ponytail: normalize watch/share URLs -&gt; embed URLs so any paste works. Split the ORIGINAL (not _u) — YouTube IDs are case-sensitive. #}
+{% set embed_url = video_url %}
+{% if 'youtube.com/watch' in _u %}
+  {% set embed_url = 'https://www.youtube.com/embed/' ~ (video_url|split('v=')|last|split('&amp;')|first) %}
+{% elseif 'youtu.be/' in _u %}
+  {% set embed_url = 'https://www.youtube.com/embed/' ~ (video_url|split('youtu.be/')|last|split('?')|first) %}
+{% elseif 'vimeo.com/' in _u and 'player.vimeo.com' not in _u %}
+  {% set embed_url = 'https://player.vimeo.com/video/' ~ (video_url|split('vimeo.com/')|last|split('?')|first|split('/')|first) %}
+{% endif %}
+&lt;div class="{{ container }} {{ space }}"&gt;
+  {% if video_url %}
+    &lt;div class="ratio {{ ratio_class }}"&gt;
+      {% if is_file %}
+        {# Autoplay implies muted — browsers block unmuted autoplay. #}
+        &lt;video controls preload="metadata"{{ autoplay ? ' autoplay loop playsinline' : '' }}{{ (muted or autoplay) ? ' muted' : '' }}&gt;
+          &lt;source src="{{ video_url }}"&gt;
+        &lt;/video&gt;
+      {% else %}
+        &lt;iframe src="{{ embed_url }}" title="{{ title|default('Video'|t) }}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"&gt;&lt;/iframe&gt;
+      {% endif %}
+    &lt;/div&gt;
+  {% endif %}
+&lt;/div&gt;
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">video.css</div><pre class="code"><code>.jarvis-video--full {
+  width: 100%;
+}
+.jarvis-video video,
+.jarvis-video iframe {
+  border: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+</code></pre></div>
+</details>
+        </article>
+
+        <!-- MAP -->
+        <article class="comp" id="map">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Map</h3>
+            <span class="comp__id">jarvis:map</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">A Google Map from a one-line address — no API key needed. It works exactly like the popular <code>simple_gmap</code> module: an embedded map iframe plus an optional "open in Google Maps" link.</p>
+          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">address</span><span class="req" title="required">✳</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">One-line address, e.g. <em>1600 Amphitheatre Parkway, Mountain View, CA</em>. Required.</td></tr>
+              <tr><td class="prop"><span class="pname">zoom</span></td><td><span class="ptype">int 1–20</span></td><td><span class="pdef">14</span></td><td class="desc-cell">Zoom level: 1 = whole world, 20 = single building.</td></tr>
+              <tr><td class="prop"><span class="pname">height</span></td><td><span class="ptype">integer</span></td><td><span class="pdef">400</span></td><td class="desc-cell">Map height in pixels.</td></tr>
+              <tr><td class="prop"><span class="pname">show_link</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">true</span></td><td class="desc-cell">Show the "open in Google Maps" link below the map.</td></tr>
+              <tr><td class="prop"><span class="pname">link_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef">View on Google Maps</span></td><td class="desc-cell">Label for that link.</td></tr>
+            </tbody>
+          </table></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 3 files</summary>
+<div class="srcfile"><div class="srcfile__name">map.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Map
+status: stable
+description: 'Google Map from a one-line address (simple_gmap-style keyless embed) with zoom and a link out.'
+category: Jarvis
+props:
+  type: object
+  required:
+    - address
+  properties:
+    address:
+      title: Address
+      description: 'One-line address, e.g. "1600 Amphitheatre Parkway, Mountain View, CA".'
+      type: string
+      examples:
+        - '1600 Amphitheatre Parkway, Mountain View, CA'
+    zoom:
+      title: Zoom
+      description: 'Map zoom level (1 = world, 20 = building).'
+      type: integer
+      minimum: 1
+      maximum: 20
+      default: 14
+    height:
+      title: 'Map height (px)'
+      type: integer
+      default: 400
+    show_link:
+      title: 'Show Google Maps link'
+      type: boolean
+      default: true
+    link_text:
+      title: 'Link text'
+      type: string
+      default: 'View on Google Maps'
+      examples:
+        - 'View on Google Maps'
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">map.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis map SDC. Replicates simple_gmap's keyless embed:
+ * an iframe pointed at maps.google.com/maps?q=ADDRESS&amp;z=ZOOM&amp;output=embed.
+ * No API key required.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set zoom = zoom|default(14) %}
+{% set height = height|default(400) %}
+{% set q = address|url_encode %}
+&lt;div class="jarvis-map {{ space }}"&gt;
+  &lt;iframe
+    class="jarvis-map__frame"
+    style="height: {{ height }}px;"
+    src="https://maps.google.com/maps?q={{ q }}&amp;amp;z={{ zoom }}&amp;amp;output=embed"
+    title="{{ address }}"
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"&gt;&lt;/iframe&gt;
+  {% if show_link is not defined or show_link %}
+    &lt;div class="jarvis-map__link"&gt;
+      &lt;a href="https://maps.google.com/maps?q={{ q }}" target="_blank" rel="noopener"&gt;{{ link_text|default('View on Google Maps') }}&lt;/a&gt;
+    &lt;/div&gt;
+  {% endif %}
+&lt;/div&gt;
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">map.css</div><pre class="code"><code>.jarvis-map__frame {
+  display: block;
+  width: 100%;
+  border: 0;
+}
+
+.jarvis-map__link {
+  margin-top: 0.5rem;
+}
+</code></pre></div>
+</details>
+        </article>
+
+        <!-- PERSON -->
+        <article class="comp" id="person">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Person</h3>
+            <span class="comp__id">jarvis:person</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">A profile block — portrait, name, position, phone, email, an optional link, and social icons. Perfect for team and about pages. Six social networks are supported, each rendered as a crisp inline SVG icon that only appears when you give it a URL.</p>
+          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a><a class="badge" href="#images">↳ portrait uses image styles</a></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">variant</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">card</span></td><td class="desc-cell">Layout.<span class="enum-list"><span class="enum enum--def">card</span> framed, centered<span class="enum">plain</span> no frame<span class="enum">image-left</span> row</span></td></tr>
+              <tr><td class="prop"><span class="pname">name</span></td><td><span class="ptype">string</span></td><td><span class="pdef">Jane Doe</span></td><td class="desc-cell">Person's name.</td></tr>
+              <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Portrait photo (cropped to a Portrait style).</td></tr>
+              <tr><td class="prop"><span class="pname">position</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Job title / role.</td></tr>
+              <tr><td class="prop"><span class="pname">phone</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Phone number (becomes a tap-to-call link).</td></tr>
+              <tr><td class="prop"><span class="pname">email</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Email (becomes a mailto link).</td></tr>
+              <tr><td class="prop"><span class="pname">link_text</span> / <span class="pname">link_href</span></td><td><span class="ptype">string / uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">An optional "View profile" style button.</td></tr>
+              <tr><td class="prop"><span class="pname">linkedin</span>, <span class="pname">x</span>, <span class="pname">facebook</span>, <span class="pname">instagram</span>, <span class="pname">youtube</span>, <span class="pname">github</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Social profile URLs. Each icon appears only when its URL is set.</td></tr>
+              <tr><td class="prop"><span class="pname">image_uri</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Internal — original file address for the portrait crop. Set automatically.</td></tr>
+            </tbody>
+          </table></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 3 files</summary>
+<div class="srcfile"><div class="srcfile__name">person.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Person
+status: stable
+description: 'Portrait, name, position, phone, email, and a link.'
+category: Jarvis
+props:
+  type: object
+  properties:
+    variant:
+      title: Layout
+      type: string
+      enum: [card, plain, image-left]
+      'meta:enum':
+        card: 'Card (framed, centered)'
+        plain: 'Plain (no frame, centered)'
+        image-left: 'Image left (row)'
+      default: card
+      # Palette preview renders from examples (ignores default); without this it passes '' and fails enum validation.
+      examples:
+        - card
+    image:
+      title: Photo
+      $ref: json-schema-definitions://canvas.module/image
+    image_uri:
+      title: 'Image source URI (internal)'
+      # Original stream-wrapper URI; required for image_style to build the Portrait derivative.
+      type: string
+    name:
+      title: Name
+      type: string
+      default: 'Jane Doe'
+      examples:
+        - 'Jane Doe'
+    position:
+      title: Position
+      type: string
+      examples:
+        - 'Chief Executive Officer'
+    phone:
+      title: Phone
+      type: string
+      examples:
+        - '+1 555 123 4567'
+    email:
+      title: Email
+      type: string
+      examples:
+        - 'jane@example.com'
+    link_text:
+      title: 'Link text'
+      type: string
+      examples:
+        - 'View profile'
+    link_href:
+      title: 'Link URL'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/1'
+    linkedin:
+      title: 'LinkedIn URL'
+      type: string
+      format: uri-reference
+    x:
+      title: 'X (Twitter) URL'
+      type: string
+      format: uri-reference
+    facebook:
+      title: 'Facebook URL'
+      type: string
+      format: uri-reference
+    instagram:
+      title: 'Instagram URL'
+      type: string
+      format: uri-reference
+    youtube:
+      title: 'YouTube URL'
+      type: string
+      format: uri-reference
+    github:
+      title: 'GitHub URL'
+      type: string
+      format: uri-reference
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+      examples:
+        - none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+      examples:
+        - medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+      examples:
+        - none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+      examples:
+        - medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">person.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis person SDC — portrait, name, position, contact links.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set has_image = image.src is defined and image.src %}
+{# Crop server-side to the Portrait style; needs the original stream-wrapper URI. #}
+{% set portrait = (image_uri is defined and image_uri) ? image_uri|image_style('portrait') : null %}
+{% set photo_src = portrait ?: image.src %}
+{% set variant = variant|default('card') %}
+&lt;div class="jarvis-person jarvis-person--{{ variant }} {{ space }}"&gt;
+  {% if has_image %}&lt;img src="{{ photo_src }}" alt="{{ image.alt }}" class="jarvis-person__photo mb-3"&gt;{% endif %}
+  &lt;div class="jarvis-person__details"&gt;
+  {% if name %}&lt;div class="jarvis-person__name text-primary"&gt;{{ name }}&lt;/div&gt;{% endif %}
+  {% if position %}&lt;div class="jarvis-person__position"&gt;{{ position }}&lt;/div&gt;{% endif %}
+  {% if phone %}&lt;div class="jarvis-person__phone"&gt;&lt;a href="tel:{{ phone }}"&gt;{{ phone }}&lt;/a&gt;&lt;/div&gt;{% endif %}
+  {% if email %}&lt;div class="jarvis-person__email"&gt;&lt;a href="mailto:{{ email }}"&gt;{{ email }}&lt;/a&gt;&lt;/div&gt;{% endif %}
+  {% if link_text and link_href %}&lt;a href="{{ link_href }}" class="btn btn-primary btn-sm mt-2"&gt;{{ link_text }}&lt;/a&gt;{% endif %}
+  {% set socials = {
+    'LinkedIn': { url: linkedin,  path: 'M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z' },
+    'X': { url: x, path: 'M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.41l-5.8-7.58-6.64 7.58H.46l8.6-9.83L0 1.15h7.6l5.24 6.93 6.06-6.93zm-1.29 19.5h2.04L6.48 3.24H4.3l13.31 17.41z' },
+    'Facebook': { url: facebook, path: 'M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07c0 6.02 4.39 11.01 10.13 11.93v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.08 24 18.09 24 12.07z' },
+    'Instagram': { url: instagram, path: 'M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zm0 3.68a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-10.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z' },
+    'YouTube': { url: youtube, path: 'M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.08 0 12 0 12s0 3.92.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.88.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z' },
+    'GitHub': { url: github, path: 'M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z' },
+  } %}
+  {% set has_social = linkedin or x or facebook or instagram or youtube or github %}
+  {% if has_social %}
+    &lt;div class="jarvis-person__social"&gt;
+      {% for label, s in socials %}
+        {% if s.url %}
+          &lt;a href="{{ s.url }}" class="jarvis-person__social-link" aria-label="{{ label }}" target="_blank" rel="noopener noreferrer"&gt;
+            &lt;svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="{{ s.path }}"/&gt;&lt;/svg&gt;
+          &lt;/a&gt;
+        {% endif %}
+      {% endfor %}
+    &lt;/div&gt;
+  {% endif %}
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">person.css</div><pre class="code"><code>.jarvis-person {
+  text-align: center;
+}
+/* Card: framed, lifts on hover. */
+.jarvis-person--card {
+  padding: 1rem;
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+/* Photo bleeds to card edges; card padding stays for text below. */
+.jarvis-person--card .jarvis-person__photo {
+  width: calc(100% + 2rem);
+  max-width: none;
+  margin: -1rem -1rem 1rem;
+  border-radius: 0;
+}
+.jarvis-person--card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+/* Image left: photo beside details, left-aligned. */
+.jarvis-person--image-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: left;
+}
+.jarvis-person--image-left .jarvis-person__photo {
+  flex: 0 0 40%;
+  max-width: 40%;
+  margin-bottom: 0;
+}
+.jarvis-person--image-left .jarvis-person__details {
+  flex: 1;
+}
+.jarvis-person--image-left .jarvis-person__social {
+  justify-content: flex-start;
+}
+.jarvis-person__photo {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.jarvis-person__name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.jarvis-person__position {
+  font-size: 1rem;
+  color: var(--bs-body-color);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+}
+/* Contact lines: quieter than the name, tighter stack. */
+.jarvis-person__phone,
+.jarvis-person__email {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.jarvis-person a {
+  text-decoration: none;
+}
+.jarvis-person__social {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.jarvis-person__social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--bs-body-color);
+  background: var(--bs-secondary-bg);
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.jarvis-person__social-link:hover {
+  color: #fff;
+  background: var(--bs-primary);
+}
+.jarvis-person__phone a,
+.jarvis-person__email a {
+  color: var(--bs-body-color);
+}
+.jarvis-person__phone a:hover,
+.jarvis-person__email a:hover {
+  color: var(--bs-primary);
+}
+</code></pre></div>
+</details>
+        </article>
+
+        <!-- STAT -->
+        <article class="comp" id="stat">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Stat card</h3>
+            <span class="comp__id">jarvis:stat</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">A centred statistic: an icon, a big number, and a short description. Drop three of them into a <a href="#three-column">3 Columns</a> row for a classic "by the numbers" band. The number can count up from zero when it scrolls into view.</p>
+          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">title</span><span class="req" title="required">✳</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The big number, e.g. <code>1,200+</code>. (It's labelled "Number" in the editor.) Required.</td></tr>
+              <tr><td class="prop"><span class="pname">icon</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Small icon above the number.</td></tr>
+              <tr><td class="prop"><span class="pname">number_color</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">primary</span></td><td class="desc-cell"><code>primary</code> or <code>secondary</code> brand colour for the number.</td></tr>
+              <tr><td class="prop"><span class="pname">count_up</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Animate the number from 0 when it scrolls into view (powered by <code>stat.js</code>).</td></tr>
+              <tr><td class="prop"><span class="pname">body</span></td><td><span class="ptype">html</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The description under the number.</td></tr>
+            </tbody>
+          </table></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 4 files</summary>
+<div class="srcfile"><div class="srcfile__name">stat.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Stat card
+status: stable
+description: 'Centered stat: icon, big number, description.'
+category: Jarvis
+libraryOverrides:
+  dependencies:
+    - core/drupal
+    - core/once
+props:
+  type: object
+  required:
+    - title
+  properties:
+    icon:
+      title: Icon
+      $ref: json-schema-definitions://canvas.module/image
+    title:
+      title: 'Number'
+      type: string
+      examples:
+        - '1,200+'
+    number_color:
+      title: 'Number color'
+      type: string
+      enum: [primary, secondary]
+      'meta:enum':
+        primary: Primary
+        secondary: Secondary
+      default: primary
+    count_up:
+      title: 'Count-up animation'
+      description: 'Animate the number from 0 when scrolled into view.'
+      type: boolean
+      default: false
+    body:
+      title: Description
+      type: string
+      contentMediaType: text/html
+      'x-formatting-context': block
+      examples:
+        - '&lt;p&gt;Happy customers served&lt;/p&gt;'
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">stat.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis stat card SDC — centered icon, big number, description.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set has_icon = icon.src is defined and icon.src %}
+&lt;div class="jarvis-stat text-center {{ space }}"&gt;
+  {% if has_icon %}&lt;img src="{{ icon.src }}" alt="{{ icon.alt }}" class="jarvis-stat__icon mb-3"&gt;{% endif %}
+  {% if title %}&lt;div class="jarvis-stat__number text-{{ number_color|default('primary') }}"{% if count_up %} data-count-up{% endif %}&gt;{{ title }}&lt;/div&gt;{% endif %}
+  {% if body %}&lt;div class="jarvis-stat__body"&gt;{{ body|raw }}&lt;/div&gt;{% endif %}
+&lt;/div&gt;
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">stat.css</div><pre class="code"><code>.jarvis-stat__icon {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+.jarvis-stat__number {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.jarvis-stat__body {
+  color: var(--bs-body-color);
+}
+.jarvis-stat__body &gt; :last-child {
+  margin-bottom: 0;
+}
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">stat.js</div><pre class="code"><code>/**
+ * @file
+ * Count-up animation for stat cards. Animates [data-count-up] from 0 to its
+ * number when scrolled into view. Preserves prefix/suffix (e.g. "1,200+").
+ */
+((Drupal, once) =&gt; {
+  // ponytail: parse "$1,200+" -&gt; {prefix:"$", value:1200, suffix:"+", commas:true}
+  const parse = (raw) =&gt; {
+    const m = raw.match(/^(\D*)([\d,]*\.?\d+)(\D*)$/);
+    if (!m) return null;
+    return {
+      prefix: m[1],
+      value: parseFloat(m[2].replace(/,/g, '')),
+      suffix: m[3],
+      commas: m[2].includes(','),
+      decimals: (m[2].split('.')[1] || '').length,
+    };
+  };
+
+  const render = (p, n) =&gt; {
+    let s = n.toFixed(p.decimals);
+    if (p.commas) s = Number(s).toLocaleString(undefined, { minimumFractionDigits: p.decimals });
+    return p.prefix + s + p.suffix;
+  };
+
+  const run = (el) =&gt; {
+    const p = parse(el.textContent.trim());
+    if (!p) return;
+    const dur = 1600;
+    let start = null;
+    const step = (ts) =&gt; {
+      if (start === null) start = ts;
+      const t = Math.min((ts - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+      el.textContent = render(p, p.value * eased);
+      if (t &lt; 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+
+  Drupal.behaviors.jarvisStatCountUp = {
+    attach(context) {
+      once('jarvis-count-up', '[data-count-up]', context).forEach((el) =&gt; {
+        if (!('IntersectionObserver' in window)) return run(el); // ponytail: old browsers just see final value
+        const io = new IntersectionObserver((entries) =&gt; {
+          entries.forEach((e) =&gt; {
+            if (e.isIntersecting) {
+              run(el);
+              io.disconnect();
+            }
+          });
+        }, { threshold: 0.4 });
+        io.observe(el);
+      });
+    },
+  };
+})(Drupal, once);
+</code></pre></div>
+</details>
+        </article>
+      </section>
+
+      <!-- ===== MODULES ===== -->
+      <section class="prose">
+        <h2 id="jarvis-blocks"><span class="section-tag">Custom modules</span>Jarvis Blocks</h2>
+        <p><code>jarvis_blocks</code> is a small module that lets the Jarvis components work as reusable <strong>content blocks</strong> — the kind you create once and place through Layout Builder or the Block layout, not just inside Canvas.</p>
+        <p>It ships five ready-made block types — <strong>Hero, Card, Video, Image,</strong> and <strong>Text</strong> — each with the right fields already set up (heading, media, call-to-action link, and so on). When one of these blocks renders anywhere on the site, the module quietly swaps the plain field output for the matching Jarvis SDC, so a content block and a Canvas component look identical on the page.</p>
+        <p class="subhead" style="max-width:var(--measure)">The mapping it manages</p>
+        <div class="table-scroll" style="max-width:var(--measure)"><table style="min-width:340px">
+          <thead><tr><th>Block type</th><th>Renders as</th></tr></thead>
+          <tbody>
+            <tr><td class="prop"><span class="pname">hero</span></td><td><span class="ptype">jarvis:hero</span></td></tr>
+            <tr><td class="prop"><span class="pname">card</span></td><td><span class="ptype">jarvis:card</span></td></tr>
+            <tr><td class="prop"><span class="pname">video</span></td><td><span class="ptype">jarvis:video</span></td></tr>
+            <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">jarvis:image</span></td></tr>
+            <tr><td class="prop"><span class="pname">text</span></td><td><span class="ptype">jarvis:text</span></td></tr>
+          </tbody>
+        </table></div>
+        <p><strong>How it does it, in one breath:</strong> a single <code>hook_preprocess_block()</code> catches any of these block types as they render, reads their fields, maps each field to the SDC's props, and replaces the block's body with the component. It's careful about two things — it preserves the block's cache metadata so caching still works, and it runs rich-text fields through <code>check_markup()</code> by hand (Canvas strips the usual processed-text shortcut, so the module does that step itself).</p>
+        <div class="note"><span class="note__icon">i</span><div><b>Dependencies:</b> core's <code>block_content</code>, <code>link</code>, <code>image</code>, <code>options</code>, and <code>text</code> modules — all standard. Nothing exotic.</div></div>
+
+        <details class="src">
+<summary>&lt;/&gt; Source · 2 files</summary>
+<div class="srcfile"><div class="srcfile__name">jarvis_blocks.info.yml</div><pre class="code"><code>name: 'Jarvis Blocks'
+type: module
+description: 'Content block types that render Jarvis SDCs — usable in Layout Builder and the Block layout.'
+package: Custom
+core_version_requirement: ^11 || ^12
+dependencies:
+  - drupal:block_content
+  - drupal:link
+  - drupal:image
+  - drupal:options
+  - drupal:text
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">jarvis_blocks.module</div><pre class="code"><code>&lt;?php
+
+/**
+ * @file
+ * Renders Jarvis content block types through their matching SDCs.
+ *
+ * A single preprocess hook covers both Layout Builder inline blocks and
+ * Block-layout placed content blocks: both return the block_content entity
+ * view build, so #block_content is present on $variables['content'].
+ */
+
+declare(strict_types=1);
+
+use Drupal\block_content\BlockContentInterface;
+
+/**
+ * Maps block_content bundle =&gt; SDC component id.
+ */
+function _jarvis_blocks_map(): array {
+  return [
+    'hero' =&gt; 'jarvis:hero',
+    'card' =&gt; 'jarvis:card',
+    'video' =&gt; 'jarvis:video',
+    'image' =&gt; 'jarvis:image',
+    'text' =&gt; 'jarvis:text',
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for block.
+ */
+function jarvis_blocks_preprocess_block(array &amp;$variables): void {
+  $content = $variables['content'] ?? [];
+  $bc = $content['#block_content'] ?? NULL;
+  if (!$bc instanceof BlockContentInterface) {
+    return;
+  }
+  $map = _jarvis_blocks_map();
+  $bundle = $bc-&gt;bundle();
+  if (empty($map[$bundle])) {
+    return;
+  }
+
+  $props = _jarvis_blocks_props($bundle, $bc);
+
+  // Replace the field-rendered body with the SDC render element. Keep the
+  // original cache metadata so block/entity cache tags still bubble up.
+  $component = [
+    '#type' =&gt; 'component',
+    '#component' =&gt; $map[$bundle],
+    '#props' =&gt; $props,
+  ];
+  if (!empty($content['#cache'])) {
+    $component['#cache'] = $content['#cache'];
+  }
+  $variables['content'] = $component;
+}
+
+/**
+ * Builds SDC props from a block_content entity's fields.
+ */
+function _jarvis_blocks_props(string $bundle, BlockContentInterface $bc): array {
+  $has = static fn (string $f): bool =&gt; $bc-&gt;hasField($f) &amp;&amp; !$bc-&gt;get($f)-&gt;isEmpty();
+  $str = static fn (string $f): ?string =&gt; $has($f) ? (string) $bc-&gt;get($f)-&gt;value : NULL;
+  $bool = static fn (string $f): bool =&gt; $has($f) ? (bool) $bc-&gt;get($f)-&gt;value : FALSE;
+  $int = static fn (string $f): ?int =&gt; $has($f) ? (int) $bc-&gt;get($f)-&gt;value : NULL;
+
+  $html = static function (string $f) use ($has, $bc): ?string {
+    if (!$has($f)) {
+      return NULL;
+    }
+    // Canvas's TextLongItemOverride drops the `processed` computed property,
+    // so run the text through check_markup() directly.
+    $item = $bc-&gt;get($f)-&gt;first();
+    return (string) check_markup($item-&gt;value, $item-&gt;format ?: NULL);
+  };
+
+  $image = static function (string $f) use ($has, $bc): ?array {
+    if (!$has($f)) {
+      return NULL;
+    }
+    $item = $bc-&gt;get($f)-&gt;first();
+    $file = $item-&gt;entity;
+    if (!$file) {
+      return NULL;
+    }
+    $url = \Drupal::service('file_url_generator')-&gt;generateAbsoluteString($file-&gt;getFileUri());
+    $out = ['src' =&gt; $url, 'alt' =&gt; (string) ($item-&gt;alt ?? '')];
+    if (!empty($item-&gt;width)) {
+      $out['width'] = (int) $item-&gt;width;
+    }
+    if (!empty($item-&gt;height)) {
+      $out['height'] = (int) $item-&gt;height;
+    }
+    return $out;
+  };
+
+  $link = static function (string $f) use ($has, $bc): array {
+    if (!$has($f)) {
+      return [NULL, NULL];
+    }
+    $item = $bc-&gt;get($f)-&gt;first();
+    try {
+      $url = $item-&gt;getUrl()-&gt;toString();
+    }
+    catch (\Throwable $e) {
+      $url = $item-&gt;uri;
+    }
+    return [$url, $item-&gt;title ?: NULL];
+  };
+
+  switch ($bundle) {
+    case 'hero':
+      [$cta_href, $cta_text] = $link('field_cta');
+      return array_filter([
+        'heading' =&gt; $str('field_heading'),
+        'subheading' =&gt; $str('field_subheading'),
+        'cta_text' =&gt; $cta_text,
+        'cta_href' =&gt; $cta_href,
+        'image' =&gt; $image('field_media_image'),
+        'overlay' =&gt; $int('field_overlay') ?? 40,
+        'align' =&gt; $str('field_align') ?? 'center',
+      ], static fn ($v) =&gt; $v !== NULL);
+
+    case 'card':
+      [$link_href, $link_text] = $link('field_cta');
+      return array_filter([
+        'variant' =&gt; $str('field_variant') ?? 'image-top',
+        'image' =&gt; $image('field_media_image'),
+        'title' =&gt; $str('field_title'),
+        'body' =&gt; $html('field_body'),
+        'link_text' =&gt; $link_text,
+        'link_href' =&gt; $link_href,
+      ], static fn ($v) =&gt; $v !== NULL);
+
+    case 'video':
+      [$video_url] = $link('field_video_url');
+      return array_filter([
+        'video_url' =&gt; $video_url,
+        'aspect' =&gt; $str('field_aspect') ?? '16x9',
+        'full_width' =&gt; $bool('field_full_width'),
+        'autoplay' =&gt; $bool('field_autoplay'),
+        'muted' =&gt; $bool('field_muted'),
+      ], static fn ($v) =&gt; $v !== NULL);
+
+    case 'image':
+      return array_filter([
+        'image' =&gt; $image('field_media_image'),
+        'caption' =&gt; $str('field_caption'),
+        'full_width' =&gt; $bool('field_full_width'),
+      ], static fn ($v) =&gt; $v !== NULL);
+
+    case 'text':
+      return array_filter([
+        'body' =&gt; $html('field_body'),
+        'width' =&gt; $str('field_width') ?? 'normal',
+        'align' =&gt; $str('field_align') ?? 'start',
+      ], static fn ($v) =&gt; $v !== NULL);
+  }
+
+  return [];
+}
+</code></pre></div>
+</details>
+<h2 id="jarvis-canvas"><span class="section-tag">Custom modules</span>Jarvis Canvas</h2>
+        <p><code>jarvis_canvas</code> is the glue between the Jarvis components and <strong>Drupal Canvas</strong>. It patches over a few rough edges in Canvas so the theme behaves the way editors expect. It does four things.</p>
+
+        <h3 style="max-width:var(--measure)">1 · Unlocks a real rich-text editor for the WYSIWYG component</h3>
+        <p>Canvas normally forces every rich-text prop into one locked, stripped-down editor. This module watches for the <code>x-jarvis-html-format</code> marker (present only on the <a href="#wysiwyg">WYSIWYG</a> component's <code>body</code>) and, for that prop alone, swaps in the site's real <strong>Basic HTML</strong> and <strong>Full HTML</strong> formats — giving editors the full CKEditor toolbar. Canvas offers no per-component setting for this, so the marker-on-the-prop trick is how the module scopes it to a single component.</p>
+
+        <h3 style="max-width:var(--measure)">2 · Restores the "Create with Canvas" button on Drupal 11.4</h3>
+        <p>Drupal 11.4 reorganised the "Manage display" screen, and in doing so Canvas's own "Create with Canvas" call-to-action stopped appearing — meaning new content types couldn't get a Canvas template through the interface. This module re-adds that button on the new screen, but only when it's genuinely needed (the content type has no Canvas template yet, and the user is allowed to create one). It's a temporary workaround for <a href="https://www.drupal.org/project/canvas/issues/3498525">Canvas issue #3498525</a>.</p>
+
+        <h3 style="max-width:var(--measure)">3 · Gives every new content type a Canvas template automatically</h3>
+        <p>Because of that same Canvas gap, creating a content type didn't reliably produce a Canvas template to design against. So whenever you create a new content type, this module automatically creates an empty <strong>Full content</strong> Canvas template for it — instantly ready to edit at <code>/canvas/template/node/&lt;type&gt;/full</code>. And when a content type is deleted, it tidily removes that template again (an empty template has no automatic link back to the type, so Drupal wouldn't clean it up on its own).</p>
+
+        <h3 style="max-width:var(--measure)">4 · The <code>jarvis_image_style</code> Twig filter</h3>
+        <p>This is the helper mentioned back in <a href="#images">Images in Canvas</a>. Canvas hands components a finished image URL, but Drupal image styles need the file's internal address — so the filter looks the file up by its name and builds the styled crop from there. It's what makes the <a href="#image">Image</a> component's style picker actually work. (Like Canvas's own equivalent, it matches files by filename, which is fine unless two managed files somehow share the exact same name.)</p>
+        <div class="note"><span class="note__icon">i</span><div><b>Dependencies:</b> the <code>canvas</code> module and core's <code>node</code>.</div></div>
+      </section>
+
+      <details class="src">
+<summary>&lt;/&gt; Source · 4 files</summary>
+<div class="srcfile"><div class="srcfile__name">jarvis_canvas.info.yml</div><pre class="code"><code>name: 'Jarvis Canvas'
+type: module
+description: 'Canvas integration for the Jarvis theme — allows Basic/Full HTML text formats on block rich-text SDC props.'
+package: Custom
+core_version_requirement: ^11 || ^12
+dependencies:
+  - canvas:canvas
+  - drupal:node
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">jarvis_canvas.module</div><pre class="code"><code>&lt;?php
+
+/**
+ * @file
+ * Canvas integration for the Jarvis theme.
+ */
+
+use Drupal\canvas\PropShape\CandidateStorablePropShape;
+use Drupal\Core\Entity\Display\EntityDisplayInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\node\NodeTypeInterface;
+
+/**
+ * Implements hook_canvas_storable_prop_shape_alter().
+ *
+ * Canvas hardwires every block rich-text prop to its locked canvas_html_block
+ * format. Swap in the site's Basic/Full HTML formats so editors get a real
+ * text-format picker — but ONLY for props that explicitly opt in with the
+ * `x-jarvis-html-format` schema marker (currently just the WYSIWYG component).
+ *
+ * Canvas exposes no per-component scope, but the custom `x-` marker survives
+ * shape normalization (see PropShape::normalizePropSchema), so it reaches this
+ * hook. Every other rich-text prop lacks the marker and keeps Canvas's default
+ * editor.
+ */
+function jarvis_canvas_canvas_storable_prop_shape_alter(CandidateStorablePropShape $storable_prop_shape): void {
+  $schema = $storable_prop_shape-&gt;shape-&gt;schema;
+  if (($schema['contentMediaType'] ?? NULL) === 'text/html'
+    &amp;&amp; !empty($schema['x-jarvis-html-format'])) {
+    $storable_prop_shape-&gt;fieldInstanceSettings['allowed_formats'] = ['basic_html', 'full_html'];
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for entity_view_display_edit_form.
+ *
+ * Canvas ships a "Create with Canvas" CTA on the node display edit form, but its
+ * route check (canvas/src/Hook/FieldUiHooks.php) is hardcoded to the pre-11.4
+ * route `entity.entity_view_display.node.default`. Drupal 11.4 split "Manage
+ * display" into a controller-based overview plus per-view-mode edit forms
+ * (route `entity.entity_view_display.node.view_mode`), so Canvas's CTA never
+ * renders and new content types can't get a Canvas template through the UI.
+ * Re-add the CTA on the view-mode edit form until upstream fixes it.
+ *
+ * @see https://www.drupal.org/project/canvas/issues/3498525
+ */
+function jarvis_canvas_form_entity_view_display_edit_form_alter(array &amp;$form, FormStateInterface $form_state): void {
+  // Only the 11.4+ per-view-mode edit form; the pre-11.4 default form is still
+  // handled by Canvas itself.
+  if (\Drupal::routeMatch()-&gt;getRouteName() !== 'entity.entity_view_display.node.view_mode') {
+    return;
+  }
+  // Canvas already queued its own CTA — don't double up.
+  $messenger = \Drupal::messenger();
+  if ($messenger-&gt;messagesByType('canvas_cta')) {
+    return;
+  }
+  $display = $form_state-&gt;getFormObject()-&gt;getEntity();
+  if (!$display instanceof EntityDisplayInterface || $display-&gt;getTargetEntityTypeId() !== 'node') {
+    return;
+  }
+  $entity_type_id = $display-&gt;getTargetEntityTypeId();
+  $bundle = $display-&gt;getTargetBundle();
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $storage = $entity_type_manager-&gt;getStorage('content_template');
+  // A Canvas template already exists for this bundle: nothing to offer.
+  $existing = $storage-&gt;getQuery()
+    -&gt;accessCheck(FALSE)
+    -&gt;condition('content_entity_type_id', $entity_type_id)
+    -&gt;condition('content_entity_type_bundle', $bundle)
+    -&gt;execute();
+  if (!empty($existing)) {
+    return;
+  }
+  if (!$entity_type_manager-&gt;getAccessControlHandler('content_template')-&gt;createAccess()) {
+    return;
+  }
+  // The boot URL Canvas's own CTA links to: opens the editor for a new template.
+  $url = Url::fromRoute('canvas.boot.empty', [], [
+    'query' =&gt; [
+      'from' =&gt; 'manage_display',
+      'entity_type' =&gt; $entity_type_id,
+      'bundle' =&gt; $bundle,
+    ],
+  ]);
+  // Mirror Canvas's canvas_cta message build so it inherits the same styling.
+  $messenger-&gt;addMessage([
+    '#theme' =&gt; 'canvas_cta',
+    '#icon' =&gt; [
+      '#type' =&gt; 'html_tag',
+      '#tag' =&gt; 'span',
+      '#attributes' =&gt; [
+        'class' =&gt; ['canvas-cta__icon'],
+        'aria-hidden' =&gt; 'true',
+      ],
+    ],
+    '#title' =&gt; t('New: Design with Drupal Canvas'),
+    '#description' =&gt; t('Canvas provides a visual, drag-and-drop interface for creating content templates. It offers a modern alternative to the standard "Manage display" table.'),
+    '#url' =&gt; $url-&gt;toString(),
+    '#link_title' =&gt; t('Create with Canvas'),
+  ], 'canvas_cta');
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for node_type.
+ *
+ * Auto-create an empty Canvas Full-content template for every new content type,
+ * so the Canvas editor is immediately usable at
+ * `/canvas/template/node/&lt;bundle&gt;/full` (Manage display → Full content tab).
+ *
+ * Canvas's own "Create with Canvas" flow is broken on Drupal 11.4: its CTA route
+ * check misses the per-view-mode forms, and even when clicked its boot opens the
+ * generic Canvas shell WITHOUT creating a template. This closes that gap so new
+ * types don't need the manual clone-an-existing-template workaround.
+ *
+ * The tree is empty (no field references) so it is valid for ANY bundle,
+ * including brand-new types that have no body field yet — the editor is where
+ * fields/components get added.
+ *
+ * @see https://www.drupal.org/project/canvas/issues/3498525
+ */
+function jarvis_canvas_node_type_insert(NodeTypeInterface $type): void {
+  // Config sync brings its own content templates; don't race it.
+  if (\Drupal::isConfigSyncing()) {
+    return;
+  }
+  $storage = \Drupal::entityTypeManager()-&gt;getStorage('content_template');
+  $id = 'node.' . $type-&gt;id() . '.full';
+  if ($storage-&gt;load($id)) {
+    return;
+  }
+  $storage-&gt;create([
+    'id' =&gt; $id,
+    'status' =&gt; TRUE,
+    'content_entity_type_id' =&gt; 'node',
+    'content_entity_type_bundle' =&gt; $type-&gt;id(),
+    'content_entity_type_view_mode' =&gt; 'full',
+    'exposed_slots' =&gt; [],
+    'component_tree' =&gt; [],
+  ])-&gt;save();
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete() for node_type.
+ *
+ * Remove the auto-created Full-content template when its content type is
+ * deleted. An empty template has no config dependency on the bundle (nothing in
+ * its component tree references the bundle's fields), so Drupal won't cascade the
+ * delete — without this the template is orphaned, pointing at a bundle that no
+ * longer exists.
+ */
+function jarvis_canvas_node_type_delete(NodeTypeInterface $type): void {
+  // During config sync the config system handles deletions itself.
+  if (\Drupal::isConfigSyncing()) {
+    return;
+  }
+  $template = \Drupal::entityTypeManager()
+    -&gt;getStorage('content_template')
+    -&gt;load('node.' . $type-&gt;id() . '.full');
+  if ($template) {
+    $template-&gt;delete();
+  }
+}
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">jarvis_canvas.services.yml</div><pre class="code"><code>services:
+  jarvis_canvas.twig_extension:
+    class: Drupal\jarvis_canvas\JarvisCanvasTwigExtension
+    arguments:
+      - '@entity_type.manager'
+      - '@file_url_generator'
+    tags:
+      - { name: twig.extension }
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">JarvisCanvasTwigExtension.php</div><pre class="code"><code>&lt;?php
+
+declare(strict_types=1);
+
+namespace Drupal\jarvis_canvas;
+
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\file\FileInterface;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\image\ImageStyleInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+
+/**
+ * Twig filter to apply an image style to a Canvas image src URL.
+ *
+ * The Jarvis image SDC receives its image as a resolved public URL
+ * (canvas.module/image → src built with File::createFileUrl()). Image styles,
+ * however, need the original stream-wrapper URI (public://…). Canvas never
+ * populates a stream-wrapper prop on a plain component insert, so the built-in
+ * |image_style filter has nothing to work with.
+ *
+ * This filter bridges the gap the same way Canvas's own ImageAndStyleAdapter
+ * does: look the file up by basename, then build the styled URL from its URI.
+ *
+ * ponytail: basename lookup, exactly like ImageAndStyleAdapter. Collides only
+ * if two managed files share a filename; upgrade to a fid-carrying prop if that
+ * ever bites.
+ */
+final class JarvisCanvasTwigExtension extends AbstractExtension {
+
+  public function __construct(
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly FileUrlGeneratorInterface $fileUrlGenerator,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFilters(): array {
+    return [
+      new TwigFilter('jarvis_image_style', [$this, 'imageStyle']),
+    ];
+  }
+
+  /**
+   * Returns the styled, root-relative URL for an image, or NULL to fall back.
+   *
+   * @param string|null $src
+   *   The image src as delivered to the component (a public file URL).
+   * @param string $style
+   *   The image style machine name.
+   */
+  public function imageStyle(?string $src, string $style): ?string {
+    if (!$src) {
+      return NULL;
+    }
+    $image_style = ImageStyle::load($style);
+    if (!$image_style instanceof ImageStyleInterface) {
+      return NULL;
+    }
+    // image.src maps to src_with_alternate_widths — a URL whose query string
+    // ends in a different filename (…jarvis-banner.png.avif?itok=…). Strip the
+    // query before basename or the file lookup matches nothing.
+    $path = (string) parse_url($src, PHP_URL_PATH);
+    $files = $this-&gt;entityTypeManager-&gt;getStorage('file')
+      -&gt;loadByProperties(['filename' =&gt; urldecode(basename($path))]);
+    $file = reset($files);
+    if (!$file instanceof FileInterface) {
+      return NULL;
+    }
+    $uri = (string) $file-&gt;getFileUri();
+    if (!$image_style-&gt;supportsUri($uri)) {
+      return NULL;
+    }
+    return $this-&gt;fileUrlGenerator-&gt;transformRelative($image_style-&gt;buildUrl($uri));
+  }
+
+}
+</code></pre></div>
+</details>
+<div class="foot prose">
+        <p style="margin-bottom:6px"><strong>About this reference.</strong> Generated from the Jarvis theme source — every prop, default, and option is transcribed from the components' own <code>.component.yml</code> files and the two modules' code. Component IDs (<code>jarvis:hero</code>) are how you reference a component in Twig or a render array.</p>
+        <p style="margin:0">Jarvis · a DXPR-style SDC theme for Drupal Canvas &amp; Layout Builder · Bootstrap 5 · Drupal 11 / 12.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Theme toggle — respects the viewer's OS preference, then lets them override.
+  (function () {
+    var root = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    var icon = document.getElementById('toggleIcon');
+    var label = document.getElementById('toggleLabel');
+    function current() {
+      return root.getAttribute('data-theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+    function paint() {
+      var d = current() === 'dark';
+      icon.textContent = d ? '☀' : '☾';
+      label.textContent = d ? 'Light' : 'Dark';
+    }
+    btn.addEventListener('click', function () {
+      root.setAttribute('data-theme', current() === 'dark' ? 'light' : 'dark');
+      paint();
+    });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', paint);
+    paint();
+  })();
+
+  // Scroll-spy: highlight the sidebar link for the section currently in view.
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
+    var map = {};
+    links.forEach(function (a) {
+      var id = a.getAttribute('href').slice(1);
+      if (document.getElementById(id)) map[id] = a;
+    });
+    var active = null;
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          if (active) active.classList.remove('is-active');
+          active = map[e.target.id];
+          if (active) active.classList.add('is-active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px', threshold: 0 });
+    Object.keys(map).forEach(function (id) { obs.observe(document.getElementById(id)); });
+  })();
+</script>
+</body>
+</html>
