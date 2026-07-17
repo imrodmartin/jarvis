@@ -54,6 +54,9 @@ function jarvis_form_system_theme_settings_alter(array &$form, FormStateInterfac
   }
 
   $form['#attached']['library'][] = 'jarvis/color-settings';
+  // Live WCAG contrast badges (js/color-settings.js) share the same pair list
+  // as the save-time warning below.
+  $form['#attached']['drupalSettings']['jarvisContrastPairs'] = _jarvis_contrast_pairs();
   $form['#validate'][] = 'jarvis_color_settings_validate';
 
   // ---------------------------------------------------------------------------
@@ -286,6 +289,31 @@ function _jarvis_contrast_ratio(string $a, string $b): float {
 }
 
 /**
+ * Foreground/background pairs checked for WCAG contrast.
+ *
+ * Shared by the live JS badges (via drupalSettings) and the save-time warning
+ * in jarvis_color_settings_validate().
+ */
+function _jarvis_contrast_pairs(): array {
+  return [
+    ['fg' => 'jarvis_color_title_text', 'bg' => 'jarvis_color_title_bg', 'label' => 'Title text on title background'],
+    ['fg' => 'jarvis_color_footer_text', 'bg' => 'jarvis_color_footer_bg', 'label' => 'Footer text on footer background'],
+    ['fg' => 'jarvis_color_header_text', 'bg' => 'jarvis_color_header_bg', 'label' => 'Header text on header background'],
+    ['fg' => 'jarvis_color_header_link', 'bg' => 'jarvis_color_header_bg', 'label' => 'Header links on header background'],
+    // WCAG 1.4.1: links must be distinguishable from surrounding text — 3:1
+    // against the text color (or carry a non-color cue such as underline).
+    // 'ref' is the shared background, so suggestions stay legible on it too.
+    [
+      'fg' => 'jarvis_color_header_link',
+      'bg' => 'jarvis_color_header_text',
+      'ref' => 'jarvis_color_header_bg',
+      'type' => 'distinguish',
+      'label' => 'Header links vs header text',
+    ],
+  ];
+}
+
+/**
  * Validate handler: reject anything that isn't a #rrggbb hex (or empty).
  *
  * Also warns (non-blocking) when a text/background pair falls below WCAG AA
@@ -299,23 +327,26 @@ function jarvis_color_settings_validate(array &$form, FormStateInterface $form_s
     }
   }
 
-  $pairs = [
-    ['jarvis_color_title_text', 'jarvis_color_title_bg', 'Title text on title background'],
-    ['jarvis_color_footer_text', 'jarvis_color_footer_bg', 'Footer text on footer background'],
-    ['jarvis_color_header_text', 'jarvis_color_header_bg', 'Header text on header background'],
-    ['jarvis_color_header_link', 'jarvis_color_header_bg', 'Header links on header background'],
-  ];
-  foreach ($pairs as [$fg_key, $bg_key, $label]) {
-    $fg = (string) $form_state->getValue($fg_key);
-    $bg = (string) $form_state->getValue($bg_key);
-    if (preg_match('/^#[0-9a-fA-F]{6}$/', $fg) && preg_match('/^#[0-9a-fA-F]{6}$/', $bg)) {
-      $ratio = _jarvis_contrast_ratio($fg, $bg);
-      if ($ratio < 4.5) {
-        \Drupal::messenger()->addWarning(t('@pair contrast is @ratio:1 — below the WCAG AA minimum of 4.5:1.', [
-          '@pair' => $label,
+  foreach (_jarvis_contrast_pairs() as $pair) {
+    $fg = (string) $form_state->getValue($pair['fg']);
+    $bg = (string) $form_state->getValue($pair['bg']);
+    if (!preg_match('/^#[0-9a-fA-F]{6}$/', $fg) || !preg_match('/^#[0-9a-fA-F]{6}$/', $bg)) {
+      continue;
+    }
+    $ratio = _jarvis_contrast_ratio($fg, $bg);
+    if (($pair['type'] ?? '') === 'distinguish') {
+      if ($ratio < 3) {
+        \Drupal::messenger()->addWarning(t('@pair contrast is @ratio:1 — links need 3:1 against the surrounding text color, or a non-color cue such as underline (WCAG 1.4.1).', [
+          '@pair' => $pair['label'],
           '@ratio' => round($ratio, 1),
         ]));
       }
+    }
+    elseif ($ratio < 4.5) {
+      \Drupal::messenger()->addWarning(t('@pair contrast is @ratio:1 — below the WCAG AA minimum of 4.5:1.', [
+        '@pair' => $pair['label'],
+        '@ratio' => round($ratio, 1),
+      ]));
     }
   }
 }

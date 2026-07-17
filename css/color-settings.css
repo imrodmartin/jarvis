@@ -17,3 +17,54 @@
   vertical-align: middle;
   margin-left: 0.5rem;
 }
+
+/* Live WCAG contrast badge under each paired color field. */
+.jarvis-contrast {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+  font-size: 0.85em;
+}
+.jarvis-contrast-ratio {
+  font-weight: 600;
+}
+.jarvis-contrast-chip {
+  padding: 0.1rem 0.5rem;
+  border-radius: 1rem;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.jarvis-contrast-chip.pass {
+  color: #1c6b2a;
+  border-color: #7cc78d;
+  background: #eaf7ed;
+}
+.jarvis-contrast-chip.fail {
+  color: #a51b1b;
+  border-color: #e39a9a;
+  background: #fdeeee;
+}
+.jarvis-contrast-fix {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.1rem 0.5rem;
+  border: 1px solid #8ca4c4;
+  border-radius: 1rem;
+  background: #eef3fa;
+  color: #1a4480;
+  font: inherit;
+  cursor: pointer;
+}
+.jarvis-contrast-note {
+  color: #55565b;
+  font-style: italic;
+}
+.jarvis-contrast-fix-swatch {
+  width: 0.9em;
+  height: 0.9em;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 2px;
+}
