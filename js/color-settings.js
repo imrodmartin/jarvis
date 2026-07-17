@@ -46,6 +46,14 @@
     return null;
   };
 
+  // Insert `el` into `wrap` just above the widgets: before whichever direct
+  // child of `wrap` contains `target` (insertBefore needs a direct child).
+  const insertAbove = (wrap, el, target) => {
+    let ref = target;
+    while (ref && ref.parentNode !== wrap) ref = ref.parentNode;
+    wrap.insertBefore(el, ref || null);
+  };
+
   Drupal.behaviors.jarvisColorSettings = {
     attach(context) {
       once('jarvis-color', '.jarvis-color-hex', context).forEach((hex) => {
@@ -71,7 +79,10 @@
 
         const badge = document.createElement('div');
         badge.className = 'jarvis-contrast';
-        (fg.closest('.form-item') || fg.parentNode).appendChild(badge);
+        // Above the inputs so the native picker popup (which opens below)
+        // doesn't cover it.
+        const fgWrap = fg.closest('.form-item') || fg.parentNode;
+        insertAbove(fgWrap, badge, fgWrap.querySelector('.jarvis-color-pick') || fg);
 
         const chip = (label, need, r) =>
           `<span class="jarvis-contrast-chip ${r >= need ? 'pass' : 'fail'}">${label} (${need}:1) ${r >= need ? '✓' : '✗'}</span>`;
@@ -129,6 +140,43 @@
         fg.addEventListener('input', update);
         bg.addEventListener('input', update);
         if (ref) ref.addEventListener('input', update);
+        update();
+      });
+
+      // Background 1/2: the live site auto-picks black or white text
+      // (jarvis_preprocess_html, white wins ties) — show which one here.
+      (drupalSettings.jarvisAutoTextBgs || []).forEach((name) => {
+        const input = document.querySelector(`input[name="${name}"]`);
+        if (!input || !once('jarvis-autotext', input).length) return;
+
+        const badge = document.createElement('div');
+        badge.className = 'jarvis-contrast';
+        const wrap = input.closest('.form-item') || input.parentNode;
+        insertAbove(wrap, badge, wrap.querySelector('.jarvis-color-pick') || input);
+
+        const chip = (label, need, r) =>
+          `<span class="jarvis-contrast-chip ${r >= need ? 'pass' : 'fail'}">${label} (${need}:1) ${r >= need ? '✓' : '✗'}</span>`;
+
+        const update = () => {
+          if (!HEX.test(input.value)) {
+            badge.innerHTML = '';
+            badge.hidden = true;
+            return;
+          }
+          badge.hidden = false;
+          const onWhite = ratio(input.value, '#ffffff');
+          const onBlack = ratio(input.value, '#000000');
+          const light = onWhite >= onBlack;
+          const text = light ? '#ffffff' : '#000000';
+          const r = light ? onWhite : onBlack;
+          badge.innerHTML = `<span class="jarvis-contrast-ratio">${Drupal.t('Text color: @hex', { '@hex': text })}</span>`
+            + `<span class="jarvis-contrast-fix-swatch" style="background:${text}"></span>`
+            + `<span class="jarvis-contrast-ratio">${r.toFixed(2)}:1</span>`
+            + chip(Drupal.t('Small text'), SMALL, r)
+            + chip(Drupal.t('Large text'), LARGE, r);
+        };
+
+        input.addEventListener('input', update);
         update();
       });
     },

@@ -18,13 +18,14 @@
   margin-left: 0.5rem;
 }
 
-/* Live WCAG contrast badge under each paired color field. */
+/* Live WCAG contrast badge above each paired color field (above so the
+   native picker popup, which opens below, never covers it). */
 .jarvis-contrast {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 0.35rem;
+  margin: 0.2rem 0 0.35rem;
   font-size: 0.85em;
 }
 .jarvis-contrast-ratio {

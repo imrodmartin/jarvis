@@ -57,6 +57,9 @@ function jarvis_form_system_theme_settings_alter(array &$form, FormStateInterfac
   // Live WCAG contrast badges (js/color-settings.js) share the same pair list
   // as the save-time warning below.
   $form['#attached']['drupalSettings']['jarvisContrastPairs'] = _jarvis_contrast_pairs();
+  // Background 1/2 get auto black-or-white text on the live site (see
+  // jarvis_preprocess_html); the form badge shows which one will be used.
+  $form['#attached']['drupalSettings']['jarvisAutoTextBgs'] = ['jarvis_color_bg_1', 'jarvis_color_bg_2'];
   $form['#validate'][] = 'jarvis_color_settings_validate';
 
   // ---------------------------------------------------------------------------
