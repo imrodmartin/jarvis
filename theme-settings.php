@@ -303,16 +303,6 @@ function _jarvis_contrast_pairs(): array {
     ['fg' => 'jarvis_color_footer_text', 'bg' => 'jarvis_color_footer_bg', 'label' => 'Footer text on footer background'],
     ['fg' => 'jarvis_color_header_text', 'bg' => 'jarvis_color_header_bg', 'label' => 'Header text on header background'],
     ['fg' => 'jarvis_color_header_link', 'bg' => 'jarvis_color_header_bg', 'label' => 'Header links on header background'],
-    // WCAG 1.4.1: links must be distinguishable from surrounding text — 3:1
-    // against the text color (or carry a non-color cue such as underline).
-    // 'ref' is the shared background, so suggestions stay legible on it too.
-    [
-      'fg' => 'jarvis_color_header_link',
-      'bg' => 'jarvis_color_header_text',
-      'ref' => 'jarvis_color_header_bg',
-      'type' => 'distinguish',
-      'label' => 'Header links vs header text',
-    ],
   ];
 }
 
@@ -337,15 +327,7 @@ function jarvis_color_settings_validate(array &$form, FormStateInterface $form_s
       continue;
     }
     $ratio = _jarvis_contrast_ratio($fg, $bg);
-    if (($pair['type'] ?? '') === 'distinguish') {
-      if ($ratio < 3) {
-        \Drupal::messenger()->addWarning(t('@pair contrast is @ratio:1 — links need 3:1 against the surrounding text color, or a non-color cue such as underline (WCAG 1.4.1).', [
-          '@pair' => $pair['label'],
-          '@ratio' => round($ratio, 1),
-        ]));
-      }
-    }
-    elseif ($ratio < 4.5) {
+    if ($ratio < 4.5) {
       \Drupal::messenger()->addWarning(t('@pair contrast is @ratio:1 — below the WCAG AA minimum of 4.5:1.', [
         '@pair' => $pair['label'],
         '@ratio' => round($ratio, 1),

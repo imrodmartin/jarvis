@@ -59,10 +59,6 @@
   font: inherit;
   cursor: pointer;
 }
-.jarvis-contrast-note {
-  color: #55565b;
-  font-style: italic;
-}
 .jarvis-contrast-fix-swatch {
   width: 0.9em;
   height: 0.9em;
