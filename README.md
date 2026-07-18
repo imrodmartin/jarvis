@@ -1,7 +1,14 @@
 # Jarvis
 
-DXPR-style SDC theme with Bootstrap 5, built for Drupal Canvas and Layout Builder.
-Ships a recipe that pulls in and enables everything it needs.
+DXPR-style SDC theme with Bootstrap 5, built for Drupal Canvas and Layout
+Builder, with WCAG 2.2 AA safeguards built in (automatic overlay contrast,
+safe-colour fallbacks, live contrast badges in the theme settings).
+
+**Building a whole site?** Use the
+[jarvis-bootstrap-recipe](https://github.com/imrodmartin/jarvis-bootstrap-recipe)
+repository — it wires this theme into a fully functional Drupal site (Canvas,
+demo content, forms, workflow, SEO, AI) with one recipe apply. This repo is
+just the theme, included there as a git submodule.
 
 ## Requirements
 
