@@ -22,11 +22,11 @@ props:
         - '1,200+'
     number_color:
       title: 'Number color'
-      # No `description` key: Canvas's prop-shape matcher fails structural
-      # matching with it present and falls back to a plain textfield instead
-      # of the enum select. Fallback note lives in the enum labels' behaviour:
-      # picks that can't pass WCAG on the surrounding background render as the
-      # section's safe text colour (matrix in overrides.css).
+      description: 'Picks that cannot meet WCAG contrast on the surrounding background fall back to the section''s safe text colour automatically.'
+      # Canvas pins placed components to the component VERSION they were saved
+      # under. Instances from the era when this prop was a free-text hex field
+      # keep rendering a textfield until re-placed (or their pinned version is
+      # migrated) — the schema here only governs newly placed cards.
       type: string
       enum: [primary, secondary, dark, light]
       'meta:enum':
