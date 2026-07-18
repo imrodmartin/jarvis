@@ -3,6 +3,9 @@ name: '2 Columns'
 status: stable
 description: 'Two columns side by side on desktop, stacked full-width on mobile.'
 category: 'Jarvis Layout'
+libraryOverrides:
+  dependencies:
+    - jarvis/contrast
 props:
   type: object
   properties:

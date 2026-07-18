@@ -21,7 +21,7 @@
     referrerpolicy="no-referrer-when-downgrade"></iframe>
   {% if show_link is not defined or show_link %}
     <div class="jarvis-map__link">
-      <a href="https://maps.google.com/maps?q={{ q }}" target="_blank" rel="noopener">{{ link_text|default('View on Google Maps') }}</a>
+      <a href="https://maps.google.com/maps?q={{ q }}" target="_blank" rel="noopener">{{ link_text|default('View on Google Maps') }}<span class="visually-hidden"> {{ '(opens in new tab)'|t }}</span></a>
     </div>
   {% endif %}
 </div>

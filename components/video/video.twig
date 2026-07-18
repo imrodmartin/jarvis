@@ -27,6 +27,8 @@
         {# Autoplay implies muted — browsers block unmuted autoplay. #}
         <video controls preload="metadata"{{ autoplay ? ' autoplay loop playsinline' : '' }}{{ (muted or autoplay) ? ' muted' : '' }}>
           <source src="{{ video_url }}">
+          {# ADA (WCAG 1.2.2): captions track for the native player. #}
+          {% if captions_url %}<track kind="captions" src="{{ captions_url }}" srclang="{{ captions_lang|default('en') }}" label="{{ 'Captions'|t }}" default>{% endif %}
         </video>
       {% else %}
         <iframe src="{{ embed_url }}" title="{{ title|default('Video'|t) }}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>

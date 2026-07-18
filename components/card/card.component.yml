@@ -32,11 +32,12 @@ props:
     text_color:
       title: 'Text color'
       type: string
-      enum: [light, dark, black]
+      # Primary-colored text was removed: a colored hue on a photo can't be
+      # made WCAG-compliant by darkening the overlay.
+      enum: [light, black]
       'meta:enum':
         light: 'Light (#ffffff)'
-        dark: 'Dark (primary color)'
-        black: 'Black (#000000)'
+        black: 'Dark (#000000)'
       default: light
       examples:
         - light
@@ -48,6 +49,16 @@ props:
       type: string
       examples:
         - 'Card title'
+    heading_level:
+      title: 'Heading level'
+      description: 'Match the page outline — one level below the heading above the cards.'
+      type: string
+      enum: [h2, h3, h4]
+      'meta:enum':
+        h2: H2
+        h3: H3
+        h4: H4
+      default: h3
     body:
       title: Body
       type: string

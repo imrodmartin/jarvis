@@ -29,7 +29,7 @@
     width: 85%;
   }
 }
-/* Text color: light (#fff) or dark (#2d6cdf), from the text_color prop. */
+/* Text color: light (#fff) or dark (#000), from the text_color prop. */
 .jarvis-hero--text-light,
 .jarvis-hero--text-light .jarvis-hero__heading,
 .jarvis-hero--text-light .jarvis-hero__subheading {
@@ -38,7 +38,7 @@
 .jarvis-hero--text-dark,
 .jarvis-hero--text-dark .jarvis-hero__heading,
 .jarvis-hero--text-dark .jarvis-hero__subheading {
-  color: var(--bs-primary);
+  color: #000;
 }
 /* Light text -> whole region black for guaranteed contrast. Comes after the
    gradient rule above so it wins the specificity tie. A background image, when

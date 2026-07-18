@@ -32,7 +32,7 @@
     <div class="jarvis-person__social">
       {% for label, s in socials %}
         {% if s.url %}
-          <a href="{{ s.url }}" class="jarvis-person__social-link" aria-label="{{ label }}" target="_blank" rel="noopener noreferrer">
+          <a href="{{ s.url }}" class="jarvis-person__social-link" aria-label="{{ label }} {{ '(opens in new tab)'|t }}" target="_blank" rel="noopener noreferrer">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="{{ s.path }}"/></svg>
           </a>
         {% endif %}

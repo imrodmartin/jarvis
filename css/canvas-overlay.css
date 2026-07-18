@@ -37,3 +37,12 @@ input[data-jarvis-overlay-hidden] {
   border-color: #e39a9a;
   background: #fdeeee;
 }
+.jarvis-overlay-slider input[type="range"]:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.jarvis-overlay-note {
+  color: #55565b;
+  font-size: 0.85em;
+  font-style: italic;
+}

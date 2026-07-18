@@ -148,9 +148,11 @@ body {
 .jarvis-primary-menu nav a:hover,
 .jarvis-primary-menu nav a:focus { color: var(--bs-primary); }
 
-/* Caret on parents (items that contain a submenu). */
+/* Caret on parents (items that contain a submenu). The `/ ""` alternative-text
+   syntax keeps screen readers from announcing the ▾ glyph; browsers without
+   that syntax fall back to the plain declaration above it. */
 .jarvis-primary-menu li:has(> ul) > a::after,
-.jarvis-primary-menu li:has(> ul) > span::after { content: " \25be"; opacity: 0.6; }
+.jarvis-primary-menu li:has(> ul) > span::after { content: " \25be"; content: " \25be" / ""; opacity: 0.6; }
 
 /* Submenus (nested ul): hidden, revealed on hover/focus. */
 .jarvis-primary-menu li > ul {
@@ -458,6 +460,18 @@ a {
   text-decoration: none;
 }
 
+/* ADA (WCAG 1.4.1): inside prose, color alone can't mark a link — the colour-
+   variable system even forces links to the body colour in coloured sections
+   (.jarvis-bg--*, footer), where an un-underlined link is invisible as a link.
+   Restore underlines in prose contexts; nav/buttons stay clean. */
+.jarvis-text a:not(.btn),
+.jarvis-wysiwyg a:not(.btn),
+.card-text a:not(.btn),
+.jarvis-cta__text a:not(.btn),
+.jarvis-footer a:not(.btn) {
+  text-decoration: underline;
+}
+
 /* Section text-colour override: cascades to every child component (text, wysiwyg,
    etc.) via the colour vars. Components with their own background (person card,
    standard card) reset above under .jarvis-columns, so they are unaffected.
@@ -501,4 +515,51 @@ a {
   --bs-link-color: #fff;
   --bs-link-color-rgb: 255, 255, 255;
   --bs-link-hover-color: #fff;
+}
+
+/* ADA (WCAG 2.4.1): core's skip link ships classes `visually-hidden focusable`
+   (verified in D11 markup — no .skip-link class), but the un-hide-on-focus
+   rules live in Drupal's system.base.css, which this base-theme-false theme
+   doesn't load — Bootstrap's .visually-hidden (all !important) would keep the
+   link clipped even while focused. Reveal it explicitly; !important is
+   required to beat Bootstrap's clip rules. */
+.visually-hidden.focusable:focus,
+.skip-link:focus {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0.75rem 1.25rem !important;
+  overflow: visible !important;
+  clip: auto !important;
+  clip-path: none !important;
+  white-space: normal !important;
+  background: #1b2a4a;
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* ADA (WCAG 2.4.7 / 2.4.11): explicit, high-visibility focus indicator.
+   currentColor tracks each section's computed (contrast-safe) text colour, so
+   the ring stays visible on dark heroes and coloured bands alike. */
+:is(a, button, [tabindex], input, select, textarea, summary):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* ADA (WCAG 2.3.3): honour the user's reduced-motion preference — kills the
+   menu/card transitions and CSS animations; js guards (stat count-up) check
+   the same media query. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

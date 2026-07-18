@@ -22,6 +22,19 @@ props:
       type: string
       examples:
         - 'Product demo video'
+    captions_url:
+      title: 'Captions file URL (files only)'
+      description: 'WebVTT (.vtt) captions track for direct video files — required for WCAG when the video has speech. YouTube/Vimeo embeds use their own captions.'
+      type: string
+      format: uri-reference
+      examples:
+        - '/sites/default/files/demo.vtt'
+    captions_lang:
+      title: 'Captions language code'
+      type: string
+      default: 'en'
+      examples:
+        - 'en'
     aspect:
       title: 'Aspect ratio'
       type: string

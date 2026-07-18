@@ -41,6 +41,8 @@
   Drupal.behaviors.jarvisStatCountUp = {
     attach(context) {
       once('jarvis-count-up', '[data-count-up]', context).forEach((el) => {
+        // ADA (WCAG 2.3.3): reduced-motion users get the final value, no animation.
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         if (!('IntersectionObserver' in window)) return run(el); // ponytail: old browsers just see final value
         const io = new IntersectionObserver((entries) => {
           entries.forEach((e) => {

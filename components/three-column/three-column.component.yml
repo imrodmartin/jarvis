@@ -3,6 +3,9 @@ name: '3 Columns'
 status: stable
 description: 'Three columns on desktop, two on tablet, stacked full-width on mobile.'
 category: 'Jarvis Layout'
+libraryOverrides:
+  dependencies:
+    - jarvis/contrast
 props:
   type: object
   properties:

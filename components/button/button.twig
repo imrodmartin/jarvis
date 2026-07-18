@@ -8,5 +8,7 @@
 {% set size = size|default('medium') %}
 {% set size_class = { small: 'btn-sm', medium: '', large: 'btn-lg' }[size] %}
 {% if text %}
-  <a href="{{ href|default('#') }}" class="btn btn-{{ variant }} {{ size_class }}"{% if new_tab|default(false) %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ text }}</a>
+  {# ADA: no dead href="#" when the URL is empty; screen readers are told when
+     the link leaves the tab (WCAG 3.2 advisory). #}
+  <a{% if href %} href="{{ href }}"{% endif %} class="btn btn-{{ variant }} {{ size_class }}"{% if new_tab|default(false) %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ text }}{% if new_tab|default(false) %}<span class="visually-hidden"> {{ '(opens in new tab)'|t }}</span>{% endif %}</a>
 {% endif %}

@@ -27,10 +27,6 @@
 .jarvis-card--text-light :is(.card-title, .card-text) {
   color: #fff;
 }
-.jarvis-card--text-dark,
-.jarvis-card--text-dark :is(.card-title, .card-text) {
-  color: var(--bs-primary);
-}
 .jarvis-card--text-black,
 .jarvis-card--text-black :is(.card-title, .card-text) {
   color: #000;

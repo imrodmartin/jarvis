@@ -1,22 +1,28 @@
 /**
  * @file
- * Shared WCAG contrast engine for the hero and card components: auto-darkens
- * the black overlay until light text passes WCAG AA (4.5:1) on the sampled
- * background image. Attached per component via libraryOverrides dependencies
- * (jarvis/contrast) in hero.component.yml and card.component.yml.
+ * Shared WCAG contrast engine for the hero, card and column components:
+ * auto-tunes the image overlay until the text passes WCAG AA (4.5:1) on the
+ * sampled background image. Dark overlays are raised for light text; light
+ * overlays (.jarvis-bg__overlay--light, columns with dark text) are raised
+ * for dark text. Attached per component via libraryOverrides dependencies
+ * (jarvis/contrast) in the hero, card and one/two/three-column .component.yml.
  */
 (function () {
   'use strict';
 
-  var NEED = 4.5;   // WCAG AA, normal text (subheading/body is the tightest case)
-  var TEXT = 1;     // relative luminance of #fff text
+  var NEED = 4.5;        // WCAG AA, normal text (subheading/body is the tightest case)
+  var TEXT = 1;          // relative luminance of #fff text
+  var DARK_TEXT = 0.011; // relative luminance of #212529 body text (matches canvas-overlay.js)
 
   // [container selector, overlay selector, dark-text class] per component.
-  // Auto-darkening assumes light text; dark text is handled by each
-  // component's black CSS fallback region instead.
+  // Hero/card: dark/black text sits on the bare image (their CSS fallback
+  // handles contrast), so those variants are skipped via the class. Columns
+  // (null class) always tune: their dark-text case flips to a light overlay
+  // (.jarvis-bg__overlay--light) which is tuned against dark text instead.
   var TARGETS = [
     ['.jarvis-hero[style*="background-image"]', '.jarvis-hero__overlay', 'jarvis-hero--text-dark'],
-    ['.jarvis-card--background[style*="background-image"]', '.jarvis-card__overlay', 'jarvis-card--text-dark']
+    ['.jarvis-card--background[style*="background-image"]', '.jarvis-card__overlay', 'jarvis-card--text-dark'],
+    ['.jarvis-columns[style*="background-image"]', '.jarvis-bg__overlay', null]
   ];
 
   // sRGB channel (0-255) -> linear
@@ -31,11 +37,12 @@
     return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
   }
 
-  // Average [r,g,b] of the brightest bs×bs block in a size×size RGBA sample.
-  // Blocks (not single pixels) so one noisy pixel can't dominate.
-  function brightestBlock(d, size, bs) {
+  // Average [r,g,b] of the worst-case bs×bs block in a size×size RGBA sample:
+  // brightest block for light text, darkest block for dark text. Blocks (not
+  // single pixels) so one noisy pixel can't dominate.
+  function extremeBlock(d, size, bs, darkest) {
     var best = [0, 0, 0];
-    var bestLum = -1;
+    var bestLum = darkest ? 2 : -1;
     for (var by = 0; by < size; by += bs) {
       for (var bx = 0; bx < size; bx += bs) {
         var r = 0, g = 0, b = 0, n = 0;
@@ -47,7 +54,7 @@
         }
         r /= n; g /= n; b /= n;
         var l = lum(r, g, b);
-        if (l > bestLum) { bestLum = l; best = [r, g, b]; }
+        if (darkest ? l < bestLum : l > bestLum) { bestLum = l; best = [r, g, b]; }
       }
     }
     return best;
@@ -64,14 +71,30 @@
     return a;
   }
 
+  // Smallest white-overlay alpha (>= floor) that makes dark text pass on [r,g,b].
+  // A white overlay blends each channel toward 255 (same model as the
+  // canvas-overlay.js editor badge).
+  function neededAlphaLight(r, g, b, floor) {
+    var a = floor;
+    while (a < 0.95) {
+      if (contrast(DARK_TEXT, lum(r + (255 - r) * a, g + (255 - g) * a, b + (255 - b) * a)) >= NEED) break;
+      a += 0.02;
+    }
+    return a;
+  }
+
   function tune(el, overlaySel, darkClass) {
     if (el.dataset.jarvisContrast) return;
     el.dataset.jarvisContrast = '1';
-    // Dark AND black text sit on the bare image — skip auto-darkening for both.
-    var blackClass = darkClass.replace('--text-dark', '--text-black');
-    if (el.classList.contains(darkClass) || el.classList.contains(blackClass)) return;
+    // Hero/card: dark AND black text sit on the bare image — skip both.
+    if (darkClass) {
+      var blackClass = darkClass.replace('--text-dark', '--text-black');
+      if (el.classList.contains(darkClass) || el.classList.contains(blackClass)) return;
+    }
     var overlay = el.querySelector(overlaySel);
     if (!overlay) return;
+    // Light overlay = dark text on a whitened image; dark overlay = white text.
+    var lightOverlay = overlay.classList.contains('jarvis-bg__overlay--light');
     var m = (el.style.backgroundImage || '').match(/url\(["']?(.*?)["']?\)/);
     if (!m) return;
 
@@ -85,12 +108,15 @@
         var cx = cv.getContext('2d');
         cx.drawImage(img, 0, 0, 16, 16);
         var d = cx.getImageData(0, 0, 16, 16).data;
-        // Score against the brightest 4x4 block, not the whole-image average:
-        // text can cross a bright patch that an average would hide.
-        var best = brightestBlock(d, 16, 4);
-        overlay.style.opacity = neededAlpha(best[0], best[1], best[2], floor).toFixed(2);
+        // Score against the worst 4x4 block, not the whole-image average:
+        // text can cross a bright (or dark) patch that an average would hide.
+        var best = extremeBlock(d, 16, 4, lightOverlay);
+        overlay.style.opacity = (lightOverlay
+          ? neededAlphaLight(best[0], best[1], best[2], floor)
+          : neededAlpha(best[0], best[1], best[2], floor)).toFixed(2);
       } catch (e) {
-        // Cross-origin image taints the canvas -> can't sample. Fail safe: force dark.
+        // Cross-origin image taints the canvas -> can't sample. Fail safe:
+        // strengthen the overlay in its own direction.
         overlay.style.opacity = Math.max(floor, 0.6).toFixed(2);
       }
     };
@@ -105,6 +131,14 @@
   }
 
   if (typeof document === 'undefined') return;  // node self-check path
+
+  // Inside the Canvas editor preview, show the author's raw overlay value —
+  // auto-darkening here would fight the overlay slider and make it look dead.
+  // The editor badge (js/canvas-overlay.js) reports compliance instead; the
+  // live site keeps the auto-raise safety net.
+  try {
+    if (window.frameElement && window.frameElement.closest('[data-testid="canvas-editor-frame"]')) return;
+  } catch (e) { /* cross-origin parent: not the Canvas editor */ }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', run);
   } else {
@@ -150,5 +184,40 @@ if (typeof module !== 'undefined' && module.exports) {
   var picked = bb(half, 16, 4);
   assert.deepStrictEqual(picked, [255, 255, 255]);
   assert.ok(need(picked[0], picked[1], picked[2], 0) > need(127, 127, 127, 0)); // stricter than the average
+
+  // Light-overlay model (columns with dark text): white overlay blends toward
+  // 255; scored against #212529 text (L = 0.011).
+  var DARK = 0.011;
+  var needLight = function (r, g, b, f) {
+    var a = f;
+    while (a < 0.95) {
+      if (contrast(DARK, lum(r + (255 - r) * a, g + (255 - g) * a, b + (255 - b) * a)) >= 4.5) break;
+      a += 0.02;
+    }
+    return a;
+  };
+  assert.ok(needLight(255, 255, 255, 0) === 0);                    // white image: dark text already passes
+  [[0, 0, 0], [40, 40, 60], [90, 70, 50]].forEach(function (c) {
+    var a = needLight(c[0], c[1], c[2], 0);                        // dark images -> lightened until text passes
+    assert.ok(a > 0);
+    assert.ok(contrast(DARK, lum(c[0] + (255 - c[0]) * a, c[1] + (255 - c[1]) * a, c[2] + (255 - c[2]) * a)) >= 4.5);
+  });
+  assert.ok(needLight(0, 0, 0, 0.9) === 0.9);                      // respects user floor when already light enough
+  // Darkest-block pick: half-black/half-white sample must resolve to the black
+  // block for dark text (worst case), mirroring the brightest pick for light.
+  var darkestPicked = (function (d, size, bs) {
+    var best = [0, 0, 0], bestLum = 2;
+    for (var by = 0; by < size; by += bs) for (var bx = 0; bx < size; bx += bs) {
+      var r = 0, g = 0, b = 0, n = 0;
+      for (var y = by; y < by + bs; y++) for (var x = bx; x < bx + bs; x++) {
+        var i = (y * size + x) * 4; r += d[i]; g += d[i + 1]; b += d[i + 2]; n++;
+      }
+      r /= n; g /= n; b /= n;
+      var l = lum(r, g, b);
+      if (l < bestLum) { bestLum = l; best = [r, g, b]; }
+    }
+    return best;
+  })(half, 16, 4);
+  assert.deepStrictEqual(darkestPicked, [0, 0, 0]);
   console.log('contrast self-check ok');
 }

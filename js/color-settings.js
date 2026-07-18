@@ -70,34 +70,45 @@
       });
 
       // Contrast badges, one per fg/bg pair, attached under the fg field.
+      // A pair side starting with '#' is a fixed color (e.g. the white of
+      // button text on Primary), not a settings field — the badge then anchors
+      // to whichever side IS a field and shows the pair label for context.
       (drupalSettings.jarvisContrastPairs || []).forEach((pair) => {
-        const fg = document.querySelector(`input[name="${pair.fg}"]`);
-        const bg = document.querySelector(`input[name="${pair.bg}"]`);
-        if (!fg || !bg || !once('jarvis-contrast-' + pair.bg, fg).length) return;
+        const isConst = (v) => v.charAt(0) === '#';
+        const fg = isConst(pair.fg) ? null : document.querySelector(`input[name="${pair.fg}"]`);
+        const bg = isConst(pair.bg) ? null : document.querySelector(`input[name="${pair.bg}"]`);
+        if ((!fg && !isConst(pair.fg)) || (!bg && !isConst(pair.bg))) return;
+        const anchor = fg || bg;
+        if (!anchor || !once(`jarvis-contrast-${pair.fg}-${pair.bg}`, anchor).length) return;
 
         const badge = document.createElement('div');
         badge.className = 'jarvis-contrast';
         // Above the inputs so the native picker popup (which opens below)
         // doesn't cover it.
-        const fgWrap = fg.closest('.form-item') || fg.parentNode;
-        insertAbove(fgWrap, badge, fgWrap.querySelector('.jarvis-color-pick') || fg);
+        const wrap = anchor.closest('.form-item') || anchor.parentNode;
+        insertAbove(wrap, badge, wrap.querySelector('.jarvis-color-pick') || anchor);
 
         const chip = (label, need, r) =>
           `<span class="jarvis-contrast-chip ${r >= need ? 'pass' : 'fail'}">${label} (${need}:1) ${r >= need ? '✓' : '✗'}</span>`;
 
+        const fgVal = () => (fg ? fg.value : pair.fg);
+        const bgVal = () => (bg ? bg.value : pair.bg);
+
         const update = () => {
-          if (!HEX.test(fg.value) || !HEX.test(bg.value)) {
+          if (!HEX.test(fgVal()) || !HEX.test(bgVal())) {
             badge.innerHTML = '';
             badge.hidden = true;
             return;
           }
           badge.hidden = false;
-          const r = ratio(fg.value, bg.value);
-          let html = `<span class="jarvis-contrast-ratio">${r.toFixed(2)}:1</span>`
+          const r = ratio(fgVal(), bgVal());
+          const label = pair.label ? `${pair.label} — ` : '';
+          let html = `<span class="jarvis-contrast-ratio">${label}${r.toFixed(2)}:1</span>`
             + chip(Drupal.t('Small text'), SMALL, r)
             + chip(Drupal.t('Large text'), LARGE, r);
-          if (r < SMALL) {
-            const fix = suggest(fg.value, bg.value, SMALL);
+          // One-click fix only when the foreground is an editable field.
+          if (r < SMALL && fg) {
+            const fix = suggest(fgVal(), bgVal(), SMALL);
             if (fix) {
               html += `<button type="button" class="jarvis-contrast-fix" data-fix="${fix}">`
                 + Drupal.t('Try @hex', { '@hex': fix })
@@ -109,14 +120,14 @@
 
         badge.addEventListener('click', (e) => {
           const btn = e.target.closest('.jarvis-contrast-fix');
-          if (!btn) return;
+          if (!btn || !fg) return;
           fg.value = btn.dataset.fix;
           // Re-sync the picker swatch and any other pair using this field.
           fg.dispatchEvent(new Event('input', { bubbles: true }));
         });
 
-        fg.addEventListener('input', update);
-        bg.addEventListener('input', update);
+        if (fg) fg.addEventListener('input', update);
+        if (bg) bg.addEventListener('input', update);
         update();
       });
 

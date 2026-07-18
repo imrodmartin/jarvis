@@ -9,10 +9,11 @@ global:
     js/menu-touch.js: {}
     js/nav-branding.js: {}
 
-# Shared WCAG overlay auto-contrast for hero + card (see js/contrast.js).
-# Attached per component via libraryOverrides in their component.yml files.
+# Shared WCAG overlay auto-contrast for hero, card + column layouts
+# (see js/contrast.js). Attached per component via libraryOverrides in their
+# component.yml files.
 contrast:
-  version: 1.0.1
+  version: 1.0.3
   js:
     js/contrast.js: {}
 
@@ -32,7 +33,7 @@ canvas-tray-autoexpand:
 # Loaded onto the Canvas editor via libraries-extend (see jarvis.info.yml).
 # Overlay-opacity slider + live WCAG ✓/✗ badge on component prop forms.
 canvas-overlay:
-  version: 1.0.5
+  version: 1.0.8
   css:
     theme:
       css/canvas-overlay.css: {}

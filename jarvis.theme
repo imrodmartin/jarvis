@@ -123,8 +123,17 @@ function jarvis_preprocess_html(array &$variables) {
     $m = theme_get_setting("jarvis_fs_mobile_$key");
     $d = is_numeric($d) ? (float) $d : $d_default;
     $m = is_numeric($m) ? (float) $m : $m_default;
-    $desktop[] = "--jarvis-fs-$key:$d$unit;";
-    $mobile[] = "--jarvis-fs-$key:$m$unit;";
+    // ADA (WCAG 1.4.4): the base size is entered in px but emitted as a
+    // percentage of the browser default (16px = 100%), so a user's enlarged
+    // browser font setting scales the whole site instead of being overridden.
+    if ($unit === 'px') {
+      $desktop[] = "--jarvis-fs-$key:" . ($d / 16 * 100) . '%;';
+      $mobile[] = "--jarvis-fs-$key:" . ($m / 16 * 100) . '%;';
+    }
+    else {
+      $desktop[] = "--jarvis-fs-$key:$d$unit;";
+      $mobile[] = "--jarvis-fs-$key:$m$unit;";
+    }
   }
   $variables['#attached']['html_head'][] = [
     [

@@ -66,10 +66,12 @@ props:
     text_color:
       title: 'Text color'
       type: string
+      # 'dark' renders #000 (was primary #2d6cdf — a colored hue on a photo
+      # can't be made WCAG-compliant by darkening the overlay).
       enum: [light, dark]
       'meta:enum':
         light: 'Light (#ffffff)'
-        dark: 'Dark (#2d6cdf)'
+        dark: 'Dark (#000000)'
       default: light
       examples:
         - light

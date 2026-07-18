@@ -298,11 +298,20 @@ function _jarvis_contrast_ratio(string $a, string $b): float {
  * in jarvis_color_settings_validate().
  */
 function _jarvis_contrast_pairs(): array {
+  // A side starting with '#' is a fixed color, not a settings field: the theme
+  // hardcodes white button/section text on Primary/Secondary and uses
+  // Primary/Secondary as text on white surfaces, so those combinations must be
+  // checked against the user's picks too (ADA — a light primary would
+  // otherwise silently fail on every button).
   return [
     ['fg' => 'jarvis_color_title_text', 'bg' => 'jarvis_color_title_bg', 'label' => 'Title text on title background'],
     ['fg' => 'jarvis_color_footer_text', 'bg' => 'jarvis_color_footer_bg', 'label' => 'Footer text on footer background'],
     ['fg' => 'jarvis_color_header_text', 'bg' => 'jarvis_color_header_bg', 'label' => 'Header text on header background'],
     ['fg' => 'jarvis_color_header_link', 'bg' => 'jarvis_color_header_bg', 'label' => 'Header links on header background'],
+    ['fg' => '#ffffff', 'bg' => 'jarvis_color_primary', 'label' => 'White text on Primary (buttons, sections)'],
+    ['fg' => 'jarvis_color_primary', 'bg' => '#ffffff', 'label' => 'Primary as text/links on white'],
+    ['fg' => '#ffffff', 'bg' => 'jarvis_color_secondary', 'label' => 'White text on Secondary (buttons, sections)'],
+    ['fg' => 'jarvis_color_secondary', 'bg' => '#ffffff', 'label' => 'Secondary as text/links on white'],
   ];
 }
 
@@ -321,8 +330,9 @@ function jarvis_color_settings_validate(array &$form, FormStateInterface $form_s
   }
 
   foreach (_jarvis_contrast_pairs() as $pair) {
-    $fg = (string) $form_state->getValue($pair['fg']);
-    $bg = (string) $form_state->getValue($pair['bg']);
+    // '#'-prefixed sides are fixed colors, not settings fields.
+    $fg = str_starts_with($pair['fg'], '#') ? $pair['fg'] : (string) $form_state->getValue($pair['fg']);
+    $bg = str_starts_with($pair['bg'], '#') ? $pair['bg'] : (string) $form_state->getValue($pair['bg']);
     if (!preg_match('/^#[0-9a-fA-F]{6}$/', $fg) || !preg_match('/^#[0-9a-fA-F]{6}$/', $bg)) {
       continue;
     }

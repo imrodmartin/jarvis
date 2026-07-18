@@ -8,9 +8,12 @@
 {% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
 {% set h = heading_level|default('h2') ?: 'h2' %}
 {% set bg = bg|default('none') %}
-{# text-bg-* sets the background AND a WCAG-contrast (white/black) foreground,
-   computed by Bootstrap's color-contrast(). Heading/text inherit it. #}
-{% set bg_class = bg != 'none' ? 'text-bg-' ~ bg : '' %}
+{# jarvis-bg--* sets the background AND the theme's ADA-safe text colour vars
+   (white on primary/secondary, checked against the user's picks by the
+   settings-form contrast badges). Bootstrap's text-bg-* was dropped: its
+   foreground is baked in at compile time against the STOCK primary, so a
+   runtime primary change could silently fail WCAG. #}
+{% set bg_class = bg != 'none' ? 'jarvis-bg--' ~ bg : '' %}
 {% set btn_variant = bg != 'none' ? 'light' : 'primary' %}
 <div class="jarvis-cta text-center {{ bg_class }} {{ space }}">
   {% if subtitle %}<p class="jarvis-cta__subtitle text-uppercase fw-bold mb-2">{{ subtitle }}</p>{% endif %}

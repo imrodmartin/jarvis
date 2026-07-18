@@ -77,6 +77,9 @@
       doc.querySelectorAll(
         '.jarvis-hero[style*="background-image"], .jarvis-card--background[style*="background-image"], .jarvis-columns[style*="background-image"]'
       ).forEach((el) => {
+        // Dark/black text variants sit on the bare image (card forces overlay
+        // to 0 for black text) — scoring them against white text would lie.
+        if (/--text-(dark|black)\b/.test(el.className)) return;
         const m = (el.style.backgroundImage || '').match(/url\(["']?(.*?)["']?\)/);
         if (!m) return;
         const ov = el.querySelector('.jarvis-hero__overlay, .jarvis-card__overlay, .jarvis-bg__overlay');
@@ -160,8 +163,35 @@
     badge.className = 'jarvis-overlay-badge';
     badge.hidden = true;
 
-    wrap.append(range, readout, badge);
+    const note = document.createElement('span');
+    note.className = 'jarvis-overlay-note';
+    note.textContent = Drupal.t('No overlay — dark text sits on the bare image');
+    note.hidden = true;
+
+    wrap.append(range, readout, badge, note);
     num.insertAdjacentElement('afterend', wrap);
+
+    // Same form holds the component's Text color select (shared uuid in the
+    // name). Dark/black text zeroes the overlay in card.twig ('black') and
+    // hero.twig ('dark'), so the slider is inert there — disable it and say
+    // why instead of showing a stale badge. Columns keep their slider: black
+    // text there flips to a light overlay instead. Card vs hero is detected
+    // by their unique props (variant / heading_level) in the same form.
+    const uuid = (num.name.match(/canvas_component_props\[([^\]]+)\]/) || [])[1];
+    const sibling = (prop) => (uuid
+      ? document.querySelector(`[name*="${uuid}"][name*="${prop}"]`)
+      : null);
+    const textColor = sibling('text_color');
+    const bareTextValue = sibling('variant') ? 'black' : (sibling('heading_level') ? 'dark' : null);
+    const overlayDisabled = () => !!textColor && !!bareTextValue && textColor.value === bareTextValue;
+    const applyDisabled = () => {
+      const off = overlayDisabled();
+      range.disabled = off;
+      readout.hidden = off;
+      note.hidden = !off;
+      if (off) badge.hidden = true;
+    };
+    if (textColor) textColor.addEventListener('change', () => { applyDisabled(); });
 
     range.addEventListener('input', () => {
       readout.textContent = `${range.value}%`;
@@ -181,10 +211,12 @@
 
     const refresh = () => {
       if (!badge.isConnected) { refreshers.delete(refresh); return; }
+      if (overlayDisabled()) { badge.hidden = true; return; }
       updateBadge(badge, Number(range.value));
     };
     refreshers.add(refresh);
-    updateBadge(badge, Number(range.value));
+    applyDisabled();
+    if (!overlayDisabled()) updateBadge(badge, Number(range.value));
   };
 
   const scan = () => {
