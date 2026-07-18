@@ -22,7 +22,11 @@ props:
         - '1,200+'
     number_color:
       title: 'Number color'
-      description: 'Picks that cannot meet WCAG contrast on the surrounding background fall back to the section''s safe text colour automatically.'
+      # No `description` key: Canvas's prop-shape matcher fails structural
+      # matching with it present and falls back to a plain textfield instead
+      # of the enum select. Fallback note lives in the enum labels' behaviour:
+      # picks that can't pass WCAG on the surrounding background render as the
+      # section's safe text colour (matrix in overrides.css).
       type: string
       enum: [primary, secondary, dark, light]
       'meta:enum':
@@ -31,6 +35,8 @@ props:
         dark: 'Dark (almost black)'
         light: 'Light (almost white)'
       default: primary
+      examples:
+        - primary
     count_up:
       title: 'Count-up animation'
       description: 'Animate the number from 0 when scrolled into view.'
