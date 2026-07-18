@@ -68,6 +68,7 @@ end you'll understand <em>why</em> each piece exists, not just <em>what</em> to 
 <li><a href="#step-10-content-templates">Step 10 — Content templates (fielded nodes → components)</a></li>
 <li><a href="#step-11-recipe">Step 11 — Package it all as a recipe</a></li>
 <li><a href="#step-12-install">Step 12 — Install, apply, and test</a></li>
+<li><a href="#accessibility-editors">Accessibility for content editors</a></li>
 <li><a href="#troubleshooting">Troubleshooting &amp; cheat sheet</a></li>
 </ol>
 <hr />
@@ -1239,6 +1240,19 @@ ddev drush uli
    per the content template. → Step 10 OK.</li>
 </ol>
 <p>If something's missing, it's almost always caching or order — see below.</p>
+<hr />
+<p><a name="accessibility-editors"></a></p>
+<h2 id="accessibility-for-content-editors">Accessibility for content editors</h2>
+<p>The theme handles colour contrast automatically — overlays darken until text passes WCAG, unsafe colour picks fall back to a safe colour, and the settings form warns on failing combinations. What it <em>can't</em> do is judge your content. The checklist below covers the failures only an editor can prevent:</p>
+<ul>
+<li><strong>One H1 per page.</strong> The page title (or the hero's heading at level H1) is the only H1. Additional heroes and section headings use H2.</li>
+<li><strong>Don't skip heading levels.</strong> H2 → H3 → H4, in order. The Hero, CTA and Card components all have a "Heading level" option — set it to one level below the heading that precedes them. Screen-reader users navigate by heading outline; a skipped level is a broken table of contents.</li>
+<li><strong>Write real alternative text.</strong> Describe what the image <em>communicates</em> ("Team collaborating around a whiteboard"), not what it is ("image", "photo of…" — the screen reader already announces it's an image). Purely decorative images get <em>empty</em> alt text, not a filename.</li>
+<li><strong>Link text says where it goes.</strong> "Read the 2026 annual report" — never "click here" or a bare "read more". Screen-reader users pull up links as a list, out of context.</li>
+<li><strong>Caption your videos.</strong> YouTube/Vimeo: enable captions on the platform. Directly-uploaded video files: supply a WebVTT (.vtt) file in the Video component's "Captions file URL" option.</li>
+<li><strong>Run the checker before publishing.</strong> The Editoria11y toggle (bottom-right on every page when you're logged in) flags all of the above in place. Publish with zero flags.</li>
+<li><strong>Trust the fallbacks.</strong> If a colour you picked "doesn't take" on a coloured section, that's the ADA guard keeping the text readable — pick a colour the section supports instead of fighting it.</li>
+</ul>
 <hr />
 <p><a name="troubleshooting"></a></p>
 <h2 id="troubleshooting-cheat-sheet">Troubleshooting &amp; cheat sheet</h2>

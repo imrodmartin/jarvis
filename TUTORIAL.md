@@ -27,7 +27,8 @@ end you'll understand *why* each piece exists, not just *what* to type.
 13. [Step 10 — Content templates (fielded nodes → components)](#step-10-content-templates)
 14. [Step 11 — Package it all as a recipe](#step-11-recipe)
 15. [Step 12 — Install, apply, and test](#step-12-install)
-16. [Troubleshooting & cheat sheet](#troubleshooting)
+16. [Accessibility for content editors](#accessibility-editors)
+17. [Troubleshooting & cheat sheet](#troubleshooting)
 
 ---
 
@@ -1304,6 +1305,39 @@ Then verify, in order:
    per the content template. → Step 10 OK.
 
 If something's missing, it's almost always caching or order — see below.
+
+---
+
+<a name="accessibility-editors"></a>
+## Accessibility for content editors
+
+The theme handles colour contrast automatically — overlays darken until text
+passes WCAG, unsafe colour picks fall back to a safe colour, and the settings
+form warns on failing combinations. What it *can't* do is judge your content.
+The checklist below covers the failures only an editor can prevent:
+
+- **One H1 per page.** The page title (or the hero's heading at level H1) is
+  the only H1. Additional heroes and section headings use H2.
+- **Don't skip heading levels.** H2 → H3 → H4, in order. The Hero, CTA and
+  Card components all have a "Heading level" option — set it to one level
+  below the heading that precedes them. Screen-reader users navigate by
+  heading outline; a skipped level is a broken table of contents.
+- **Write real alternative text.** Describe what the image *communicates*
+  ("Team collaborating around a whiteboard"), not what it is ("image", "photo
+  of…"  — the screen reader already announces it's an image). Purely
+  decorative images get *empty* alt text, not a filename.
+- **Link text says where it goes.** "Read the 2026 annual report" — never
+  "click here" or a bare "read more". Screen-reader users pull up links as a
+  list, out of context.
+- **Caption your videos.** YouTube/Vimeo: enable captions on the platform.
+  Directly-uploaded video files: supply a WebVTT (.vtt) file in the Video
+  component's "Captions file URL" option.
+- **Run the checker before publishing.** The Editoria11y toggle
+  (bottom-right on every page when you're logged in) flags all of the above
+  in place. Publish with zero flags.
+- **Trust the fallbacks.** If a colour you picked "doesn't take" on a
+  coloured section, that's the ADA guard keeping the text readable — pick a
+  colour the section supports instead of fighting it.
 
 ---
 

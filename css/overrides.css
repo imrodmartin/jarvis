@@ -538,6 +538,34 @@ a {
   color: #f8f9fa;
 }
 
+/* ADA matrix for the Text component's own colour prop (.jarvis-text--*,
+   base classes in text.css). The columns' text_color override is matrix-
+   gated in Twig, but a child Text component's colour pick bypassed it —
+   primary text inside a primary section rendered invisible. Same deny-by-
+   default approach as the stat number: unsafe picks fall back to the
+   section's contrast-safe text colour (body small text, so the allowlist
+   mirrors the columns AA matrix, not the large-text one). Heading vars are
+   reset too — the base classes repaint headings via --jarvis-heading-color. */
+.jarvis-bg--primary :is(.jarvis-text--primary, .jarvis-text--secondary, .jarvis-text--black, .jarvis-text--white),
+.jarvis-bg--secondary :is(.jarvis-text--primary, .jarvis-text--secondary, .jarvis-text--black, .jarvis-text--white),
+.jarvis-bg--dark :is(.jarvis-text--primary, .jarvis-text--secondary, .jarvis-text--black, .jarvis-text--white),
+.jarvis-bg--bg1 :is(.jarvis-text--primary, .jarvis-text--secondary, .jarvis-text--black, .jarvis-text--white),
+.jarvis-bg--bg2 :is(.jarvis-text--primary, .jarvis-text--secondary, .jarvis-text--black, .jarvis-text--white),
+.jarvis-bg--image :is(.jarvis-text--primary, .jarvis-text--secondary, .jarvis-text--black, .jarvis-text--white),
+.jarvis-bg--light :is(.jarvis-text--primary, .jarvis-text--white) {
+  color: inherit;
+  --jarvis-heading-color: inherit;
+  --bs-heading-color: inherit;
+}
+/* Allowlist: white passes AA on primary/secondary/dark sections. */
+.jarvis-bg--primary .jarvis-text--white,
+.jarvis-bg--secondary .jarvis-text--white,
+.jarvis-bg--dark .jarvis-text--white {
+  color: #fff;
+  --jarvis-heading-color: #fff;
+  --bs-heading-color: #fff;
+}
+
 /* ADA: the person name's .text-primary (Bootstrap, !important) goes invisible
    when the surrounding section is painted primary — ride the section's
    contrast-safe text colour on coloured/auto/image backgrounds instead. */

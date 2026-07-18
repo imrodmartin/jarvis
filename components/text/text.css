@@ -17,8 +17,11 @@
   --jarvis-heading-color: #000;
   --bs-heading-color: #000;
 }
+/* White starts as inherit — near-white on the default white page is
+   unreadable; the colored-background allowlist in overrides.css turns it
+   #fff where it passes WCAG (same pattern as the stat number's light). */
 .jarvis-text--white {
-  color: #fff;
-  --jarvis-heading-color: #fff;
-  --bs-heading-color: #fff;
+  color: inherit;
+  --jarvis-heading-color: inherit;
+  --bs-heading-color: inherit;
 }
