@@ -9,6 +9,9 @@
 {% set has_icon = icon.src is defined and icon.src %}
 <div class="jarvis-stat text-center {{ space }}">
   {% if has_icon %}<img src="{{ icon.src }}" alt="{{ icon.alt }}" class="jarvis-stat__icon mb-3">{% endif %}
-  {% if title %}<div class="jarvis-stat__number text-{{ number_color|default('primary') }}"{% if count_up %} data-count-up{% endif %}>{{ title }}</div>{% endif %}
+  {# Custom colour classes (not Bootstrap text-*): overrides.css holds the ADA
+     matrix that falls back to the section's safe text colour when the pick
+     can't pass WCAG on the surrounding background. #}
+  {% if title %}<div class="jarvis-stat__number jarvis-stat__number--{{ number_color|default('primary') }}"{% if count_up %} data-count-up{% endif %}>{{ title }}</div>{% endif %}
   {% if body %}<div class="jarvis-stat__body">{{ body|raw }}</div>{% endif %}
 </div>

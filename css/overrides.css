@@ -517,19 +517,36 @@ a {
   --bs-link-hover-color: #fff;
 }
 
-/* ADA: brand-coloured accents (stat number's .text-primary/.text-secondary,
-   person name) go invisible when the surrounding section is painted the SAME
-   brand colour — Bootstrap's .text-* utilities are !important and ignore
-   context. On any coloured/image/auto background, ride the section's computed
-   contrast-safe text colour instead; !important beats the utility. Plain and
-   light backgrounds keep the brand colour (3rem numbers are large text,
-   >= 3:1 there). */
-.jarvis-bg--primary :is(.jarvis-stat__number, .jarvis-person__name),
-.jarvis-bg--secondary :is(.jarvis-stat__number, .jarvis-person__name),
-.jarvis-bg--dark :is(.jarvis-stat__number, .jarvis-person__name),
-.jarvis-bg--bg1 :is(.jarvis-stat__number, .jarvis-person__name),
-.jarvis-bg--bg2 :is(.jarvis-stat__number, .jarvis-person__name),
-.jarvis-bg--image :is(.jarvis-stat__number, .jarvis-person__name) {
+/* ADA matrix for the stat number_color prop (base classes in stat.css).
+   Deny-by-default on every coloured/auto/image background: the pick falls
+   back to the section's contrast-safe text colour. The allowlist below
+   re-enables combinations that pass WCAG for 3rem large text with the
+   default palette — mirrors the columns text_color matrix philosophy.
+   bg1/bg2/image stay deny-only (user/image colours are unknowable here). */
+.jarvis-bg--primary .jarvis-stat__number,
+.jarvis-bg--secondary .jarvis-stat__number,
+.jarvis-bg--dark .jarvis-stat__number,
+.jarvis-bg--bg1 .jarvis-stat__number,
+.jarvis-bg--bg2 .jarvis-stat__number,
+.jarvis-bg--image .jarvis-stat__number {
+  color: inherit;
+}
+/* Allowlist: near-white passes on primary, secondary and dark sections. */
+.jarvis-bg--primary .jarvis-stat__number--light,
+.jarvis-bg--secondary .jarvis-stat__number--light,
+.jarvis-bg--dark .jarvis-stat__number--light {
+  color: #f8f9fa;
+}
+
+/* ADA: the person name's .text-primary (Bootstrap, !important) goes invisible
+   when the surrounding section is painted primary — ride the section's
+   contrast-safe text colour on coloured/auto/image backgrounds instead. */
+.jarvis-bg--primary .jarvis-person__name,
+.jarvis-bg--secondary .jarvis-person__name,
+.jarvis-bg--dark .jarvis-person__name,
+.jarvis-bg--bg1 .jarvis-person__name,
+.jarvis-bg--bg2 .jarvis-person__name,
+.jarvis-bg--image .jarvis-person__name {
   color: inherit !important;
 }
 

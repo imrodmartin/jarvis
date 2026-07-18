@@ -22,11 +22,14 @@ props:
         - '1,200+'
     number_color:
       title: 'Number color'
+      description: 'Picks that cannot meet WCAG contrast on the surrounding background fall back to the section''s safe text colour automatically.'
       type: string
-      enum: [primary, secondary]
+      enum: [primary, secondary, dark, light]
       'meta:enum':
         primary: Primary
         secondary: Secondary
+        dark: 'Dark (almost black)'
+        light: 'Light (almost white)'
       default: primary
     count_up:
       title: 'Count-up animation'

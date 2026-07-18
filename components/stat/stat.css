@@ -8,6 +8,13 @@
   font-weight: 700;
   line-height: 1.1;
 }
+/* Base accent colours for the number_color prop. `light` starts as inherit —
+   near-white is unreadable on the default white page; the colored-background
+   allowlist in overrides.css turns it #f8f9fa where it passes WCAG. */
+.jarvis-stat__number--primary { color: var(--bs-primary); }
+.jarvis-stat__number--secondary { color: var(--bs-secondary); }
+.jarvis-stat__number--dark { color: #212529; }
+.jarvis-stat__number--light { color: inherit; }
 .jarvis-stat__body {
   color: var(--bs-body-color);
 }
