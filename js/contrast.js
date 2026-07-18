@@ -31,6 +31,28 @@
     return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
   }
 
+  // Average [r,g,b] of the brightest bs×bs block in a size×size RGBA sample.
+  // Blocks (not single pixels) so one noisy pixel can't dominate.
+  function brightestBlock(d, size, bs) {
+    var best = [0, 0, 0];
+    var bestLum = -1;
+    for (var by = 0; by < size; by += bs) {
+      for (var bx = 0; bx < size; bx += bs) {
+        var r = 0, g = 0, b = 0, n = 0;
+        for (var y = by; y < by + bs; y++) {
+          for (var x = bx; x < bx + bs; x++) {
+            var i = (y * size + x) * 4;
+            r += d[i]; g += d[i + 1]; b += d[i + 2]; n++;
+          }
+        }
+        r /= n; g /= n; b /= n;
+        var l = lum(r, g, b);
+        if (l > bestLum) { bestLum = l; best = [r, g, b]; }
+      }
+    }
+    return best;
+  }
+
   // Smallest black-overlay alpha (>= floor) that makes white text pass on [r,g,b].
   // A black overlay in sRGB space scales each channel by (1 - a).
   function neededAlpha(r, g, b, floor) {
@@ -63,9 +85,10 @@
         var cx = cv.getContext('2d');
         cx.drawImage(img, 0, 0, 16, 16);
         var d = cx.getImageData(0, 0, 16, 16).data;
-        var r = 0, g = 0, b = 0, n = 0;
-        for (var i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; }
-        overlay.style.opacity = neededAlpha(r / n, g / n, b / n, floor).toFixed(2);
+        // Score against the brightest 4x4 block, not the whole-image average:
+        // text can cross a bright patch that an average would hide.
+        var best = brightestBlock(d, 16, 4);
+        overlay.style.opacity = neededAlpha(best[0], best[1], best[2], floor).toFixed(2);
       } catch (e) {
         // Cross-origin image taints the canvas -> can't sample. Fail safe: force dark.
         overlay.style.opacity = Math.max(floor, 0.6).toFixed(2);
@@ -105,5 +128,27 @@ if (typeof module !== 'undefined' && module.exports) {
     assert.ok(contrast(1, lum(c[0] * (1 - a), c[1] * (1 - a), c[2] * (1 - a))) >= 4.5);
   });
   assert.ok(need(230, 225, 210, 0.8) === 0.8);                     // respects user floor when already dark enough
+  // Brightest-block: half-black/half-white sample must resolve to the white
+  // block, not the mid-gray average.
+  var bb = function (d, size, bs) {
+    var best = [0, 0, 0], bestLum = -1;
+    for (var by = 0; by < size; by += bs) for (var bx = 0; bx < size; bx += bs) {
+      var r = 0, g = 0, b = 0, n = 0;
+      for (var y = by; y < by + bs; y++) for (var x = bx; x < bx + bs; x++) {
+        var i = (y * size + x) * 4; r += d[i]; g += d[i + 1]; b += d[i + 2]; n++;
+      }
+      r /= n; g /= n; b /= n;
+      var l = lum(r, g, b);
+      if (l > bestLum) { bestLum = l; best = [r, g, b]; }
+    }
+    return best;
+  };
+  var half = new Array(16 * 16 * 4).fill(0).map(function (_, i) {
+    var px = Math.floor(i / 4);
+    return (i % 4 === 3) ? 255 : ((px % 16) < 8 ? 0 : 255);        // left half black, right half white
+  });
+  var picked = bb(half, 16, 4);
+  assert.deepStrictEqual(picked, [255, 255, 255]);
+  assert.ok(need(picked[0], picked[1], picked[2], 0) > need(127, 127, 127, 0)); // stricter than the average
   console.log('contrast self-check ok');
 }

@@ -1,0 +1,39 @@
+/**
+ * Canvas editor — overlay opacity slider + WCAG badge (js/canvas-overlay.js).
+ */
+input[data-jarvis-overlay-hidden] {
+  display: none !important;
+}
+.jarvis-overlay-slider {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+.jarvis-overlay-slider input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  accent-color: #2d6cdf;
+}
+.jarvis-overlay-readout {
+  min-width: 2.8em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.jarvis-overlay-badge {
+  padding: 0.1rem 0.5rem;
+  border-radius: 1rem;
+  border: 1px solid;
+  white-space: nowrap;
+  font-size: 0.85em;
+}
+.jarvis-overlay-badge.pass {
+  color: #1c6b2a;
+  border-color: #7cc78d;
+  background: #eaf7ed;
+}
+.jarvis-overlay-badge.fail {
+  color: #a51b1b;
+  border-color: #e39a9a;
+  background: #fdeeee;
+}
