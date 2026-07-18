@@ -517,6 +517,22 @@ a {
   --bs-link-hover-color: #fff;
 }
 
+/* ADA: brand-coloured accents (stat number's .text-primary/.text-secondary,
+   person name) go invisible when the surrounding section is painted the SAME
+   brand colour — Bootstrap's .text-* utilities are !important and ignore
+   context. On any coloured/image/auto background, ride the section's computed
+   contrast-safe text colour instead; !important beats the utility. Plain and
+   light backgrounds keep the brand colour (3rem numbers are large text,
+   >= 3:1 there). */
+.jarvis-bg--primary :is(.jarvis-stat__number, .jarvis-person__name),
+.jarvis-bg--secondary :is(.jarvis-stat__number, .jarvis-person__name),
+.jarvis-bg--dark :is(.jarvis-stat__number, .jarvis-person__name),
+.jarvis-bg--bg1 :is(.jarvis-stat__number, .jarvis-person__name),
+.jarvis-bg--bg2 :is(.jarvis-stat__number, .jarvis-person__name),
+.jarvis-bg--image :is(.jarvis-stat__number, .jarvis-person__name) {
+  color: inherit !important;
+}
+
 /* ADA (WCAG 2.4.1): core's skip link ships classes `visually-hidden focusable`
    (verified in D11 markup — no .skip-link class), but the un-hide-on-focus
    rules live in Drupal's system.base.css, which this base-theme-false theme
