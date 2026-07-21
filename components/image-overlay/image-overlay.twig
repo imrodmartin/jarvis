@@ -1,0 +1,30 @@
+{#
+/**
+ * @file
+ * Jarvis Image Overlay SDC. An image with a coloured text card overlaid in the
+ * lower-left or lower-right corner. The card reuses the theme's jarvis-bg--*
+ * classes for background colour + ADA-safe text vars.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : false), no_padding|default(false)) %}
+{% set position = position|default('left') %}
+{% set bg = background|default('primary') %}
+{% set has_image = image.src is defined and image.src %}
+{% set overlay_opacity = overlay_opacity is defined ? overlay_opacity : 100 %}
+{% set rounded_class = (rounded is defined ? rounded : true) ? 'jarvis-image-overlay--rounded' : '' %}
+<figure class="jarvis-image-overlay jarvis-image-overlay--{{ position }} {{ rounded_class }} {{ space }}">
+  {% if has_image %}
+    <img class="jarvis-image-overlay__img" src="{{ image.src }}"{% if image.alt is defined %} alt="{{ image.alt }}"{% else %} alt=""{% endif %}{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %} loading="lazy">
+  {% endif %}
+  {% if heading or text %}
+    {# jarvis-bg--* on the caption supplies the ADA-safe text colour vars; the
+       __bg layer carries the actual (optionally translucent) colour so the text
+       above it never fades. #}
+    <figcaption class="jarvis-image-overlay__caption jarvis-bg--{{ bg }}">
+      <span class="jarvis-image-overlay__bg jarvis-bg--{{ bg }}" style="opacity: {{ overlay_opacity / 100 }};" aria-hidden="true"></span>
+      {% if heading %}<span class="jarvis-image-overlay__heading">{{ heading }}</span>{% endif %}
+      {% if text %}<span class="jarvis-image-overlay__text">{{ text }}</span>{% endif %}
+    </figcaption>
+  {% endif %}
+</figure>
