@@ -1,0 +1,159 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Large Call to Action'
+status: stable
+description: 'Eyebrow, large heading, lead text, three icon+sentence rows separated by rules, a primary button and a reversed-colour link.'
+category: Jarvis
+libraryOverrides:
+  dependencies:
+    - jarvis/fontawesome
+props:
+  type: object
+  required:
+    - heading
+  properties:
+    eyebrow:
+      title: Eyebrow
+      description: 'Small uppercase label above the heading.'
+      type: string
+      examples:
+        - 'Who we are'
+    heading:
+      title: Heading
+      type: string
+      examples:
+        - 'Faithful to Scripture. Growing together in Christ.'
+    heading_level:
+      title: 'Heading level'
+      type: string
+      enum: [h2, h3, h4]
+      'meta:enum':
+        h2: H2
+        h3: H3
+        h4: H4
+      default: h2
+    text:
+      title: 'Lead text'
+      type: string
+      examples:
+        - 'We are a multigenerational Baptist church seeking to glorify God through biblical worship, faithful teaching, caring relationships, and gospel witness.'
+    row1_icon: &icon
+      title: 'Row 1 icon'
+      # Value is the full Font Awesome class string, printed straight into the <i>.
+      type: string
+      enum:
+        - 'none'
+        - 'fa-solid fa-check'
+        - 'fa-solid fa-circle-check'
+        - 'fa-solid fa-cross'
+        - 'fa-solid fa-book-bible'
+        - 'fa-solid fa-church'
+        - 'fa-solid fa-hands-praying'
+        - 'fa-solid fa-dove'
+        - 'fa-solid fa-heart'
+        - 'fa-solid fa-people-group'
+        - 'fa-solid fa-star'
+        - 'fa-solid fa-arrow-right'
+      'meta:enum':
+        'none': 'None'
+        'fa-solid fa-check': 'Check'
+        'fa-solid fa-circle-check': 'Circle check'
+        'fa-solid fa-cross': 'Cross'
+        'fa-solid fa-book-bible': 'Bible'
+        'fa-solid fa-church': 'Church'
+        'fa-solid fa-hands-praying': 'Praying hands'
+        'fa-solid fa-dove': 'Dove'
+        'fa-solid fa-heart': 'Heart'
+        'fa-solid fa-people-group': 'People group'
+        'fa-solid fa-star': 'Star'
+        'fa-solid fa-arrow-right': 'Arrow right'
+      default: 'fa-solid fa-check'
+    row1_text:
+      title: 'Row 1 text'
+      type: string
+      examples:
+        - "God's Word shapes what we believe and how we live."
+    row2_icon:
+      <<: *icon
+      title: 'Row 2 icon'
+    row2_text:
+      title: 'Row 2 text'
+      type: string
+      examples:
+        - 'The gospel of Jesus Christ is our hope and message.'
+    row3_icon:
+      <<: *icon
+      title: 'Row 3 icon'
+    row3_text:
+      title: 'Row 3 text'
+      type: string
+      examples:
+        - 'The local church is a family where believers grow and serve.'
+    button_text:
+      title: 'Button text'
+      type: string
+      examples:
+        - 'What We Believe'
+    button_href:
+      title: 'Button link'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/1'
+    link_text:
+      title: 'Link text'
+      description: 'Reversed-colour text link shown beside the button.'
+      type: string
+      examples:
+        - 'Meet Our Church'
+    link_href:
+      title: 'Link URL'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/2'
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true

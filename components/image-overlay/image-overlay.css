@@ -8,6 +8,16 @@
   width: 100%;
   height: auto;
 }
+/* Match column height: fill the Bootstrap column (stretched to equal height by
+   its .row) and crop the image to cover it. Two classes beat any jp-* utility. */
+.jarvis-image-overlay.jarvis-image-overlay--match-height {
+  height: 100%;
+  padding-block: 0;
+}
+.jarvis-image-overlay--match-height .jarvis-image-overlay__img {
+  height: 100%;
+  object-fit: cover;
+}
 .jarvis-image-overlay--rounded .jarvis-image-overlay__img {
   border-radius: 12px;
 }

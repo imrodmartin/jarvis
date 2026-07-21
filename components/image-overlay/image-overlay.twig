@@ -13,7 +13,8 @@
 {% set has_image = image.src is defined and image.src %}
 {% set overlay_opacity = overlay_opacity is defined ? overlay_opacity : 100 %}
 {% set rounded_class = (rounded is defined ? rounded : true) ? 'jarvis-image-overlay--rounded' : '' %}
-<figure class="jarvis-image-overlay jarvis-image-overlay--{{ position }} {{ rounded_class }} {{ space }}">
+{% set mh_class = match_height|default(false) ? 'jarvis-image-overlay--match-height' : '' %}
+<figure class="jarvis-image-overlay jarvis-image-overlay--{{ position }} {{ rounded_class }} {{ mh_class }} {{ space }}">
   {% if has_image %}
     <img class="jarvis-image-overlay__img" src="{{ image.src }}"{% if image.alt is defined %} alt="{{ image.alt }}"{% else %} alt=""{% endif %}{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %} loading="lazy">
   {% endif %}

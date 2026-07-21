@@ -1,0 +1,53 @@
+{#
+/**
+ * @file
+ * Jarvis Video with Sidebar SDC. A responsive video beside an eyebrow / title /
+ * description / CTA buttons column. The video source is either a media-library
+ * pick (video.src) or a plain URL (video_url) — the latter is how a Views row
+ * template feeds it. YouTube/Vimeo watch URLs are normalised to embed URLs.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : false), no_padding|default(false)) %}
+{% set h = heading_level|default('h2') ?: 'h2' %}
+{% set aspect = aspect|default('16x9') %}
+{% set ratio_class = { '16x9': 'ratio-16x9', '4x3': 'ratio-4x3', '21x9': 'ratio-21x9' }[aspect] %}
+{% set src = (video.src is defined and video.src) ? video.src : (video_url|default('')) %}
+{% set _u = src|lower %}
+{% set is_file = '.mp4' in _u or '.webm' in _u or '.ogv' in _u or '.ogg' in _u %}
+{% set embed_url = src %}
+{% if 'youtube.com/watch' in _u %}
+  {% set embed_url = 'https://www.youtube.com/embed/' ~ (src|split('v=')|last|split('&')|first) %}
+{% elseif 'youtu.be/' in _u %}
+  {% set embed_url = 'https://www.youtube.com/embed/' ~ (src|split('youtu.be/')|last|split('?')|first) %}
+{% elseif 'vimeo.com/' in _u and 'player.vimeo.com' not in _u %}
+  {% set embed_url = 'https://player.vimeo.com/video/' ~ (src|split('vimeo.com/')|last|split('?')|first|split('/')|first) %}
+{% endif %}
+<div class="jarvis-video-sidebar {{ space }}">
+  <div class="row g-0 align-items-center {{ video_right|default(false) ? 'flex-lg-row-reverse jarvis-video-sidebar--right' : '' }}">
+    <div class="col-12 col-lg-7 jarvis-video-sidebar__media">
+      {% if src %}
+        <div class="ratio {{ ratio_class }}">
+          {% if is_file %}
+            <video controls preload="metadata"{% if video.poster is defined and video.poster %} poster="{{ video.poster }}"{% endif %}>
+              <source src="{{ src }}">
+            </video>
+          {% else %}
+            <iframe src="{{ embed_url }}" title="{{ title|default('Video'|t) }}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+    <div class="col-12 col-lg-5 jarvis-video-sidebar__aside">
+      {% if eyebrow %}<p class="jarvis-video-sidebar__eyebrow text-uppercase fw-bold mb-2">{{ eyebrow }}</p>{% endif %}
+      {% if title %}<{{ h }} class="jarvis-video-sidebar__title fw-bold mb-3">{{ title }}</{{ h }}>{% endif %}
+      {% if description %}<div class="jarvis-video-sidebar__desc mb-4">{{ description }}</div>{% endif %}
+      {% if (button1_text and button1_href) or (button2_text and button2_href) %}
+        <div class="jarvis-video-sidebar__actions d-flex flex-wrap align-items-center gap-3">
+          {% if button1_text and button1_href %}<a href="{{ button1_href }}" class="btn btn-primary btn-lg">{{ button1_text }}</a>{% endif %}
+          {% if button2_text and button2_href %}<a href="{{ button2_href }}" class="jarvis-video-sidebar__link fw-bold">{{ button2_text }} <span aria-hidden="true">&rarr;</span></a>{% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,125 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Video with Sidebar'
+status: stable
+description: 'A video on one side (media-library or a plain URL) with an eyebrow, title, description and call-to-action buttons alongside. Placeable in Canvas or driven by a View.'
+category: Jarvis
+props:
+  type: object
+  properties:
+    video:
+      title: Video
+      description: 'Pick a video with the media manager. Leave empty to use the Video URL below (e.g. from a View).'
+      $ref: json-schema-definitions://canvas.module/video
+    video_url:
+      title: 'Video URL (fallback)'
+      description: 'YouTube/Vimeo/watch URL or a direct .mp4/.webm. Used when no media video is chosen — how a View passes its field value.'
+      type: string
+      format: uri-reference
+      examples:
+        - 'https://www.youtube.com/watch?v=aqz-KE-bpKQ'
+    aspect:
+      title: 'Video aspect ratio'
+      type: string
+      enum: ['16x9', '4x3', '21x9']
+      'meta:enum':
+        '16x9': '16:9'
+        '4x3': '4:3'
+        '21x9': '21:9'
+      default: '16x9'
+    video_right:
+      title: 'Video on right'
+      type: boolean
+      default: false
+    eyebrow:
+      title: Eyebrow
+      description: 'Small overline — e.g. Scripture reference and date.'
+      type: string
+      examples:
+        - 'John 3:16 · July 21, 2026'
+    title:
+      title: Title
+      type: string
+      examples:
+        - 'The Love of God'
+    heading_level:
+      title: 'Title level'
+      type: string
+      enum: [h2, h3, h4]
+      'meta:enum':
+        h2: H2
+        h3: H3
+        h4: H4
+      default: h2
+    description:
+      title: Description
+      type: string
+      examples:
+        - 'A message on the greatest verse in Scripture.'
+    button1_text:
+      title: 'Primary button text'
+      type: string
+      examples:
+        - 'Watch now'
+    button1_href:
+      title: 'Primary button link'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/1'
+    button2_text:
+      title: 'Secondary button text'
+      type: string
+      examples:
+        - 'Sermon notes'
+    button2_href:
+      title: 'Secondary button link'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/2'
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: false

@@ -53,6 +53,11 @@ props:
       title: 'Rounded corners'
       type: boolean
       default: true
+    match_height:
+      title: 'Match column height'
+      description: 'In a 2- or 3-column layout, stretch the image to the full height of the tallest column (crops to fill).'
+      type: boolean
+      default: false
     padding:
       title: Padding
       type: string

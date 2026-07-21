@@ -1,0 +1,83 @@
+.jarvis-large-cta__eyebrow {
+  color: var(--bs-primary, #2d6cdf);
+  letter-spacing: 0.12em;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+.jarvis-large-cta__text {
+  color: var(--bs-secondary-color, #6c757d);
+  max-width: 46rem;
+}
+/* Size follows the chosen tag so the Heading level selector visibly changes it
+   (Bootstrap's display-* would pin one size regardless of h2/h3/h4). */
+h2.jarvis-large-cta__heading { font-size: 2.75rem; line-height: 1.1; }
+h3.jarvis-large-cta__heading { font-size: 2rem; line-height: 1.15; }
+h4.jarvis-large-cta__heading { font-size: 1.5rem; line-height: 1.2; }
+
+/* Rows: a rule above each one, echoing the reference. margin-top separates the
+   first row from the lead text. */
+.jarvis-large-cta__rows {
+  margin-top: 2rem;
+}
+.jarvis-large-cta__row {
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--bs-border-color, #dee2e6);
+}
+.jarvis-large-cta__row:last-child {
+  border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+}
+.jarvis-large-cta__icon {
+  color: var(--bs-primary, #2d6cdf);
+  font-size: 1rem;
+  line-height: 1.6; /* align the glyph with the first text line */
+  flex: 0 0 auto;
+  width: 1.25rem;
+  text-align: center;
+}
+
+.jarvis-large-cta__actions {
+  margin-top: 2rem;
+}
+/* Reversed-colour link: the button's fill colour becomes the link's text
+   colour on a transparent background. */
+.jarvis-large-cta__link {
+  color: var(--bs-primary, #2d6cdf);
+  text-decoration: none;
+  font-size: 1.05rem;
+}
+.jarvis-large-cta__link:hover,
+.jarvis-large-cta__link:focus {
+  text-decoration: underline;
+}
+
+/* On a coloured section (jarvis-bg--* set by a parent Section/Column), the fixed
+   accent can fail contrast — primary text on a primary background vanishes. Fall
+   back to the section's ADA-safe text colour (--bs-body-color, computed white on
+   dark backgrounds, black on light, per jarvis_preprocess_html). */
+:is(.jarvis-bg--primary, .jarvis-bg--secondary, .jarvis-bg--bg1, .jarvis-bg--bg2, .jarvis-bg--dark, .jarvis-bg--light, .jarvis-bg--image) :is(
+  .jarvis-large-cta__eyebrow,
+  .jarvis-large-cta__text,
+  .jarvis-large-cta__icon,
+  .jarvis-large-cta__link
+) {
+  color: var(--bs-body-color);
+}
+/* Row rules also need to read on the coloured bg. */
+:is(.jarvis-bg--primary, .jarvis-bg--secondary, .jarvis-bg--bg1, .jarvis-bg--bg2, .jarvis-bg--dark, .jarvis-bg--image) .jarvis-large-cta__row {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+/* A primary (gold) button on a primary/dark section blends in. Swap it to a
+   white button with dark text — the same move the Jarvis CTA makes when its own
+   bg is coloured, but done in CSS since here the bg comes from a parent. */
+:is(.jarvis-bg--primary, .jarvis-bg--secondary, .jarvis-bg--dark, .jarvis-bg--image) .jarvis-large-cta .btn-primary {
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: #fff;
+  --bs-btn-color: #1a1a1a;
+  --bs-btn-hover-bg: #f0f0f0;
+  --bs-btn-hover-border-color: #f0f0f0;
+  --bs-btn-hover-color: #1a1a1a;
+  --bs-btn-active-bg: #e6e6e6;
+  --bs-btn-active-border-color: #e6e6e6;
+  --bs-btn-active-color: #1a1a1a;
+}
