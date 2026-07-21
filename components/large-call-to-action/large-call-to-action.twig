@@ -1,0 +1,44 @@
+{#
+/**
+ * @file
+ * Jarvis Large Call to Action SDC. Eyebrow + big heading + lead text, three
+ * icon/sentence rows separated by rules, then a primary button and a
+ * reversed-colour link. Type comes from the theme's own heading/lead classes
+ * (Inter etc.), NOT the reference image's fonts.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set h = heading_level|default('h2') ?: 'h2' %}
+{% set rows = [
+  { icon: row1_icon|default('none'), text: row1_text },
+  { icon: row2_icon|default('none'), text: row2_text },
+  { icon: row3_icon|default('none'), text: row3_text },
+] %}
+<div class="jarvis-large-cta {{ space }}">
+  {% if eyebrow %}<p class="jarvis-large-cta__eyebrow text-uppercase fw-bold mb-3">{{ eyebrow }}</p>{% endif %}
+  {% if heading %}<{{ h }} class="jarvis-large-cta__heading fw-bold mb-3">{{ heading }}</{{ h }}>{% endif %}
+  {% if text %}<p class="jarvis-large-cta__text lead mb-0">{{ text }}</p>{% endif %}
+
+  <ul class="jarvis-large-cta__rows list-unstyled mb-0">
+    {% for row in rows %}
+      {% if row.text %}
+        <li class="jarvis-large-cta__row d-flex align-items-start">
+          {% if row.icon and row.icon != 'none' %}<i class="{{ row.icon }} jarvis-large-cta__icon" aria-hidden="true"></i>{% endif %}
+          <span class="jarvis-large-cta__row-text fw-bold">{{ row.text }}</span>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+
+  {% if (button_text and button_href) or (link_text and link_href) %}
+    <div class="jarvis-large-cta__actions d-flex flex-wrap align-items-center gap-3">
+      {% if button_text and button_href %}
+        <a href="{{ button_href }}" class="btn btn-primary btn-lg">{{ button_text }}</a>
+      {% endif %}
+      {% if link_text and link_href %}
+        <a href="{{ link_href }}" class="jarvis-large-cta__link fw-bold">{{ link_text }} <span aria-hidden="true">&rarr;</span></a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>

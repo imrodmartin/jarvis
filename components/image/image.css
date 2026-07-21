@@ -6,3 +6,14 @@
 .jarvis-image--full .jarvis-image__img {
   border-radius: 0;
 }
+/* Match column height: the enclosing Bootstrap .row stretches each column to
+   equal height; fill that height and crop the image to cover it. Two classes
+   beat the .jp-vpad utility so the figure has no inset. */
+.jarvis-image.jarvis-image--match-height {
+  height: 100%;
+  padding-block: 0;
+}
+.jarvis-image--match-height .jarvis-image__img {
+  height: 100%;
+  object-fit: cover;
+}

@@ -9,6 +9,19 @@ global:
     js/menu-touch.js: {}
     js/nav-branding.js: {}
 
+# Font Awesome 6 Free (CDN). Attached per component via libraryOverrides.
+# Icon-only decorative use; the accompanying text carries the meaning.
+fontawesome:
+  remote: https://fontawesome.com
+  version: 6.5.2
+  license:
+    name: 'Font Awesome Free License'
+    url: https://fontawesome.com/license/free
+    gpl-compatible: true
+  css:
+    theme:
+      https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css: { type: external, minified: true }
+
 # Shared WCAG overlay auto-contrast for hero, card + column layouts
 # (see js/contrast.js). Attached per component via libraryOverrides in their
 # component.yml files.
