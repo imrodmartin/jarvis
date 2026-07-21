@@ -1,0 +1,101 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Image Overlay'
+status: stable
+description: 'An image with a coloured text card overlaid in the lower corner (left or right).'
+category: Jarvis
+props:
+  type: object
+  properties:
+    image:
+      title: Image
+      $ref: json-schema-definitions://canvas.module/image
+    heading:
+      title: 'Overlay heading'
+      type: string
+      examples:
+        - 'Come as you are —'
+    text:
+      title: 'Overlay text'
+      type: string
+      examples:
+        - "there's a seat saved for you this Sunday."
+    position:
+      title: 'Overlay position'
+      type: string
+      enum: [left, right]
+      'meta:enum':
+        left: 'Lower left'
+        right: 'Lower right'
+      default: left
+    background:
+      title: 'Overlay colour'
+      # Reuses the theme's jarvis-bg--* classes (background + ADA-safe text vars).
+      type: string
+      enum: [primary, secondary, bg1, bg2, dark, light]
+      'meta:enum':
+        primary: Primary
+        secondary: Secondary
+        bg1: 'Background 1'
+        bg2: 'Background 2'
+        dark: 'Dark (#1a1a1a)'
+        light: 'Light (#f5f5f5)'
+      default: primary
+    overlay_opacity:
+      title: 'Overlay opacity (%)'
+      description: 'Opacity of the coloured card behind the text. Text stays fully opaque.'
+      type: integer
+      minimum: 0
+      maximum: 100
+      default: 100
+      examples:
+        - 100
+    rounded:
+      title: 'Rounded corners'
+      type: boolean
+      default: true
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: false

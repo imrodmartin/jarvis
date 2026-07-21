@@ -1,0 +1,72 @@
+.jarvis-image-overlay {
+  position: relative;
+  display: block;
+  margin: 0;
+}
+.jarvis-image-overlay__img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.jarvis-image-overlay--rounded .jarvis-image-overlay__img {
+  border-radius: 12px;
+}
+
+/* Text card anchored to a lower corner. Overhangs the image edge slightly
+   (negative insets) so it reads as a placed card, like the reference. */
+.jarvis-image-overlay__caption {
+  position: absolute;
+  bottom: -12px;
+  max-width: 55%;
+  padding: 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  /* jarvis-bg--* stays on the caption only for its ADA-safe text vars; the
+     colour itself is painted by __bg so opacity never touches the text. */
+  background: transparent !important;
+}
+/* Colour layer: fills the caption, sits behind the text, carries the opacity. */
+.jarvis-image-overlay__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+}
+.jarvis-image-overlay__heading,
+.jarvis-image-overlay__text {
+  position: relative;
+  z-index: 1;
+}
+.jarvis-image-overlay--left .jarvis-image-overlay__caption {
+  left: -12px;
+}
+.jarvis-image-overlay--right .jarvis-image-overlay__caption {
+  right: -12px;
+  text-align: right;
+}
+.jarvis-image-overlay--rounded .jarvis-image-overlay__caption {
+  border-radius: 8px;
+}
+.jarvis-image-overlay__heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--bs-heading-color, inherit);
+}
+.jarvis-image-overlay__text {
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+/* Small screens: the card can't overhang a narrow viewport without clipping —
+   pin it to the bottom edge, full width, no negative insets. */
+@media (max-width: 575.98px) {
+  .jarvis-image-overlay__caption {
+    max-width: none;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+}
