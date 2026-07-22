@@ -14,7 +14,7 @@ just the theme, included there as a git submodule.
 
 - PHP `>= 8.3`
 - Drupal `^11 || ^12`
-- Composer + Drush
+- Docker + [ddev](https://ddev.com) — provides Composer + Drush in-container (the commands below assume it)
 - Contrib modules (pulled automatically by Composer): `canvas`, `canvas_field_component`, `focal_point` (→ `crop`), `twig_tweak`
 
 ## Install
@@ -22,8 +22,8 @@ just the theme, included there as a git submodule.
 Register this repo as a Composer VCS source, then require it:
 
 ```bash
-composer config repositories.jarvis '{"type":"vcs","url":"https://github.com/imrodmartin/jarvis","no-api":true}'
-composer require imrodmartin/jarvis
+ddev composer config repositories.jarvis '{"type":"vcs","url":"https://github.com/imrodmartin/jarvis","no-api":true}'
+ddev composer require imrodmartin/jarvis
 ```
 
 `no-api` makes Composer clone over git instead of the GitHub API — it avoids the
@@ -38,22 +38,16 @@ contrib modules to `web/modules/contrib`. Then run, **in this order**:
 #    Canvas registers its parametrized image style and the theme's SDC
 #    components during this rebuild — the recipe's config and demo content
 #    reference them, so they must exist before the recipe runs.
-drush pm:install canvas canvas_field_component
-drush theme:install jarvis
-drush cache:rebuild
+ddev drush pm:install canvas canvas_field_component
+ddev drush theme:install jarvis
+ddev drush cache:rebuild
 
-# 2. Apply the recipe, then rebuild again.
-drush recipe web/themes/custom/jarvis/recipe
-drush cache:rebuild
+# 2. Apply the recipe, then rebuild again. Pass the recipe as an absolute
+#    container path — ddev drush resolves relative paths from the container
+#    working dir, not the project root.
+ddev drush recipe /var/www/html/web/themes/custom/jarvis/recipe
+ddev drush cache:rebuild
 ```
-
-> **DDEV (or any containerised Drush):** pass the recipe as an **absolute
-> container path**, since `ddev drush` resolves relative paths from the
-> container working dir:
->
-> ```bash
-> ddev drush recipe /var/www/html/web/themes/custom/jarvis/recipe
-> ```
 
 > **Order matters.** If you apply the recipe *before* enabling Canvas + the
 > theme and rebuilding, the import fails with
