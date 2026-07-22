@@ -324,12 +324,15 @@
         <p class="nav-group__title">Content</p>
         <a href="#hero">Hero</a>
         <a href="#cta">Call to Action</a>
+        <a href="#large-call-to-action">Large CTA</a>
         <a href="#text">Text</a>
         <a href="#wysiwyg">WYSIWYG</a>
         <a href="#button">Button</a>
         <a href="#card">Card</a>
         <a href="#image">Image</a>
+        <a href="#image-overlay">Image Overlay</a>
         <a href="#video">Video</a>
+        <a href="#video-with-sidebar">Video w/ Sidebar</a>
         <a href="#map">Map</a>
         <a href="#person">Person</a>
         <a href="#stat">Stat card</a>
@@ -348,7 +351,7 @@
       <header class="page">
         <p class="eyebrow">Jarvis Theme · Drupal 11 / 12</p>
         <h1>The Jarvis component reference</h1>
-        <p class="lede">Every building block that ships with the Jarvis theme, explained in plain language — the 16 components you drag into a page, plus the two small modules that make them work. Written for site builders who are new to Single Directory Components but comfortable in Drupal.</p>
+        <p class="lede">Every building block that ships with the Jarvis theme, explained in plain language — the 19 components you drag into a page, plus the two small modules that make them work. Written for site builders who are new to Single Directory Components but comfortable in Drupal.</p>
         <div class="meta-row">
           <span class="pill"><b>16</b> components</span>
           <span class="pill"><b>2</b> custom modules</span>
@@ -375,7 +378,7 @@
       <!-- ===== FOUNDATIONS ===== -->
       <section class="prose">
         <h2 id="spacing"><span class="section-tag">Foundations</span>The shared spacing controls</h2>
-        <p>Fifteen of the sixteen components (everything except <a href="#button">Button</a>) expose the same set of spacing props. Rather than repeat them in every table below, here they are once. When a component's badge says <em>"＋ standard spacing controls,"</em> it means this set.</p>
+        <p>Eighteen of the nineteen components (everything except <a href="#button">Button</a>) expose the same set of spacing props. Rather than repeat them in every table below, here they are once. When a component's badge says <em>"＋ standard spacing controls,"</em> it means this set.</p>
         <p>Under the hood they all funnel through one shared Twig helper, <code>jarvis-spacing.html.twig</code>, which turns your choices into utility classes (<code>jp-p-*</code>, <code>jp-m-*</code>, <code>jp-vpad</code>) defined in the theme's <code>overrides.css</code>. One source of truth — change spacing behaviour there and every component follows.</p>
         <div class="table-scroll">
           <table>
@@ -3369,6 +3372,832 @@ props:
   };
 })(Drupal, once);
 </code></pre></div>
+</details>
+        </article>
+
+        <!-- IMAGE OVERLAY -->
+        <article class="comp" id="image-overlay">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Image Overlay</h3>
+            <span class="comp__id">jarvis:image-overlay</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">An image with a small coloured card laid over one of its lower corners — a heading and a line of text sitting on the picture itself. For a photo that needs a caption with presence, not a plain line underneath.</p>
+          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The picture — pick it with the media manager.</td></tr>
+              <tr><td class="prop"><span class="pname">heading</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Bold first line on the card.</td></tr>
+              <tr><td class="prop"><span class="pname">text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The line under the heading.</td></tr>
+              <tr><td class="prop"><span class="pname">position</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">left</span></td><td class="desc-cell">Which lower corner the card sits in.<span class="enum-list"><span class="enum enum--def">left</span><span class="enum">right</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">background</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">primary</span></td><td class="desc-cell">Card colour. Reuses the theme's <a href="#backgrounds">background set</a>, so its text stays ADA-safe.<span class="enum-list"><span class="enum enum--def">primary</span><span class="enum">secondary</span><span class="enum">bg1</span><span class="enum">bg2</span><span class="enum">dark</span><span class="enum">light</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">overlay_opacity</span></td><td><span class="ptype">integer</span></td><td><span class="pdef">100</span></td><td class="desc-cell">Opacity of the card’s colour, 0–100. The text above it stays fully opaque.</td></tr>
+              <tr><td class="prop"><span class="pname">rounded</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">true</span></td><td class="desc-cell">Round the image and card corners.</td></tr>
+              <tr><td class="prop"><span class="pname">match_height</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">In a <a href="#two-column">2</a>- or <a href="#three-column">3</a>-column row, stretch the image to the tallest column’s height (crops to fill).</td></tr>
+            </tbody>
+          </table></div>
+          <div class="note"><span class="note__icon">i</span><div>On phones the card can’t overhang a narrow screen without clipping, so it pins to the bottom edge full-width instead of a corner.</div></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 3 files</summary>
+<div class="srcfile"><div class="srcfile__name">image-overlay.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Image Overlay'
+status: stable
+description: 'An image with a coloured text card overlaid in the lower corner (left or right).'
+category: Jarvis
+props:
+  type: object
+  properties:
+    image:
+      title: Image
+      $ref: json-schema-definitions://canvas.module/image
+    heading:
+      title: 'Overlay heading'
+      type: string
+      examples:
+        - 'Come as you are —'
+    text:
+      title: 'Overlay text'
+      type: string
+      examples:
+        - "there's a seat saved for you this Sunday."
+    position:
+      title: 'Overlay position'
+      type: string
+      enum: [left, right]
+      'meta:enum':
+        left: 'Lower left'
+        right: 'Lower right'
+      default: left
+    background:
+      title: 'Overlay colour'
+      # Reuses the theme's jarvis-bg--* classes (background + ADA-safe text vars).
+      type: string
+      enum: [primary, secondary, bg1, bg2, dark, light]
+      'meta:enum':
+        primary: Primary
+        secondary: Secondary
+        bg1: 'Background 1'
+        bg2: 'Background 2'
+        dark: 'Dark (#1a1a1a)'
+        light: 'Light (#f5f5f5)'
+      default: primary
+    overlay_opacity:
+      title: 'Overlay opacity (%)'
+      description: 'Opacity of the coloured card behind the text. Text stays fully opaque.'
+      type: integer
+      minimum: 0
+      maximum: 100
+      default: 100
+      examples:
+        - 100
+    rounded:
+      title: 'Rounded corners'
+      type: boolean
+      default: true
+    match_height:
+      title: 'Match column height'
+      description: 'In a 2- or 3-column layout, stretch the image to the full height of the tallest column (crops to fill).'
+      type: boolean
+      default: false
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: false</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">image-overlay.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis Image Overlay SDC. An image with a coloured text card overlaid in the
+ * lower-left or lower-right corner. The card reuses the theme's jarvis-bg--*
+ * classes for background colour + ADA-safe text vars.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : false), no_padding|default(false)) %}
+{% set position = position|default('left') %}
+{% set bg = background|default('primary') %}
+{% set has_image = image.src is defined and image.src %}
+{% set overlay_opacity = overlay_opacity is defined ? overlay_opacity : 100 %}
+{% set rounded_class = (rounded is defined ? rounded : true) ? 'jarvis-image-overlay--rounded' : '' %}
+{% set mh_class = match_height|default(false) ? 'jarvis-image-overlay--match-height' : '' %}
+&lt;figure class="jarvis-image-overlay jarvis-image-overlay--{{ position }} {{ rounded_class }} {{ mh_class }} {{ space }}"&gt;
+  {% if has_image %}
+    &lt;img class="jarvis-image-overlay__img" src="{{ image.src }}"{% if image.alt is defined %} alt="{{ image.alt }}"{% else %} alt=""{% endif %}{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %} loading="lazy"&gt;
+  {% endif %}
+  {% if heading or text %}
+    {# jarvis-bg--* on the caption supplies the ADA-safe text colour vars; the
+       __bg layer carries the actual (optionally translucent) colour so the text
+       above it never fades. #}
+    &lt;figcaption class="jarvis-image-overlay__caption jarvis-bg--{{ bg }}"&gt;
+      &lt;span class="jarvis-image-overlay__bg jarvis-bg--{{ bg }}" style="opacity: {{ overlay_opacity / 100 }};" aria-hidden="true"&gt;&lt;/span&gt;
+      {% if heading %}&lt;span class="jarvis-image-overlay__heading"&gt;{{ heading }}&lt;/span&gt;{% endif %}
+      {% if text %}&lt;span class="jarvis-image-overlay__text"&gt;{{ text }}&lt;/span&gt;{% endif %}
+    &lt;/figcaption&gt;
+  {% endif %}
+&lt;/figure&gt;</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">image-overlay.css</div><pre class="code"><code>.jarvis-image-overlay {
+  position: relative;
+  display: block;
+  margin: 0;
+}
+.jarvis-image-overlay__img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* Match column height: fill the Bootstrap column (stretched to equal height by
+   its .row) and crop the image to cover it. Two classes beat any jp-* utility. */
+.jarvis-image-overlay.jarvis-image-overlay--match-height {
+  height: 100%;
+  padding-block: 0;
+}
+.jarvis-image-overlay--match-height .jarvis-image-overlay__img {
+  height: 100%;
+  object-fit: cover;
+}
+.jarvis-image-overlay--rounded .jarvis-image-overlay__img {
+  border-radius: 12px;
+}
+
+/* Text card anchored to a lower corner. Overhangs the image edge slightly
+   (negative insets) so it reads as a placed card, like the reference. */
+.jarvis-image-overlay__caption {
+  position: absolute;
+  bottom: -12px;
+  max-width: 55%;
+  padding: 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  /* jarvis-bg--* stays on the caption only for its ADA-safe text vars; the
+     colour itself is painted by __bg so opacity never touches the text. */
+  background: transparent !important;
+}
+/* Colour layer: fills the caption, sits behind the text, carries the opacity. */
+.jarvis-image-overlay__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+}
+.jarvis-image-overlay__heading,
+.jarvis-image-overlay__text {
+  position: relative;
+  z-index: 1;
+}
+.jarvis-image-overlay--left .jarvis-image-overlay__caption {
+  left: -12px;
+}
+.jarvis-image-overlay--right .jarvis-image-overlay__caption {
+  right: -12px;
+  text-align: right;
+}
+.jarvis-image-overlay--rounded .jarvis-image-overlay__caption {
+  border-radius: 8px;
+}
+.jarvis-image-overlay__heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--bs-heading-color, inherit);
+}
+.jarvis-image-overlay__text {
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+/* Small screens: the card can't overhang a narrow viewport without clipping —
+   pin it to the bottom edge, full width, no negative insets. */
+@media (max-width: 575.98px) {
+  .jarvis-image-overlay__caption {
+    max-width: none;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+}</code></pre></div>
+</details>
+        </article>
+
+        <!-- LARGE CALL TO ACTION -->
+        <article class="comp" id="large-call-to-action">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Large Call to Action</h3>
+            <span class="comp__id">jarvis:large-call-to-action</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">A full statement block: a small eyebrow, a large heading, a lead paragraph, then three icon-and-sentence rows divided by rules, and finally a primary button beside a reversed-colour text link. Built for an "about us / what we believe" band.</p>
+          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a><span class="badge">Font Awesome icons</span></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">eyebrow</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Small uppercase label above the heading.</td></tr>
+              <tr><td class="prop"><span class="pname">heading</span><span class="req" title="required">✳</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The headline. Required.</td></tr>
+              <tr><td class="prop"><span class="pname">heading_level</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">h2</span></td><td class="desc-cell">Which heading tag — also sets its size.<span class="enum-list"><span class="enum enum--def">h2</span><span class="enum">h3</span><span class="enum">h4</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Lead paragraph under the heading.</td></tr>
+              <tr><td class="prop"><span class="pname">row1_icon</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">fa-solid fa-check</span></td><td class="desc-cell">Font Awesome icon for row 1; <code>none</code> hides it. 11 presets — check, cross, Bible, church, praying hands, dove, heart, people, star, arrow.</td></tr>
+              <tr><td class="prop"><span class="pname">row1_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Sentence for row 1.</td></tr>
+              <tr><td class="prop"><span class="pname">row2_icon</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">fa-solid fa-check</span></td><td class="desc-cell">Icon for row 2 (same choices).</td></tr>
+              <tr><td class="prop"><span class="pname">row2_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Sentence for row 2.</td></tr>
+              <tr><td class="prop"><span class="pname">row3_icon</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">fa-solid fa-check</span></td><td class="desc-cell">Icon for row 3 (same choices).</td></tr>
+              <tr><td class="prop"><span class="pname">row3_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Sentence for row 3.</td></tr>
+              <tr><td class="prop"><span class="pname">button_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Primary button label.</td></tr>
+              <tr><td class="prop"><span class="pname">button_href</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Primary button link.</td></tr>
+              <tr><td class="prop"><span class="pname">link_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Reversed-colour text link shown beside the button.</td></tr>
+              <tr><td class="prop"><span class="pname">link_href</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">That link’s URL.</td></tr>
+            </tbody>
+          </table></div>
+          <div class="note"><span class="note__icon">i</span><div>Drop it into a coloured <a href="#section">Section</a> and it adapts: the accent-coloured eyebrow, text, icons and link fall back to the section’s ADA-safe text colour, and the gold button flips to white-on-dark — so nothing vanishes against the background.</div></div>
+          <div class="note"><span class="note__icon">i</span><div>Unlike most components its <code>vertical_padding</code> defaults <b>on</b> (30px), since it’s meant to stand as its own band.</div></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 3 files</summary>
+<div class="srcfile"><div class="srcfile__name">large-call-to-action.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Large Call to Action'
+status: stable
+description: 'Eyebrow, large heading, lead text, three icon+sentence rows separated by rules, a primary button and a reversed-colour link.'
+category: Jarvis
+libraryOverrides:
+  dependencies:
+    - jarvis/fontawesome
+props:
+  type: object
+  required:
+    - heading
+  properties:
+    eyebrow:
+      title: Eyebrow
+      description: 'Small uppercase label above the heading.'
+      type: string
+      examples:
+        - 'Who we are'
+    heading:
+      title: Heading
+      type: string
+      examples:
+        - 'Faithful to Scripture. Growing together in Christ.'
+    heading_level:
+      title: 'Heading level'
+      type: string
+      enum: [h2, h3, h4]
+      'meta:enum':
+        h2: H2
+        h3: H3
+        h4: H4
+      default: h2
+    text:
+      title: 'Lead text'
+      type: string
+      examples:
+        - 'We are a multigenerational Baptist church seeking to glorify God through biblical worship, faithful teaching, caring relationships, and gospel witness.'
+    row1_icon: &amp;icon
+      title: 'Row 1 icon'
+      # Value is the full Font Awesome class string, printed straight into the &lt;i&gt;.
+      type: string
+      enum:
+        - 'none'
+        - 'fa-solid fa-check'
+        - 'fa-solid fa-circle-check'
+        - 'fa-solid fa-cross'
+        - 'fa-solid fa-book-bible'
+        - 'fa-solid fa-church'
+        - 'fa-solid fa-hands-praying'
+        - 'fa-solid fa-dove'
+        - 'fa-solid fa-heart'
+        - 'fa-solid fa-people-group'
+        - 'fa-solid fa-star'
+        - 'fa-solid fa-arrow-right'
+      'meta:enum':
+        'none': 'None'
+        'fa-solid fa-check': 'Check'
+        'fa-solid fa-circle-check': 'Circle check'
+        'fa-solid fa-cross': 'Cross'
+        'fa-solid fa-book-bible': 'Bible'
+        'fa-solid fa-church': 'Church'
+        'fa-solid fa-hands-praying': 'Praying hands'
+        'fa-solid fa-dove': 'Dove'
+        'fa-solid fa-heart': 'Heart'
+        'fa-solid fa-people-group': 'People group'
+        'fa-solid fa-star': 'Star'
+        'fa-solid fa-arrow-right': 'Arrow right'
+      default: 'fa-solid fa-check'
+    row1_text:
+      title: 'Row 1 text'
+      type: string
+      examples:
+        - "God's Word shapes what we believe and how we live."
+    row2_icon:
+      &lt;&lt;: *icon
+      title: 'Row 2 icon'
+    row2_text:
+      title: 'Row 2 text'
+      type: string
+      examples:
+        - 'The gospel of Jesus Christ is our hope and message.'
+    row3_icon:
+      &lt;&lt;: *icon
+      title: 'Row 3 icon'
+    row3_text:
+      title: 'Row 3 text'
+      type: string
+      examples:
+        - 'The local church is a family where believers grow and serve.'
+    button_text:
+      title: 'Button text'
+      type: string
+      examples:
+        - 'What We Believe'
+    button_href:
+      title: 'Button link'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/1'
+    link_text:
+      title: 'Link text'
+      description: 'Reversed-colour text link shown beside the button.'
+      type: string
+      examples:
+        - 'Meet Our Church'
+    link_href:
+      title: 'Link URL'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/2'
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">large-call-to-action.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis Large Call to Action SDC. Eyebrow + big heading + lead text, three
+ * icon/sentence rows separated by rules, then a primary button and a
+ * reversed-colour link. Type comes from the theme's own heading/lead classes
+ * (Inter etc.), NOT the reference image's fonts.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
+{% set h = heading_level|default('h2') ?: 'h2' %}
+{% set rows = [
+  { icon: row1_icon|default('none'), text: row1_text },
+  { icon: row2_icon|default('none'), text: row2_text },
+  { icon: row3_icon|default('none'), text: row3_text },
+] %}
+&lt;div class="jarvis-large-cta {{ space }}"&gt;
+  {% if eyebrow %}&lt;p class="jarvis-large-cta__eyebrow text-uppercase fw-bold mb-3"&gt;{{ eyebrow }}&lt;/p&gt;{% endif %}
+  {% if heading %}&lt;{{ h }} class="jarvis-large-cta__heading fw-bold mb-3"&gt;{{ heading }}&lt;/{{ h }}&gt;{% endif %}
+  {% if text %}&lt;p class="jarvis-large-cta__text lead mb-0"&gt;{{ text }}&lt;/p&gt;{% endif %}
+
+  &lt;ul class="jarvis-large-cta__rows list-unstyled mb-0"&gt;
+    {% for row in rows %}
+      {% if row.text %}
+        &lt;li class="jarvis-large-cta__row d-flex align-items-start"&gt;
+          {% if row.icon and row.icon != 'none' %}&lt;i class="{{ row.icon }} jarvis-large-cta__icon" aria-hidden="true"&gt;&lt;/i&gt;{% endif %}
+          &lt;span class="jarvis-large-cta__row-text fw-bold"&gt;{{ row.text }}&lt;/span&gt;
+        &lt;/li&gt;
+      {% endif %}
+    {% endfor %}
+  &lt;/ul&gt;
+
+  {% if (button_text and button_href) or (link_text and link_href) %}
+    &lt;div class="jarvis-large-cta__actions d-flex flex-wrap align-items-center gap-3"&gt;
+      {% if button_text and button_href %}
+        &lt;a href="{{ button_href }}" class="btn btn-primary btn-lg"&gt;{{ button_text }}&lt;/a&gt;
+      {% endif %}
+      {% if link_text and link_href %}
+        &lt;a href="{{ link_href }}" class="jarvis-large-cta__link fw-bold"&gt;{{ link_text }} &lt;span aria-hidden="true"&gt;&amp;rarr;&lt;/span&gt;&lt;/a&gt;
+      {% endif %}
+    &lt;/div&gt;
+  {% endif %}
+&lt;/div&gt;</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">large-call-to-action.css</div><pre class="code"><code>.jarvis-large-cta__eyebrow {
+  color: var(--bs-primary, #2d6cdf);
+  letter-spacing: 0.12em;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+.jarvis-large-cta__text {
+  color: var(--bs-secondary-color, #6c757d);
+  max-width: 46rem;
+}
+/* Size follows the chosen tag so the Heading level selector visibly changes it
+   (Bootstrap's display-* would pin one size regardless of h2/h3/h4). */
+h2.jarvis-large-cta__heading { font-size: 2.75rem; line-height: 1.1; }
+h3.jarvis-large-cta__heading { font-size: 2rem; line-height: 1.15; }
+h4.jarvis-large-cta__heading { font-size: 1.5rem; line-height: 1.2; }
+
+/* Rows: a rule above each one, echoing the reference. margin-top separates the
+   first row from the lead text. */
+.jarvis-large-cta__rows {
+  margin-top: 2rem;
+}
+.jarvis-large-cta__row {
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--bs-border-color, #dee2e6);
+}
+.jarvis-large-cta__row:last-child {
+  border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+}
+.jarvis-large-cta__icon {
+  color: var(--bs-primary, #2d6cdf);
+  font-size: 1rem;
+  line-height: 1.6; /* align the glyph with the first text line */
+  flex: 0 0 auto;
+  width: 1.25rem;
+  text-align: center;
+}
+
+.jarvis-large-cta__actions {
+  margin-top: 2rem;
+}
+/* Reversed-colour link: the button's fill colour becomes the link's text
+   colour on a transparent background. */
+.jarvis-large-cta__link {
+  color: var(--bs-primary, #2d6cdf);
+  text-decoration: none;
+  font-size: 1.05rem;
+}
+.jarvis-large-cta__link:hover,
+.jarvis-large-cta__link:focus {
+  text-decoration: underline;
+}
+
+/* On a coloured section (jarvis-bg--* set by a parent Section/Column), the fixed
+   accent can fail contrast — primary text on a primary background vanishes. Fall
+   back to the section's ADA-safe text colour (--bs-body-color, computed white on
+   dark backgrounds, black on light, per jarvis_preprocess_html). */
+:is(.jarvis-bg--primary, .jarvis-bg--secondary, .jarvis-bg--bg1, .jarvis-bg--bg2, .jarvis-bg--dark, .jarvis-bg--light, .jarvis-bg--image) :is(
+  .jarvis-large-cta__eyebrow,
+  .jarvis-large-cta__text,
+  .jarvis-large-cta__icon,
+  .jarvis-large-cta__link
+) {
+  color: var(--bs-body-color);
+}
+/* Row rules also need to read on the coloured bg. */
+:is(.jarvis-bg--primary, .jarvis-bg--secondary, .jarvis-bg--bg1, .jarvis-bg--bg2, .jarvis-bg--dark, .jarvis-bg--image) .jarvis-large-cta__row {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+/* A primary (gold) button on a primary/dark section blends in. Swap it to a
+   white button with dark text — the same move the Jarvis CTA makes when its own
+   bg is coloured, but done in CSS since here the bg comes from a parent. */
+:is(.jarvis-bg--primary, .jarvis-bg--secondary, .jarvis-bg--dark, .jarvis-bg--image) .jarvis-large-cta .btn-primary {
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: #fff;
+  --bs-btn-color: #1a1a1a;
+  --bs-btn-hover-bg: #f0f0f0;
+  --bs-btn-hover-border-color: #f0f0f0;
+  --bs-btn-hover-color: #1a1a1a;
+  --bs-btn-active-bg: #e6e6e6;
+  --bs-btn-active-border-color: #e6e6e6;
+  --bs-btn-active-color: #1a1a1a;
+}</code></pre></div>
+</details>
+        </article>
+
+        <!-- VIDEO WITH SIDEBAR -->
+        <article class="comp" id="video-with-sidebar">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Video with Sidebar</h3>
+            <span class="comp__id">jarvis:video-with-sidebar</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">A video on one side, words on the other: an eyebrow, title, description and up to two calls-to-action in a column beside the player, all wrapped in a bordered card. It takes either a media-library video or a plain URL — so a <a href="#jarvis-canvas">View</a> can feed it a field value and render a row as this component.</p>
+          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">video</span></td><td><span class="ptype">video</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Pick a video with the media manager. Leave empty to use the URL below.</td></tr>
+              <tr><td class="prop"><span class="pname">video_url</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">YouTube/Vimeo/watch URL, or a direct <code>.mp4</code>/<code>.webm</code>. Used when no media video is chosen — how a View passes its value.</td></tr>
+              <tr><td class="prop"><span class="pname">aspect</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">16x9</span></td><td class="desc-cell">Player aspect ratio.<span class="enum-list"><span class="enum enum--def">16x9</span><span class="enum">4x3</span><span class="enum">21x9</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">video_right</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Put the video on the right, words on the left.</td></tr>
+              <tr><td class="prop"><span class="pname">eyebrow</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Small overline — e.g. a Scripture reference and date.</td></tr>
+              <tr><td class="prop"><span class="pname">title</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Heading beside the video.</td></tr>
+              <tr><td class="prop"><span class="pname">heading_level</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">h2</span></td><td class="desc-cell">The title’s heading tag.<span class="enum-list"><span class="enum enum--def">h2</span><span class="enum">h3</span><span class="enum">h4</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">description</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Paragraph under the title.</td></tr>
+              <tr><td class="prop"><span class="pname">button1_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Primary button label.</td></tr>
+              <tr><td class="prop"><span class="pname">button1_href</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Primary button link.</td></tr>
+              <tr><td class="prop"><span class="pname">button2_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Secondary reversed-colour link label.</td></tr>
+              <tr><td class="prop"><span class="pname">button2_href</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">That link’s URL.</td></tr>
+            </tbody>
+          </table></div>
+          <div class="note"><span class="note__icon">i</span><div>Watch/share URLs just work — paste a normal YouTube or Vimeo link and it’s normalised to the right embed, same as the plain <a href="#video">Video</a> component.</div></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 3 files</summary>
+<div class="srcfile"><div class="srcfile__name">video-with-sidebar.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Video with Sidebar'
+status: stable
+description: 'A video on one side (media-library or a plain URL) with an eyebrow, title, description and call-to-action buttons alongside. Placeable in Canvas or driven by a View.'
+category: Jarvis
+props:
+  type: object
+  properties:
+    video:
+      title: Video
+      description: 'Pick a video with the media manager. Leave empty to use the Video URL below (e.g. from a View).'
+      $ref: json-schema-definitions://canvas.module/video
+    video_url:
+      title: 'Video URL (fallback)'
+      description: 'YouTube/Vimeo/watch URL or a direct .mp4/.webm. Used when no media video is chosen — how a View passes its field value.'
+      type: string
+      format: uri-reference
+      examples:
+        - 'https://www.youtube.com/watch?v=aqz-KE-bpKQ'
+    aspect:
+      title: 'Video aspect ratio'
+      type: string
+      enum: ['16x9', '4x3', '21x9']
+      'meta:enum':
+        '16x9': '16:9'
+        '4x3': '4:3'
+        '21x9': '21:9'
+      default: '16x9'
+    video_right:
+      title: 'Video on right'
+      type: boolean
+      default: false
+    eyebrow:
+      title: Eyebrow
+      description: 'Small overline — e.g. Scripture reference and date.'
+      type: string
+      examples:
+        - 'John 3:16 · July 21, 2026'
+    title:
+      title: Title
+      type: string
+      examples:
+        - 'The Love of God'
+    heading_level:
+      title: 'Title level'
+      type: string
+      enum: [h2, h3, h4]
+      'meta:enum':
+        h2: H2
+        h3: H3
+        h4: H4
+      default: h2
+    description:
+      title: Description
+      type: string
+      examples:
+        - 'A message on the greatest verse in Scripture.'
+    button1_text:
+      title: 'Primary button text'
+      type: string
+      examples:
+        - 'Watch now'
+    button1_href:
+      title: 'Primary button link'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/1'
+    button2_text:
+      title: 'Secondary button text'
+      type: string
+      examples:
+        - 'Sermon notes'
+    button2_href:
+      title: 'Secondary button link'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/2'
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: false</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">video-with-sidebar.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis Video with Sidebar SDC. A responsive video beside an eyebrow / title /
+ * description / CTA buttons column. The video source is either a media-library
+ * pick (video.src) or a plain URL (video_url) — the latter is how a Views row
+ * template feeds it. YouTube/Vimeo watch URLs are normalised to embed URLs.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : false), no_padding|default(false)) %}
+{% set h = heading_level|default('h2') ?: 'h2' %}
+{% set aspect = aspect|default('16x9') %}
+{% set ratio_class = { '16x9': 'ratio-16x9', '4x3': 'ratio-4x3', '21x9': 'ratio-21x9' }[aspect] %}
+{% set src = (video.src is defined and video.src) ? video.src : (video_url|default('')) %}
+{% set _u = src|lower %}
+{% set is_file = '.mp4' in _u or '.webm' in _u or '.ogv' in _u or '.ogg' in _u %}
+{% set embed_url = src %}
+{% if 'youtube.com/watch' in _u %}
+  {% set embed_url = 'https://www.youtube.com/embed/' ~ (src|split('v=')|last|split('&amp;')|first) %}
+{% elseif 'youtu.be/' in _u %}
+  {% set embed_url = 'https://www.youtube.com/embed/' ~ (src|split('youtu.be/')|last|split('?')|first) %}
+{% elseif 'vimeo.com/' in _u and 'player.vimeo.com' not in _u %}
+  {% set embed_url = 'https://player.vimeo.com/video/' ~ (src|split('vimeo.com/')|last|split('?')|first|split('/')|first) %}
+{% endif %}
+&lt;div class="jarvis-video-sidebar {{ space }}"&gt;
+  &lt;div class="row g-0 align-items-center {{ video_right|default(false) ? 'flex-lg-row-reverse jarvis-video-sidebar--right' : '' }}"&gt;
+    &lt;div class="col-12 col-lg-7 jarvis-video-sidebar__media"&gt;
+      {% if src %}
+        &lt;div class="ratio {{ ratio_class }}"&gt;
+          {% if is_file %}
+            &lt;video controls preload="metadata"{% if video.poster is defined and video.poster %} poster="{{ video.poster }}"{% endif %}&gt;
+              &lt;source src="{{ src }}"&gt;
+            &lt;/video&gt;
+          {% else %}
+            &lt;iframe src="{{ embed_url }}" title="{{ title|default('Video'|t) }}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"&gt;&lt;/iframe&gt;
+          {% endif %}
+        &lt;/div&gt;
+      {% endif %}
+    &lt;/div&gt;
+    &lt;div class="col-12 col-lg-5 jarvis-video-sidebar__aside"&gt;
+      {% if eyebrow %}&lt;p class="jarvis-video-sidebar__eyebrow text-uppercase fw-bold mb-2"&gt;{{ eyebrow }}&lt;/p&gt;{% endif %}
+      {% if title %}&lt;{{ h }} class="jarvis-video-sidebar__title fw-bold mb-3"&gt;{{ title }}&lt;/{{ h }}&gt;{% endif %}
+      {% if description %}&lt;div class="jarvis-video-sidebar__desc mb-4"&gt;{{ description }}&lt;/div&gt;{% endif %}
+      {% if (button1_text and button1_href) or (button2_text and button2_href) %}
+        &lt;div class="jarvis-video-sidebar__actions d-flex flex-wrap align-items-center gap-3"&gt;
+          {% if button1_text and button1_href %}&lt;a href="{{ button1_href }}" class="btn btn-primary btn-lg"&gt;{{ button1_text }}&lt;/a&gt;{% endif %}
+          {% if button2_text and button2_href %}&lt;a href="{{ button2_href }}" class="jarvis-video-sidebar__link fw-bold"&gt;{{ button2_text }} &lt;span aria-hidden="true"&gt;&amp;rarr;&lt;/span&gt;&lt;/a&gt;{% endif %}
+        &lt;/div&gt;
+      {% endif %}
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">video-with-sidebar.css</div><pre class="code"><code>/* Bordered white card; the video bleeds to its edge, the sidebar is padded. */
+.jarvis-video-sidebar {
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+/* Bootstrap .ratio already absolutely fills the iframe/video into a 16:9 box;
+   the card's overflow:hidden clips the outer corners. */
+.jarvis-video-sidebar__media video {
+  object-fit: cover;
+}
+.jarvis-video-sidebar__aside {
+  padding: 2.5rem;
+}
+.jarvis-video-sidebar__eyebrow {
+  color: var(--bs-primary, #2d6cdf);
+  letter-spacing: 0.1em;
+  font-size: 0.85rem;
+}
+.jarvis-video-sidebar__title {
+  font-size: 1.9rem;
+  line-height: 1.15;
+}
+.jarvis-video-sidebar__desc {
+  color: var(--bs-secondary-color, #6c757d);
+}
+/* Reversed-colour link beside the primary button (secondary hue, no fill). */
+.jarvis-video-sidebar__link {
+  color: var(--bs-secondary, #1b2a4a);
+  text-decoration: none;
+  font-size: 1.05rem;
+}
+.jarvis-video-sidebar__link:hover,
+.jarvis-video-sidebar__link:focus {
+  text-decoration: underline;
+}
+
+/* Below the lg breakpoint the columns stack: video on top, full width, so the
+   media column shouldn't stay at the 16x9 crop height of the desktop layout. */
+@media (max-width: 991.98px) {
+  .jarvis-video-sidebar__aside {
+    padding: 1.75rem;
+  }
+}</code></pre></div>
 </details>
         </article>
       </section>
