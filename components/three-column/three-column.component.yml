@@ -36,11 +36,6 @@ props:
     background_image:
       title: 'Background image'
       $ref: json-schema-definitions://canvas.module/image
-      examples:
-        - src: preview.svg
-          alt: 'Sample image'
-          width: 1200
-          height: 800
     overlay:
       title: 'Image overlay opacity (%)'
       type: integer
@@ -122,15 +117,9 @@ slots:
   first:
     title: 'Column 1'
     description: 'First column.'
-    examples:
-      - '<div style="padding:24px"><h3 style="margin:0 0 8px;font-size:1.4rem">Sample heading</h3><p style="margin:0;color:#555;line-height:1.5">A short line of placeholder text so the preview shows real content.</p></div>'
   second:
     title: 'Column 2'
     description: 'Second column.'
-    examples:
-      - '<div style="padding:24px"><h3 style="margin:0 0 8px;font-size:1.4rem">Sample heading</h3><p style="margin:0;color:#555;line-height:1.5">A short line of placeholder text so the preview shows real content.</p></div>'
   third:
     title: 'Column 3'
     description: 'Third column.'
-    examples:
-      - '<div style="padding:24px"><h3 style="margin:0 0 8px;font-size:1.4rem">Sample heading</h3><p style="margin:0;color:#555;line-height:1.5">A short line of placeholder text so the preview shows real content.</p></div>'
