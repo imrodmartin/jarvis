@@ -44,6 +44,11 @@ props:
     image:
       title: Image
       $ref: json-schema-definitions://canvas.module/image
+      examples:
+        - src: preview.svg
+          alt: 'Sample image'
+          width: 1200
+          height: 800
     title:
       title: Title
       type: string

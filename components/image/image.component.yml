@@ -9,6 +9,11 @@ props:
     image:
       title: Image
       $ref: json-schema-definitions://canvas.module/image
+      examples:
+        - src: preview.svg
+          alt: 'Sample image'
+          width: 1200
+          height: 800
     image_style:
       title: 'Image style'
       # ponytail: hardcoded enum of site image styles; regenerate if styles change.

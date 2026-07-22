@@ -21,6 +21,11 @@ props:
     image:
       title: Photo
       $ref: json-schema-definitions://canvas.module/image
+      examples:
+        - src: preview.svg
+          alt: 'Sample image'
+          width: 1200
+          height: 800
     image_uri:
       title: 'Image source URI (internal)'
       # Original stream-wrapper URI; required for image_style to build the Portrait derivative.
