@@ -32,15 +32,15 @@ props:
       default: false
     eyebrow:
       title: Eyebrow
-      description: 'Small overline — e.g. Scripture reference and date.'
+      description: 'Small overline'
       type: string
       examples:
-        - 'John 3:16 · July 21, 2026'
+        - 'July 21, 2026'
     title:
       title: Title
       type: string
       examples:
-        - 'The Love of God'
+        - 'The Main Title'
     heading_level:
       title: 'Title level'
       type: string
@@ -54,7 +54,7 @@ props:
       title: Description
       type: string
       examples:
-        - 'A message on the greatest verse in Scripture.'
+        - 'A message about Jarvis.'
     button1_text:
       title: 'Primary button text'
       type: string

@@ -21,7 +21,7 @@ props:
       title: Heading
       type: string
       examples:
-        - 'Faithful to Scripture. Growing together in Christ.'
+        - 'Large Heading for the CTA.'
     heading_level:
       title: 'Heading level'
       type: string
@@ -35,7 +35,7 @@ props:
       title: 'Lead text'
       type: string
       examples:
-        - 'We are a multigenerational Baptist church seeking to glorify God through biblical worship, faithful teaching, caring relationships, and gospel witness.'
+        - 'This is a lead paragraph that introduces the call to action. It should be short and compelling.'
     row1_icon: &icon
       title: 'Row 1 icon'
       # Value is the full Font Awesome class string, printed straight into the <i>.
@@ -71,7 +71,7 @@ props:
       title: 'Row 1 text'
       type: string
       examples:
-        - "God's Word shapes what we believe and how we live."
+        - "We love the Jarvis theme"
     row2_icon:
       <<: *icon
       title: 'Row 2 icon'
@@ -79,7 +79,7 @@ props:
       title: 'Row 2 text'
       type: string
       examples:
-        - 'The gospel of Jesus Christ is our hope and message.'
+        - 'The way it makes the site look is amazing.'
     row3_icon:
       <<: *icon
       title: 'Row 3 icon'
@@ -87,12 +87,12 @@ props:
       title: 'Row 3 text'
       type: string
       examples:
-        - 'The local church is a family where believers grow and serve.'
+        - 'This is really awesome'
     button_text:
       title: 'Button text'
       type: string
       examples:
-        - 'What We Believe'
+        - 'How it works'
     button_href:
       title: 'Button link'
       type: string
@@ -104,7 +104,7 @@ props:
       description: 'Reversed-colour text link shown beside the button.'
       type: string
       examples:
-        - 'Meet Our Church'
+        - 'Meet Our Team'
     link_href:
       title: 'Link URL'
       type: string
