@@ -1,0 +1,19 @@
+include:
+  - project: $_GITLAB_TEMPLATES_REPO
+    ref: $_GITLAB_TEMPLATES_REF
+    file:
+      - '/includes/include.drupalci.main.yml'
+      - '/includes/include.drupalci.variables.yml'
+      - '/includes/include.drupalci.workflows.yml'
+
+# Build and deploy the docs only. Skip the test and lint jobs.
+# Drop any of these to re-enable that check. SKIP_PAGES stays unset so pages runs.
+variables:
+  SKIP_COMPOSER_LINT: '1'
+  SKIP_CSPELL: '1'
+  SKIP_ESLINT: '1'
+  SKIP_NIGHTWATCH: '1'
+  SKIP_PHPCS: '1'
+  SKIP_PHPSTAN: '1'
+  SKIP_PHPUNIT: '1'
+  SKIP_STYLELINT: '1'

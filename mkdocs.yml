@@ -1,0 +1,31 @@
+site_name: Jarvis
+site_url: https://project.pages.drupalcode.org/jarvis
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - search.suggest
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Configuration: configuration.md
+  - Usage:
+      - Overview: usage/index.md
+      - Components: usage/components.md
+      - Regions and layout: usage/regions.md
+      - Accessibility: usage/accessibility.md

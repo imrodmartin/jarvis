@@ -90,3 +90,8 @@ This theme bundles Bootstrap v5.3.8 under `libraries/bootstrap/`:
 No other third-party assets are bundled. Fonts are fetched from Google Fonts at
 the site owner's request via the theme settings form and stored locally under
 `public://jarvis-fonts/`; none ship with the theme.
+
+## Documentation
+
+Full documentation is under [`docs/`](docs/) and published at
+https://project.pages.drupalcode.org/jarvis.
