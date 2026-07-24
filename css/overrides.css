@@ -130,7 +130,9 @@ body {
 .jarvis-primary-menu nav ul { list-style: none; margin: 0; padding: 0; }
 
 /* Top level = horizontal bar. */
-.jarvis-primary-menu nav > ul { display: flex; flex-wrap: wrap; align-items: center; }
+/* flex-direction is explicit so it pairs visibly with the column override in
+   the mobile block below, and so no Bootstrap list class can flip it. */
+.jarvis-primary-menu nav > ul { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; }
 
 .jarvis-primary-menu li { position: relative; }
 /* <nolink> items render as <span>, not <a> — style both identically so they sit

@@ -26,7 +26,12 @@
   {% import _self as menus %}
   {% if items %}
     {% if depth == 0 %}
-      <ul{{ attributes.addClass('navbar-nav', 'jarvis-menu') }}>
+      {# No .navbar-nav here. Bootstrap sets flex-direction:column on it and only
+         flips it to row inside a .navbar-expand-* wrapper, which this markup has
+         no reason to introduce — the theme lays the bar out itself
+         (css/overrides.css, .jarvis-primary-menu nav > ul). Adding the class
+         stacked the menu vertically on desktop. #}
+      <ul{{ attributes.addClass('jarvis-menu') }}>
     {% else %}
       <ul class="dropdown-menu">
     {% endif %}
