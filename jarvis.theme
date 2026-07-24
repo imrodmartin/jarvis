@@ -5,6 +5,8 @@
  * Jarvis theme hooks.
  */
 
+use Drupal\Core\Render\Markup;
+
 /**
  * Color settings: key => [label, CSS custom property, needs -rgb, default].
  *
@@ -200,6 +202,41 @@ function jarvis_preprocess_page(array &$variables) {
     $stripped = preg_replace('/<!--.*?-->/s', '', $markup);
     $variables[$region . '_empty'] = trim(strip_tags($stripped)) === ''
       && !preg_match('/<(img|picture|video|iframe|svg|canvas|embed)\b/i', $stripped);
+  }
+}
+
+/**
+ * Implements hook_preprocess_views_view_field().
+ *
+ * Un-nest the blog view's "Read More" link.
+ *
+ * The field rewrites to `Read More - {{ title }}`, but the title token is
+ * itself already a link, so Views emits an anchor inside an anchor:
+ *
+ *   <a href="/blog/x">Read More - <a href="/blog/x">Title</a> </a>
+ *
+ * Nested <a> is invalid HTML. Browsers recover by splitting it, so the row
+ * renders as TWO links to the same destination — two tab stops, and two
+ * announcements to a screen reader for one action.
+ *
+ * Fixing it here rather than in views.view.blog keeps the change in code: the
+ * view config is exported into the recipe, so editing it there would mean a
+ * re-export and would be silently undone by anyone re-saving the view.
+ *
+ * Only rewrites when the nested shape is actually present, so a future fix to
+ * the view (or a different rewrite) passes through untouched.
+ */
+function jarvis_preprocess_views_view_field(array &$variables) {
+  $view = $variables['view'] ?? NULL;
+  $field = $variables['field'] ?? NULL;
+  if (!$view || !$field || $view->id() !== 'blog' || ($field->field ?? NULL) !== 'view_node') {
+    return;
+  }
+  $html = (string) ($variables['output'] ?? '');
+  // Outer anchor ... inner anchor(s) ... closing. Keep the outer link, drop the
+  // inner anchor tags but keep their text.
+  if (preg_match('#^(\s*<a\b[^>]*>)(.*<a\b.*)(</a>\s*)$#s', $html, $m)) {
+    $variables['output'] = Markup::create($m[1] . preg_replace('#</?a\b[^>]*>#i', '', $m[2]) . $m[3]);
   }
 }
 
