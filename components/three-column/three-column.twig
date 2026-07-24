@@ -24,6 +24,11 @@
   none: ['primary', 'secondary', 'black'],
   primary: ['white'],
   secondary: ['white'],
+  {# Deliberately empty: Background 1/2 are arbitrary theme-setting colours,
+     so no fixed palette entry can be guaranteed to pass AA against them.
+     jarvis_preprocess_html computes a black-or-white safe colour per
+     background instead, and the section CSS reads that. ADA wins over the
+     editor's pick here; the prop description says so in the tray. #}
   bg1: [],
   bg2: [],
   dark: ['white'],

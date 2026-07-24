@@ -1,0 +1,73 @@
+{#
+/**
+ * @file
+ * Main menu as a Bootstrap 5 navbar with real dropdowns.
+ *
+ * Drupal's menu block emits a bare <nav><ul><li> with no classes, so this
+ * template supplies the .nav-item / .dropdown / .dropdown-menu markup that
+ * Bootstrap's Dropdown plugin binds to. The bundle is already loaded
+ * (jarvis/global), so open/close, keyboard navigation, Escape-to-close,
+ * click-outside dismissal and the aria-expanded contract all come from the
+ * framework. This replaces js/menu-touch.js, which hand-rolled all of it.
+ *
+ * Parents that have their own URL keep it: the link navigates and a separate
+ * split-toggle button opens the submenu. Putting data-bs-toggle on the link
+ * itself would swallow the click and strand the parent page.
+ *
+ * Bootstrap 5 has no native multi-level dropdown. The menu is two levels deep;
+ * anything deeper is flattened into the same panel (indented) rather than
+ * silently disappearing.
+ */
+#}
+{% import _self as menus %}
+{{ menus.build(items, 0, attributes) }}
+
+{% macro build(items, depth, attributes) %}
+  {% import _self as menus %}
+  {% if items %}
+    {% if depth == 0 %}
+      <ul{{ attributes.addClass('navbar-nav', 'jarvis-menu') }}>
+    {% else %}
+      <ul class="dropdown-menu">
+    {% endif %}
+    {% for item in items %}
+      {% set has_children = item.below is not empty %}
+      {# Only the top level opens a panel; deeper items flatten into it. #}
+      {% set is_parent = has_children and depth == 0 %}
+      {% set nolink = item.url.isRouted and item.url.routeName == '<nolink>' %}
+      <li{{ item.attributes.addClass(depth == 0 ? 'nav-item' : '', is_parent ? 'dropdown' : '') }}>
+        {% if is_parent %}
+          {% if nolink %}
+            {# Nowhere to navigate, so one button both labels and toggles. #}
+            <button type="button" class="nav-link dropdown-toggle jarvis-menu__toggle"
+                    data-bs-toggle="dropdown" aria-expanded="false">{{ item.title }}</button>
+          {% else %}
+            <a href="{{ item.url }}"
+               class="nav-link{{ item.in_active_trail ? ' active' : '' }}">{{ item.title }}</a>
+            <button type="button"
+                    class="nav-link dropdown-toggle dropdown-toggle-split jarvis-menu__toggle"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="visually-hidden">{{ 'Show submenu for @title'|t({'@title': item.title}) }}</span>
+            </button>
+          {% endif %}
+          {{ menus.build(item.below, depth + 1, attributes) }}
+        {% else %}
+          {% if nolink %}
+            <span class="{{ depth == 0 ? 'nav-link' : 'dropdown-item' }}">{{ item.title }}</span>
+          {% else %}
+            <a href="{{ item.url }}"
+               class="{{ depth == 0 ? 'nav-link' : 'dropdown-item' }}{{ item.in_active_trail ? ' active' : '' }}">{{ item.title }}</a>
+          {% endif %}
+          {# Depth >= 2: Bootstrap has no nested panel, so render descendants as
+             further indented rows in the panel we are already inside. #}
+          {% if has_children %}
+            {% for child in item.below %}
+              <a href="{{ child.url }}" class="dropdown-item ps-4">{{ child.title }}</a>
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}

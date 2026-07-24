@@ -121,23 +121,24 @@ body {
 .jarvis-columns .row { margin-top: 0; row-gap: var(--bs-gutter-y); }
 .jarvis-columns .row > * { padding-top: 0; }
 
-/* Primary menu: superfish-style dropdowns. Pure CSS hover + :focus-within
-   multi-level fly-outs — no jQuery/superfish plugin (native covers it).
-   Menu block renders a bare <nav><ul><li> (no .menu / menu-item classes), so
-   selectors target that structure; :has(> ul) marks parents for the caret.
-   ponytail: skips hover-intent delay + touch tap-handling (JS); a dedicated
-   mobile menu is separate scope — add if touch UX needs it. */
+/* Primary menu. templates/menu--main.html.twig emits Bootstrap navbar markup,
+   so the dropdown panel and its open/close, keyboard navigation, Escape and
+   click-outside dismissal all come from the already-loaded bundle. What is left
+   here is only the theme's typography and spacing on top of .nav-link /
+   .dropdown-item. Replaces the former pure-CSS hover fly-outs and the
+   hand-rolled js/menu-touch.js. */
 .jarvis-primary-menu nav ul { list-style: none; margin: 0; padding: 0; }
 
 /* Top level = horizontal bar. */
-.jarvis-primary-menu nav > ul { display: flex; flex-wrap: wrap; }
+.jarvis-primary-menu nav > ul { display: flex; flex-wrap: wrap; align-items: center; }
 
 .jarvis-primary-menu li { position: relative; }
-/* <nolink> menu items render as <span>, not <a> (e.g. dropdown-parent titles
-   with no URL) — style both identically so they sit on the bar, bold, like real
-   links. Scoped to nav so the hamburger's <span> bars aren't caught. */
+/* <nolink> items render as <span>, not <a> — style both identically so they sit
+   on the bar like real links. Scoped to nav so the hamburger's <span> bars are
+   not caught. The split toggle is included so it matches its sibling link. */
 .jarvis-primary-menu nav a,
-.jarvis-primary-menu nav span {
+.jarvis-primary-menu nav span,
+.jarvis-primary-menu nav .jarvis-menu__toggle {
   display: block;
   padding: 0.75rem 1rem;
   color: var(--bs-body-color);
@@ -146,42 +147,32 @@ body {
   font-weight: 600;
 }
 .jarvis-primary-menu nav a:hover,
-.jarvis-primary-menu nav a:focus { color: var(--bs-primary); }
+.jarvis-primary-menu nav a:focus,
+.jarvis-primary-menu nav .jarvis-menu__toggle:hover,
+.jarvis-primary-menu nav .jarvis-menu__toggle:focus { color: var(--bs-primary); }
 
-/* Caret on parents (items that contain a submenu). The `/ ""` alternative-text
-   syntax keeps screen readers from announcing the ▾ glyph; browsers without
-   that syntax fall back to the plain declaration above it. */
-.jarvis-primary-menu li:has(> ul) > a::after,
-.jarvis-primary-menu li:has(> ul) > span::after { content: " \25be"; content: " \25be" / ""; opacity: 0.6; }
+/* Split toggle sits tight against the parent link it belongs to. Bootstrap's
+   .dropdown-toggle draws the caret, so there is no ::after of our own. */
+.jarvis-primary-menu nav .jarvis-menu__toggle {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.jarvis-primary-menu nav .dropdown-toggle-split { padding-inline: 0.25rem 0.75rem; }
+.jarvis-primary-menu nav .nav-item.dropdown { display: flex; align-items: center; }
+/* The link half of a split parent must not double the gap before the caret. */
+.jarvis-primary-menu nav .nav-item.dropdown > a { padding-right: 0.25rem; }
 
-/* Submenus (nested ul): hidden, revealed on hover/focus. */
-.jarvis-primary-menu li > ul {
-  position: absolute;
-  top: 100%;
-  left: 0;
+/* Dropdown panel: keep the theme's shadow and rounding, let Bootstrap position
+   and toggle it. */
+.jarvis-primary-menu .dropdown-menu {
   min-width: 220px;
   padding: 0.25rem 0;
-  background: #fff;
+  border: 0;
   border-radius: var(--bs-border-radius);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(4px);
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  z-index: 1000;
 }
-.jarvis-primary-menu li:hover > ul,
-.jarvis-primary-menu li:focus-within > ul,
-.jarvis-primary-menu li.jarvis-open > ul {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-/* Second level and deeper fly to the right. */
-.jarvis-primary-menu li li > ul { top: 0; left: 100%; transform: translateX(4px); }
-.jarvis-primary-menu li li:hover > ul,
-.jarvis-primary-menu li li:focus-within > ul { transform: translateX(0); }
+.jarvis-primary-menu .dropdown-item { font-weight: 500; white-space: normal; }
 
 /* Hamburger: 44px touch target. Visibility handled by .d-lg-none in markup. */
 .jarvis-menu-toggle {
@@ -221,18 +212,23 @@ body {
 /* Mobile (<992px): menu lives in the slide-out offcanvas drawer; stack it and
    keep submenus static + always open so every item is tappable. */
 @media (max-width: 991.98px) {
-  .jarvis-primary-menu nav > ul { flex-direction: column; }
-  .jarvis-primary-menu li > ul {
+  .jarvis-primary-menu nav > ul { flex-direction: column; align-items: stretch; }
+  /* Force Bootstrap's panel open and inline: inside the drawer there is nowhere
+     to pop to, and collapsing it would hide items behind a second tap. */
+  .jarvis-primary-menu .dropdown-menu {
+    display: block;
     position: static;
     min-width: 0;
     padding: 0 0 0 1rem;
     background: transparent;
     box-shadow: none;
-    opacity: 1;
-    visibility: visible;
     transform: none;
   }
-  .jarvis-primary-menu li li > ul { left: auto; }
+  /* Panel is always visible here, so the toggle is redundant — and announcing a
+     collapsed state that is not real would be a lie to screen readers. */
+  .jarvis-primary-menu nav .jarvis-menu__toggle { display: none; }
+  .jarvis-primary-menu nav .nav-item.dropdown { display: block; }
+  .jarvis-primary-menu nav .nav-item.dropdown > a { padding-right: 1rem; }
 }
 
 /* Theme-settings colors: regions consume the vars set by hook_preprocess_html.
@@ -328,10 +324,6 @@ td:has(> span.file) { padding-right: 20px; }
   display: block;
   border: 0;
 }
-.video-frame {
-  padding: 10px;
-  filter: drop-shadow(grey 0.5rem 0.5rem 5px);
-}
 
 /* Section background colours (1/2/3-column components).
    Text + Bootstrap colour vars are overridden so ANY child component inherits
@@ -341,69 +333,71 @@ td:has(> span.file) { padding-right: 20px; }
 .jarvis-bg {
   padding-block: 2rem; /* breathing room so text isn't flush to the colour band edge */
 }
+/* One foreground contract for every surface below. Each variant declares only
+   what it IS — its background and its safe text colour as --jarvis-on /
+   --jarvis-on-rgb — and this rule wires that into every colour var the theme
+   and Bootstrap read. Links follow the text colour unless a surface overrides
+   them with --jarvis-link*.
+
+   Custom properties resolve per element, so a nested surface (the card reset at
+   the end of this block) re-declares --jarvis-on and wins on its own element
+   while still inheriting everything else. */
+.jarvis-bg--primary,
+.jarvis-bg--secondary,
+.jarvis-bg--dark,
+.jarvis-bg--light,
+.jarvis-bg--bg1,
+.jarvis-bg--bg2,
+.jarvis-bg--image,
+.jarvis-columns .jarvis-person--card,
+.jarvis-columns .jarvis-card:not(.jarvis-card--background) {
+  color: var(--jarvis-on);
+  --bs-body-color: var(--jarvis-on);
+  --bs-body-color-rgb: var(--jarvis-on-rgb);
+  --bs-heading-color: var(--jarvis-on);
+  --jarvis-heading-color: var(--jarvis-on); /* theme headings read this, not --bs-heading-color */
+  --bs-emphasis-color: var(--jarvis-on);
+  --bs-link-color: var(--jarvis-link, var(--jarvis-on));
+  --bs-link-color-rgb: var(--jarvis-link-rgb, var(--jarvis-on-rgb));
+  --bs-link-hover-color: var(--jarvis-link-hover, var(--jarvis-on));
+}
+
+/* Fixed brand backgrounds: white text, slightly dimmed link hover. */
 .jarvis-bg--primary {
   background: var(--bs-primary, #2d6cdf);
+  --jarvis-on: #fff;
+  --jarvis-on-rgb: 255, 255, 255;
+  --jarvis-link-hover: #e6e6e6;
 }
 .jarvis-bg--secondary {
   background: var(--bs-secondary, #1b2a4a);
-}
-/* Background 1/2: arbitrary theme-setting colours. Text/heading/link colour come
-   from the ADA-safe companion var computed in jarvis_preprocess_html(). */
-.jarvis-bg--bg1 {
-  background: var(--jarvis-bg-1);
-  color: var(--jarvis-bg-1-text);
-  --bs-body-color: var(--jarvis-bg-1-text);
-  --bs-body-color-rgb: var(--jarvis-bg-1-text-rgb);
-  --bs-heading-color: var(--jarvis-bg-1-text);
-  --jarvis-heading-color: var(--jarvis-bg-1-text);
-  --bs-emphasis-color: var(--jarvis-bg-1-text);
-  --bs-link-color: var(--jarvis-bg-1-text);
-  --bs-link-color-rgb: var(--jarvis-bg-1-text-rgb);
-  --bs-link-hover-color: var(--jarvis-bg-1-text);
-}
-.jarvis-bg--bg2 {
-  background: var(--jarvis-bg-2);
-  color: var(--jarvis-bg-2-text);
-  --bs-body-color: var(--jarvis-bg-2-text);
-  --bs-body-color-rgb: var(--jarvis-bg-2-text-rgb);
-  --bs-heading-color: var(--jarvis-bg-2-text);
-  --jarvis-heading-color: var(--jarvis-bg-2-text);
-  --bs-emphasis-color: var(--jarvis-bg-2-text);
-  --bs-link-color: var(--jarvis-bg-2-text);
-  --bs-link-color-rgb: var(--jarvis-bg-2-text-rgb);
-  --bs-link-hover-color: var(--jarvis-bg-2-text);
+  --jarvis-on: #fff;
+  --jarvis-on-rgb: 255, 255, 255;
+  --jarvis-link-hover: #e6e6e6;
 }
 .jarvis-bg--dark {
   background: #1a1a1a;
+  --jarvis-on: #fff;
+  --jarvis-on-rgb: 255, 255, 255;
+  --jarvis-link-hover: #e6e6e6;
 }
 .jarvis-bg--light {
   background: #f5f5f5;
+  --jarvis-on: #000;
+  --jarvis-on-rgb: 0, 0, 0;
+  --jarvis-link-hover: #333333;
 }
-/* White text on the dark backgrounds. */
-.jarvis-bg--primary,
-.jarvis-bg--secondary,
-.jarvis-bg--dark {
-  color: #fff;
-  --bs-body-color: #fff;
-  --bs-body-color-rgb: 255, 255, 255;
-  --bs-heading-color: #fff;
-  --jarvis-heading-color: #fff; /* theme headings read this var, not --bs-heading-color */
-  --bs-emphasis-color: #fff;
-  --bs-link-color: #fff;
-  --bs-link-color-rgb: 255, 255, 255;
-  --bs-link-hover-color: #e6e6e6;
+/* Background 1/2: arbitrary theme-setting colours, so the safe text colour is
+   computed per background in jarvis_preprocess_html() rather than hardcoded. */
+.jarvis-bg--bg1 {
+  background: var(--jarvis-bg-1);
+  --jarvis-on: var(--jarvis-bg-1-text);
+  --jarvis-on-rgb: var(--jarvis-bg-1-text-rgb);
 }
-/* Black text on the light background. */
-.jarvis-bg--light {
-  color: #000;
-  --bs-body-color: #000;
-  --bs-body-color-rgb: 0, 0, 0;
-  --bs-heading-color: #000;
-  --jarvis-heading-color: #000; /* theme headings read this var, not --bs-heading-color */
-  --bs-emphasis-color: #000;
-  --bs-link-color: #000;
-  --bs-link-color-rgb: 0, 0, 0;
-  --bs-link-hover-color: #333333;
+.jarvis-bg--bg2 {
+  background: var(--jarvis-bg-2);
+  --jarvis-on: var(--jarvis-bg-2-text);
+  --jarvis-on-rgb: var(--jarvis-bg-2-text-rgb);
 }
 /* Media image background: cover the section, darken with an adjustable overlay
    so light text stays ADA-readable regardless of the photo. */
@@ -411,15 +405,9 @@ td:has(> span.file) { padding-right: 20px; }
   position: relative;
   background-size: cover;
   background-position: center;
-  color: #fff;
-  --bs-body-color: #fff;
-  --bs-body-color-rgb: 255, 255, 255;
-  --bs-heading-color: #fff;
-  --jarvis-heading-color: #fff;
-  --bs-emphasis-color: #fff;
-  --bs-link-color: #fff;
-  --bs-link-color-rgb: 255, 255, 255;
-  --bs-link-hover-color: #e6e6e6;
+  --jarvis-on: #fff;
+  --jarvis-on-rgb: 255, 255, 255;
+  --jarvis-link-hover: #e6e6e6;
 }
 .jarvis-bg--image > .jarvis-bg__overlay {
   position: absolute;
@@ -441,18 +429,15 @@ td:has(> span.file) { padding-right: 20px; }
 
 /* Components with their own (light) background must keep dark text even inside a
    coloured section — otherwise the inherited white text is invisible on them.
-   Reset the colour vars back to the light-surface defaults. */
+   Only the inputs are restated; the shared rule above wires them up. Links go
+   brand-coloured here rather than following the text. */
 .jarvis-columns .jarvis-person--card,
 .jarvis-columns .jarvis-card:not(.jarvis-card--background) {
-  color: #1a1a1a;
-  --bs-body-color: #1a1a1a;
-  --bs-body-color-rgb: 26, 26, 26;
-  --bs-heading-color: #1a1a1a;
-  --jarvis-heading-color: #1a1a1a;
-  --bs-emphasis-color: #1a1a1a;
-  --bs-link-color: var(--bs-primary);
-  --bs-link-color-rgb: var(--bs-primary-rgb);
-  --bs-link-hover-color: var(--bs-primary);
+  --jarvis-on: #1a1a1a;
+  --jarvis-on-rgb: 26, 26, 26;
+  --jarvis-link: var(--bs-primary);
+  --jarvis-link-rgb: var(--bs-primary-rgb);
+  --jarvis-link-hover: var(--bs-primary);
 }
 
 /* Site-wide: links have no underline. */
@@ -584,8 +569,7 @@ a {
    doesn't load — Bootstrap's .visually-hidden (all !important) would keep the
    link clipped even while focused. Reveal it explicitly; !important is
    required to beat Bootstrap's clip rules. */
-.visually-hidden.focusable:focus,
-.skip-link:focus {
+.visually-hidden.focusable:focus {
   position: fixed !important;
   top: 0;
   left: 0;

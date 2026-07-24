@@ -6,7 +6,6 @@ global:
       css/overrides.css: {}
   js:
     libraries/bootstrap/js/bootstrap.bundle.min.js: { minified: true, attributes: { defer: true } }
-    js/menu-touch.js: {}
     js/nav-branding.js: {}
 
 # Font Awesome 6 Free (CDN). Attached per component via libraryOverrides.

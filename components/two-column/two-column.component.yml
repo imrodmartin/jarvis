@@ -44,6 +44,7 @@ props:
       default: 45
     text_color:
       title: 'Text colour (overrides child components)'
+      description: 'Ignored on Background 1 and Background 2. Those are arbitrary theme-setting colours, so the text colour there is computed automatically to meet WCAG AA contrast and cannot be overridden.'
       type: string
       enum: [inherit, primary, secondary, black, white]
       'meta:enum':
