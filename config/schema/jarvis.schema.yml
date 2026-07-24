@@ -25,6 +25,12 @@ jarvis.settings:
     jarvis_color_heading:
       type: string
       label: 'Heading color'
+    jarvis_color_bg_1:
+      type: string
+      label: 'Background 1 color'
+    jarvis_color_bg_2:
+      type: string
+      label: 'Background 2 color'
     jarvis_color_header_bg:
       type: string
       label: 'Header background color'

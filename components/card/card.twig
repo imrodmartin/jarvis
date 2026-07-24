@@ -29,7 +29,7 @@
     <div class="row g-0 {{ variant == 'image-right' ? 'flex-md-row-reverse' : '' }}">
       {% if has_image %}
         <div class="col-md-5">
-          <img src="{{ image.src }}" alt="{{ image.alt }}" class="jarvis-card__img jarvis-card__img--side w-100 h-100">
+          <img src="{{ image.src }}" alt="{{ image.alt|default('') }}" class="jarvis-card__img jarvis-card__img--side w-100 h-100">
         </div>
       {% endif %}
       <div class="{{ has_image ? 'col-md-7' : 'col-12' }}">
@@ -43,7 +43,7 @@
   </div>
 {% else %}
   <div class="{{ base }}">
-    {% if has_image %}<img src="{{ image.src }}" alt="{{ image.alt }}" class="card-img-top jarvis-card__img">{% endif %}
+    {% if has_image %}<img src="{{ image.src }}" alt="{{ image.alt|default('') }}" class="card-img-top jarvis-card__img">{% endif %}
     <div class="card-body">
       {% if title %}<{{ h }} class="card-title h4">{{ title }}</{{ h }}>{% endif %}
       {% if body %}<div class="card-text">{{ body|raw }}</div>{% endif %}

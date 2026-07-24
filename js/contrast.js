@@ -120,6 +120,11 @@
         overlay.style.opacity = Math.max(floor, 0.6).toFixed(2);
       }
     };
+    // 404, CSP block or network failure: nothing to sample either, so fail
+    // safe the same way rather than leaving the author's floor unprotected.
+    img.onerror = function () {
+      overlay.style.opacity = Math.max(floor, 0.6).toFixed(2);
+    };
     img.src = m[1];
   }
 
@@ -130,7 +135,63 @@
     });
   }
 
-  if (typeof document === 'undefined') return;  // node self-check path
+  // ponytail: node self-check. `node contrast.js` runs it, the browser skips
+  // it. It calls the SAME functions the browser path uses — an earlier version
+  // re-implemented them here, so a bug in the real solver still passed.
+  function selfCheck() {
+    var assert = require('assert');
+
+    // Ratio + luminance primitives.
+    assert.strictEqual(Math.round(contrast(TEXT, lum(0, 0, 0))), 21);  // white on black = 21:1
+    assert.strictEqual(contrast(TEXT, lum(255, 255, 255)), 1);         // white on white = 1:1
+
+    // Dark-overlay solver: a black image needs none, light images get darkened
+    // until white text passes, and a sufficient user floor is left alone.
+    assert.strictEqual(neededAlpha(0, 0, 0, 0), 0);
+    [[255, 255, 255], [230, 225, 210], [200, 180, 150]].forEach(function (c) {
+      var a = neededAlpha(c[0], c[1], c[2], 0);
+      assert.ok(a > 0);
+      assert.ok(contrast(TEXT, lum(c[0] * (1 - a), c[1] * (1 - a), c[2] * (1 - a))) >= NEED);
+    });
+    assert.strictEqual(neededAlpha(230, 225, 210, 0.8), 0.8);
+
+    // Light-overlay solver (columns with dark text): mirror of the above.
+    assert.strictEqual(neededAlphaLight(255, 255, 255, 0), 0);
+    [[0, 0, 0], [40, 40, 60], [90, 70, 50]].forEach(function (c) {
+      var a = neededAlphaLight(c[0], c[1], c[2], 0);
+      assert.ok(a > 0);
+      assert.ok(contrast(DARK_TEXT, lum(c[0] + (255 - c[0]) * a, c[1] + (255 - c[1]) * a, c[2] + (255 - c[2]) * a)) >= NEED);
+    });
+    assert.strictEqual(neededAlphaLight(0, 0, 0, 0.9), 0.9);
+
+    // Worst-block sampler on a left-black/right-white image: light text must
+    // score the white block, dark text the black one, never the gray average.
+    var half = new Array(16 * 16 * 4).fill(0).map(function (_, i) {
+      var px = Math.floor(i / 4);
+      return (i % 4 === 3) ? 255 : ((px % 16) < 8 ? 0 : 255);
+    });
+    assert.deepStrictEqual(extremeBlock(half, 16, 4, false), [255, 255, 255]);
+    assert.deepStrictEqual(extremeBlock(half, 16, 4, true), [0, 0, 0]);
+    assert.ok(neededAlpha(255, 255, 255, 0) > neededAlpha(127, 127, 127, 0));
+
+    console.log('contrast self-check ok');
+  }
+
+  // Node: export the engine and run the check against it. No document here, so
+  // this also replaces the browser bootstrap below.
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      chan: chan,
+      lum: lum,
+      contrast: contrast,
+      extremeBlock: extremeBlock,
+      neededAlpha: neededAlpha,
+      neededAlphaLight: neededAlphaLight
+    };
+    selfCheck();
+    return;
+  }
+  if (typeof document === 'undefined') return;
 
   // Inside the Canvas editor preview, show the author's raw overlay value —
   // auto-darkening here would fight the overlay slider and make it look dead.
@@ -145,79 +206,3 @@
     run();
   }
 })();
-
-// ponytail: node self-check for the contrast math. `node contrast.js` runs it; browser skips.
-if (typeof module !== 'undefined' && module.exports) {
-  var chan = function (c) { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
-  var lum = function (r, g, b) { return 0.2126 * chan(r) + 0.7152 * chan(g) + 0.0722 * chan(b); };
-  var contrast = function (a, b) { return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05); };
-  var need = function (r, g, b, f) { var a = f; while (a < 0.95) { if (contrast(1, lum(r * (1 - a), g * (1 - a), b * (1 - a))) >= 4.5) break; a += 0.02; } return a; };
-  var assert = require('assert');
-  assert.strictEqual(Math.round(contrast(1, lum(0, 0, 0))), 21);   // white on black = 21:1
-  assert.ok(contrast(1, lum(255, 255, 255)) === 1);                // white on white = 1:1
-  assert.ok(need(0, 0, 0, 0) === 0);                               // black image needs none
-  [[255, 255, 255], [230, 225, 210], [200, 180, 150]].forEach(function (c) {
-    var a = need(c[0], c[1], c[2], 0);                             // light images -> darkened until text passes
-    assert.ok(a > 0);
-    assert.ok(contrast(1, lum(c[0] * (1 - a), c[1] * (1 - a), c[2] * (1 - a))) >= 4.5);
-  });
-  assert.ok(need(230, 225, 210, 0.8) === 0.8);                     // respects user floor when already dark enough
-  // Brightest-block: half-black/half-white sample must resolve to the white
-  // block, not the mid-gray average.
-  var bb = function (d, size, bs) {
-    var best = [0, 0, 0], bestLum = -1;
-    for (var by = 0; by < size; by += bs) for (var bx = 0; bx < size; bx += bs) {
-      var r = 0, g = 0, b = 0, n = 0;
-      for (var y = by; y < by + bs; y++) for (var x = bx; x < bx + bs; x++) {
-        var i = (y * size + x) * 4; r += d[i]; g += d[i + 1]; b += d[i + 2]; n++;
-      }
-      r /= n; g /= n; b /= n;
-      var l = lum(r, g, b);
-      if (l > bestLum) { bestLum = l; best = [r, g, b]; }
-    }
-    return best;
-  };
-  var half = new Array(16 * 16 * 4).fill(0).map(function (_, i) {
-    var px = Math.floor(i / 4);
-    return (i % 4 === 3) ? 255 : ((px % 16) < 8 ? 0 : 255);        // left half black, right half white
-  });
-  var picked = bb(half, 16, 4);
-  assert.deepStrictEqual(picked, [255, 255, 255]);
-  assert.ok(need(picked[0], picked[1], picked[2], 0) > need(127, 127, 127, 0)); // stricter than the average
-
-  // Light-overlay model (columns with dark text): white overlay blends toward
-  // 255; scored against #212529 text (L = 0.011).
-  var DARK = 0.011;
-  var needLight = function (r, g, b, f) {
-    var a = f;
-    while (a < 0.95) {
-      if (contrast(DARK, lum(r + (255 - r) * a, g + (255 - g) * a, b + (255 - b) * a)) >= 4.5) break;
-      a += 0.02;
-    }
-    return a;
-  };
-  assert.ok(needLight(255, 255, 255, 0) === 0);                    // white image: dark text already passes
-  [[0, 0, 0], [40, 40, 60], [90, 70, 50]].forEach(function (c) {
-    var a = needLight(c[0], c[1], c[2], 0);                        // dark images -> lightened until text passes
-    assert.ok(a > 0);
-    assert.ok(contrast(DARK, lum(c[0] + (255 - c[0]) * a, c[1] + (255 - c[1]) * a, c[2] + (255 - c[2]) * a)) >= 4.5);
-  });
-  assert.ok(needLight(0, 0, 0, 0.9) === 0.9);                      // respects user floor when already light enough
-  // Darkest-block pick: half-black/half-white sample must resolve to the black
-  // block for dark text (worst case), mirroring the brightest pick for light.
-  var darkestPicked = (function (d, size, bs) {
-    var best = [0, 0, 0], bestLum = 2;
-    for (var by = 0; by < size; by += bs) for (var bx = 0; bx < size; bx += bs) {
-      var r = 0, g = 0, b = 0, n = 0;
-      for (var y = by; y < by + bs; y++) for (var x = bx; x < bx + bs; x++) {
-        var i = (y * size + x) * 4; r += d[i]; g += d[i + 1]; b += d[i + 2]; n++;
-      }
-      r /= n; g /= n; b /= n;
-      var l = lum(r, g, b);
-      if (l < bestLum) { bestLum = l; best = [r, g, b]; }
-    }
-    return best;
-  })(half, 16, 4);
-  assert.deepStrictEqual(darkestPicked, [0, 0, 0]);
-  console.log('contrast self-check ok');
-}

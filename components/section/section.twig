@@ -8,10 +8,28 @@
 {% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true), no_padding|default(false)) %}
 {% set width = width|default('normal') %}
 {% set bg = bg|default('none') %}
-{% set bg_class = bg != 'none' ? 'bg-' ~ bg : '' %}
-{% set text_class = (bg == 'dark' or bg == 'primary') ? 'text-white' : '' %}
+{# Use the theme's .jarvis-bg--* cascade rather than Bootstrap's bg-* plus a
+   hardcoded text-white. Bootstrap compiles its foreground against the STOCK
+   primary, so text-white silently fails AA once the site primary is themed —
+   the same trap cta.twig documents. The .jarvis-bg--* rules in
+   css/overrides.css set colour plus every --bs-* var, so headings and links
+   follow too, and the child-component ADA fallbacks are keyed on these
+   classes, so they never fired for anything placed in a Section before.
+
+   The base .jarvis-bg class is deliberately omitted: it carries padding-block
+   and Section already exposes its own padding props.
+
+   body-tertiary has no theme equivalent. It is a light surface, so Bootstrap's
+   own class with the default body colour is correct for it. #}
+{% set bg_class = {
+  none: '',
+  light: 'jarvis-bg--light',
+  dark: 'jarvis-bg--dark',
+  primary: 'jarvis-bg--primary',
+  'body-tertiary': 'bg-body-tertiary',
+}[bg]|default('') %}
 {% set container = width == 'full' ? 'container-fluid' : 'container' %}
-<section class="jarvis-section {{ bg_class }} {{ text_class }} {{ space }}">
+<section class="jarvis-section {{ bg_class }} {{ space }}">
   <div class="{{ container }}">
     {{ content }}
   </div>

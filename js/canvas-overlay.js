@@ -144,6 +144,22 @@
   const enhance = (num) => {
     num.setAttribute('data-jarvis-overlay-hidden', '');
 
+    // Which component owns this form? Probe order is load-bearing: `variant`
+    // is unique to card, but `heading_level` is on BOTH card and hero, so card
+    // must be tested first. The column layouts have neither prop.
+    const uuid = (num.name.match(/canvas_component_props\[([^\]]+)\]/) || [])[1];
+    const sibling = (prop) => (uuid
+      ? document.querySelector(`[name*="${uuid}"][name*="${prop}"]`)
+      : null);
+    const isCard = !!sibling('variant');
+    const isHero = !isCard && !!sibling('heading_level');
+
+    // An empty field means the SDC's own |default() applies at render time.
+    // card.twig and hero.twig default to 40, the column layouts to 45 — seeding
+    // a flat 40 made the slider and the WCAG badge disagree with what a column
+    // actually renders.
+    const emptyDefault = (isCard || isHero) ? 40 : 45;
+
     const wrap = document.createElement('div');
     wrap.className = 'jarvis-overlay-slider';
 
@@ -152,7 +168,7 @@
     range.min = 0;
     range.max = 100;
     range.step = 1;
-    range.value = num.value === '' ? 40 : num.value;
+    range.value = num.value === '' ? emptyDefault : num.value;
     range.setAttribute('aria-label', Drupal.t('Overlay opacity (%)'));
 
     const readout = document.createElement('span');
@@ -175,14 +191,9 @@
     // name). Dark/black text zeroes the overlay in card.twig ('black') and
     // hero.twig ('dark'), so the slider is inert there — disable it and say
     // why instead of showing a stale badge. Columns keep their slider: black
-    // text there flips to a light overlay instead. Card vs hero is detected
-    // by their unique props (variant / heading_level) in the same form.
-    const uuid = (num.name.match(/canvas_component_props\[([^\]]+)\]/) || [])[1];
-    const sibling = (prop) => (uuid
-      ? document.querySelector(`[name*="${uuid}"][name*="${prop}"]`)
-      : null);
+    // text there flips to a light overlay instead.
     const textColor = sibling('text_color');
-    const bareTextValue = sibling('variant') ? 'black' : (sibling('heading_level') ? 'dark' : null);
+    const bareTextValue = isCard ? 'black' : (isHero ? 'dark' : null);
     const overlayDisabled = () => !!textColor && !!bareTextValue && textColor.value === bareTextValue;
     const applyDisabled = () => {
       const off = overlayDisabled();

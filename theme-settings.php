@@ -308,10 +308,13 @@ function _jarvis_contrast_pairs(): array {
     ['fg' => 'jarvis_color_footer_text', 'bg' => 'jarvis_color_footer_bg', 'label' => 'Footer text on footer background'],
     ['fg' => 'jarvis_color_header_text', 'bg' => 'jarvis_color_header_bg', 'label' => 'Header text on header background'],
     ['fg' => 'jarvis_color_header_link', 'bg' => 'jarvis_color_header_bg', 'label' => 'Header links on header background'],
-    ['fg' => '#ffffff', 'bg' => 'jarvis_color_primary', 'label' => 'White text on Primary (buttons, sections)'],
-    ['fg' => 'jarvis_color_primary', 'bg' => '#ffffff', 'label' => 'Primary as text/links on white'],
-    ['fg' => '#ffffff', 'bg' => 'jarvis_color_secondary', 'label' => 'White text on Secondary (buttons, sections)'],
-    ['fg' => 'jarvis_color_secondary', 'bg' => '#ffffff', 'label' => 'Secondary as text/links on white'],
+    // Contrast is symmetric, so each of these is listed once. Listing both
+    // directions scored the identical ratio twice: two stacked badges above
+    // the field and two identical warnings on save. The settings field stays
+    // on the 'fg' side so the one-click fix in js/color-settings.js still has
+    // a field to write to.
+    ['fg' => 'jarvis_color_primary', 'bg' => '#ffffff', 'label' => 'Primary vs white (white button text, Primary links on white)'],
+    ['fg' => 'jarvis_color_secondary', 'bg' => '#ffffff', 'label' => 'Secondary vs white (white button text, Secondary links on white)'],
   ];
 }
 

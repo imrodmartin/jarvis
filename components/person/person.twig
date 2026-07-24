@@ -12,7 +12,7 @@
 {% set photo_src = portrait ?: image.src %}
 {% set variant = variant|default('card') %}
 <div class="jarvis-person jarvis-person--{{ variant }} {{ space }}">
-  {% if has_image %}<img src="{{ photo_src }}" alt="{{ image.alt }}" class="jarvis-person__photo mb-3">{% endif %}
+  {% if has_image %}<img src="{{ photo_src }}" alt="{{ image.alt|default('') }}" class="jarvis-person__photo mb-3">{% endif %}
   <div class="jarvis-person__details">
   {% if name %}<div class="jarvis-person__name text-primary">{{ name }}</div>{% endif %}
   {% if position %}<div class="jarvis-person__position">{{ position }}</div>{% endif %}

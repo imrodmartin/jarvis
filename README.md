@@ -23,7 +23,7 @@ Register this repo as a Composer VCS source, then require it:
 
 ```bash
 ddev composer config repositories.jarvis '{"type":"vcs","url":"https://github.com/imrodmartin/jarvis","no-api":true}'
-ddev composer require imrodmartin/jarvis
+ddev composer require drupal/jarvis
 ```
 
 `no-api` makes Composer clone over git instead of the GitHub API — it avoids the
@@ -45,7 +45,9 @@ ddev drush cache:rebuild
 # 2. Apply the recipe, then rebuild again. Pass the recipe as an absolute
 #    container path — ddev drush resolves relative paths from the container
 #    working dir, not the project root.
-ddev drush recipe /var/www/html/web/themes/custom/jarvis/recipe
+#    The recipe ships in the jarvis-bootstrap-recipe repo, not in this one;
+#    this path assumes you are working in a checkout of that project.
+ddev drush recipe /var/www/html/recipes/jarvis
 ddev drush cache:rebuild
 ```
 
