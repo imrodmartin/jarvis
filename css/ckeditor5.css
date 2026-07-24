@@ -1,0 +1,133 @@
+/**
+ * @file
+ * Makes the CKEditor 5 editing area look like the rendered page.
+ *
+ * Referenced from jarvis.info.yml via `ckeditor5-stylesheets`. Core reads that
+ * key from the DEFAULT theme and loads these files as a plain library
+ * (Ckeditor5Hooks::themeCss) — it does NOT scope them for you, and CKEditor 5
+ * in Drupal is inline rather than an iframe. So every rule here is scoped to
+ * .ck-content; anything unscoped would leak into the surrounding admin page.
+ *
+ * Node forms render in the admin theme (node.settings use_admin_theme: true),
+ * so jarvis_preprocess_html() does not run there and the --jarvis-* / --bs-*
+ * custom properties are absent, as is Bootstrap. Every value therefore carries
+ * a fallback matching the theme's own default, and the var() wins wherever the
+ * variables ARE present (e.g. a Canvas preview in the front-end theme).
+ *
+ * Selectors are doubled (.ck-content.ck-content) on purpose. CKEditor 5 injects
+ * ~70 of its own .ck-content rules as an inline <style>, which lands AFTER this
+ * file in the document, so at equal specificity theirs win — verified: our
+ * blockquote/pre/base rules were being overridden. Doubling the class raises
+ * specificity above their single-class rules without resorting to !important,
+ * and keeps working if CKEditor starts styling an element we also style.
+ *
+ * Scope is deliberately typography plus the output of the filters jarvis_html
+ * enables (filter_align, filter_caption, media_embed) — not layout, not
+ * components. The editor shows prose, not page structure.
+ */
+
+.ck-content.ck-content {
+  color: var(--bs-body-color, #212529);
+  font-size: var(--jarvis-fs-base, 100%);
+  line-height: 1.5;
+}
+
+/* Heading scale mirrors overrides.css. rem so it keeps tracking the base font
+   size configured in the theme settings. */
+.ck-content.ck-content h1 { font-size: var(--jarvis-fs-h1, 2.5rem); }
+.ck-content.ck-content h2 { font-size: var(--jarvis-fs-h2, 2rem); }
+.ck-content.ck-content h3 { font-size: var(--jarvis-fs-h3, 1.75rem); }
+.ck-content.ck-content h4 { font-size: var(--jarvis-fs-h4, 1.5rem); }
+.ck-content.ck-content h5 { font-size: var(--jarvis-fs-h5, 1.25rem); }
+.ck-content.ck-content h6 { font-size: var(--jarvis-fs-h6, 1rem); }
+
+.ck-content.ck-content :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--jarvis-heading-color, inherit);
+  line-height: 1.2;
+  margin-block: 1.5rem 0.5rem;
+}
+.ck-content.ck-content > :is(h1, h2, h3, h4, h5, h6):first-child {
+  margin-block-start: 0;
+}
+
+.ck-content.ck-content p {
+  margin-block: 0 1rem;
+}
+
+/* Prose links are underlined for WCAG 1.4.1 — colour alone cannot mark a link.
+   Mirrors the .jarvis-text / .jarvis-wysiwyg rule in overrides.css. */
+.ck-content.ck-content a {
+  color: var(--bs-link-color, #2d6cdf);
+  text-decoration: underline;
+}
+
+.ck-content.ck-content :is(ul, ol) {
+  margin-block: 0 1rem;
+  padding-inline-start: 2rem;
+}
+.ck-content.ck-content li {
+  margin-block-end: 0.25rem;
+}
+
+.ck-content.ck-content blockquote {
+  margin: 1.5rem 0;
+  padding: 0.5rem 0 0.5rem 1.25rem;
+  border-inline-start: 4px solid var(--bs-primary, #2d6cdf);
+  font-style: italic;
+}
+
+.ck-content.ck-content :is(code, pre) {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+}
+.ck-content.ck-content pre {
+  padding: 1rem;
+  overflow-x: auto;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.ck-content.ck-content table {
+  width: 100%;
+  margin-block: 0 1rem;
+  border-collapse: collapse;
+}
+.ck-content.ck-content :is(th, td) {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  text-align: start;
+}
+.ck-content.ck-content th {
+  font-weight: 600;
+  background: #f8f9fa;
+}
+
+/* Media: keep images inside the editing area instead of overflowing it. */
+.ck-content.ck-content :is(img, video, iframe) {
+  max-width: 100%;
+  height: auto;
+}
+
+/* filter_caption output. */
+.ck-content.ck-content figure {
+  margin: 0 0 1rem;
+}
+.ck-content.ck-content figcaption {
+  margin-block-start: 0.5rem;
+  color: var(--bs-secondary-color, #6c757d);
+  font-size: 0.875em;
+}
+
+/* filter_align output — the data-align attribute becomes these classes. */
+.ck-content.ck-content .align-left {
+  float: left;
+  margin: 0 1rem 1rem 0;
+}
+.ck-content.ck-content .align-right {
+  float: right;
+  margin: 0 0 1rem 1rem;
+}
+.ck-content.ck-content .align-center {
+  display: block;
+  margin-inline: auto;
+}

@@ -7,6 +7,11 @@ package: Jarvis
 screenshot: screenshot.jpg
 libraries:
   - jarvis/global
+# Styles the CKEditor 5 editing area so authors see the theme's typography
+# rather than the admin theme's. Core reads this key from the DEFAULT theme and
+# loads the file unscoped, so every rule inside it is scoped to .ck-content.
+ckeditor5-stylesheets:
+  - css/ckeditor5.css
 libraries-extend:
   canvas/canvas-ui:
     - jarvis/canvas-tray-autoexpand
