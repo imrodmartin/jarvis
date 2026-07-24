@@ -7,6 +7,10 @@ global:
   js:
     libraries/bootstrap/js/bootstrap.bundle.min.js: { minified: true, attributes: { defer: true } }
     js/nav-branding.js: {}
+  dependencies:
+    # nav-branding.js is a Drupal behavior using once().
+    - core/once
+    - core/drupal
 
 # Font Awesome 6 Free (CDN). Attached per component via libraryOverrides.
 # Icon-only decorative use; the accompanying text carries the meaning.

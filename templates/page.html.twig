@@ -35,14 +35,15 @@
      responsive offcanvas (offcanvas-lg) that slides in from the right when the
      hamburger is tapped and slides back on close/backdrop tap — no custom JS,
      the loaded bootstrap bundle drives it.
-     ponytail: block ids (jarvis_site_branding / jarvis_main_menu) are hardcoded
-     to split branding out of the offcanvas drawer; rename the blocks -> update
-     these keys. #}
+     .jarvis-branding-wrap is filled by js/nav-branding.js, which relocates the
+     branding block out of the drawer after render. It cannot be done here: this
+     region is a Canvas PageRegion rendered from a component tree, so the region
+     arrives as one opaque blob rather than block children a preprocess hook
+     could address (verified — the branding block renders under a UUID id, not
+     its block id). #}
   {% if page.primary_menu %}
     <div class="container jarvis-region jarvis-primary-menu d-flex align-items-center">
-      <div class="jarvis-branding-wrap">
-        {{ page.primary_menu.jarvis_site_branding }}
-      </div>
+      <div class="jarvis-branding-wrap"></div>
       <button class="jarvis-menu-toggle d-lg-none ms-auto" type="button"
               data-bs-toggle="offcanvas" data-bs-target="#jarvis-primary-nav"
               aria-controls="jarvis-primary-nav" aria-label="{{ 'Toggle main menu'|t }}">
@@ -55,11 +56,10 @@
                   data-bs-target="#jarvis-primary-nav" aria-label="{{ 'Close'|t }}"></button>
         </div>
         <div class="offcanvas-body">
-          {{ page.primary_menu.jarvis_main_menu }}
-          {# Any other block placed here (and the block-demo placeholder) — the
-             two blocks above are split out by id; this renders the rest so
-             nothing silently vanishes. #}
-          {{ page.primary_menu|without('jarvis_site_branding', 'jarvis_main_menu') }}
+          {# Everything still in the region: the main menu and any other block
+             placed here. Branding was already lifted out in preprocess, so this
+             needs no id-based filtering and nothing can silently vanish. #}
+          {{ page.primary_menu }}
         </div>
       </div>
     </div>
