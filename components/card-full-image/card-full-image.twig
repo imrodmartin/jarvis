@@ -16,7 +16,13 @@
 <div class="jarvis-card-full-image {{ bg_class }} {{ fade_class }} {{ flip_class }}">
   <div class="row g-0 {{ flip ? 'flex-md-row-reverse' : '' }}">
     <div class="col-12 col-md-6 jarvis-card-full-image__media">
-      {{ media }}
+      {# ponytail: reuses .jarvis-image__img so the existing fill/fade CSS applies unchanged.
+         Prop wins when set; the slot stays for instances placed before the prop existed. #}
+      {% if image.src is defined and image.src %}
+        <img class="jarvis-image__img" src="{{ image.src }}" alt="{{ image.alt|default('') }}"{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %} loading="lazy">
+      {% else %}
+        {{ media }}
+      {% endif %}
     </div>
     <div class="col-12 col-md-6 jarvis-card-full-image__content">
       {{ content }}

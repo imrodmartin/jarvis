@@ -6,6 +6,10 @@ category: 'Jarvis Layout'
 props:
   type: object
   properties:
+    image:
+      title: Image
+      description: 'Pick the image here. Leave empty to drop an Image component into the Image slot instead.'
+      $ref: json-schema-definitions://canvas.module/image
     image_right:
       title: 'Image on right'
       type: boolean

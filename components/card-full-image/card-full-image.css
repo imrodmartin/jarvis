@@ -7,6 +7,14 @@
   justify-content: center;
 }
 
+/* Direct `image` prop render: no .jarvis-image wrapper, so set the mobile size here.
+   Desktop is handled by the absolute-fill rule below. */
+.jarvis-card-full-image__media > .jarvis-image__img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 /* Desktop: image fills its half on all sides and matches the content height.
    The Bootstrap row already makes both columns equal height (flex stretch), so
    the media column takes the content column's height. The <img> is absolutely
