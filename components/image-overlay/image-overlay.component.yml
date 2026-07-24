@@ -9,6 +9,11 @@ props:
     image:
       title: Image
       $ref: json-schema-definitions://canvas.module/image
+      examples:
+        - src: /sites/default/files/2026-07/jarvis-computer.png
+          alt: 'Laptop showing the Jarvis theme'
+          width: 1672
+          height: 941
     heading_level:
       title: 'Heading level'
       description: 'The overlay heading is styled as a heading, so it must be one in the markup too. Match the page outline.'

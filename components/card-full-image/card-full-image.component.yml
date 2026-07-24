@@ -10,6 +10,11 @@ props:
       title: Image
       description: 'Pick the image here. Leave empty to drop an Image component into the Image slot instead.'
       $ref: json-schema-definitions://canvas.module/image
+      examples:
+        - src: /sites/default/files/2026-07/jarvis-banner-1.jpg
+          alt: 'Jarvis theme banner'
+          width: 1774
+          height: 887
     image_right:
       title: 'Image on right'
       type: boolean
@@ -40,3 +45,5 @@ slots:
   content:
     title: Content
     description: 'Drop a Text / WYSIWYG component here. Gets 20px left/right padding.'
+    examples:
+      - '<h3>Built for Drupal Canvas</h3><p>Drop a Text or WYSIWYG component here to fill this column.</p>'

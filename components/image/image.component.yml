@@ -9,6 +9,11 @@ props:
     image:
       title: Image
       $ref: json-schema-definitions://canvas.module/image
+      examples:
+        - src: /sites/default/files/2026-07/jarvis-banner.png
+          alt: 'Jarvis theme banner'
+          width: 1774
+          height: 887
     image_style:
       title: 'Image style'
       # ponytail: hardcoded enum of site image styles; regenerate if styles change.
