@@ -29,9 +29,14 @@ fontawesome:
 # (see js/contrast.js). Attached per component via libraryOverrides in their
 # component.yml files.
 contrast:
-  version: 1.0.3
+  version: 1.0.4
   js:
     js/contrast.js: {}
+  dependencies:
+    # Attached as a Drupal behavior so late-arriving sections (Views AJAX,
+    # Canvas preview refresh) get their overlays tuned too.
+    - core/once
+    - core/drupal
 
 # Loaded onto the Canvas editor via libraries-extend (see jarvis.info.yml).
 # Widens the right settings tray while a CKEditor field is focused.

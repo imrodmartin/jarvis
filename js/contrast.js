@@ -7,7 +7,7 @@
  * for dark text. Attached per component via libraryOverrides dependencies
  * (jarvis/contrast) in the hero, card and one/two/three-column .component.yml.
  */
-(function () {
+(function (Drupal, once) {
   'use strict';
 
   var NEED = 4.5;        // WCAG AA, normal text (subheading/body is the tightest case)
@@ -84,8 +84,6 @@
   }
 
   function tune(el, overlaySel, darkClass) {
-    if (el.dataset.jarvisContrast) return;
-    el.dataset.jarvisContrast = '1';
     // Hero/card: dark AND black text sit on the bare image — skip both.
     if (darkClass) {
       var blackClass = darkClass.replace('--text-dark', '--text-black');
@@ -128,10 +126,14 @@
     img.src = m[1];
   }
 
-  function run() {
+  // once() replaces the old dataset flag inside tune(): same
+  // process-each-element-exactly-once guarantee, but scoped to `context` so
+  // elements arriving later are picked up instead of ignored.
+  function run(context) {
     TARGETS.forEach(function (t) {
-      var els = document.querySelectorAll(t[0]);
-      for (var i = 0; i < els.length; i++) tune(els[i], t[1], t[2]);
+      once('jarvis-contrast', t[0], context || document).forEach(function (el) {
+        tune(el, t[1], t[2]);
+      });
     });
   }
 
@@ -200,9 +202,14 @@
   try {
     if (window.frameElement && window.frameElement.closest('[data-testid="canvas-editor-frame"]')) return;
   } catch (e) { /* cross-origin parent: not the Canvas editor */ }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', run);
-  } else {
-    run();
-  }
-})();
+
+  // A behavior, not a one-shot on DOMContentLoaded: sections arriving after
+  // first paint — a Views AJAX pager, a Canvas preview refresh, anything
+  // rendered into the page later — used to keep the author's raw overlay with
+  // no contrast tuning at all, which is the case the safety net exists for.
+  Drupal.behaviors.jarvisContrast = {
+    attach: function (context) {
+      run(context);
+    }
+  };
+})(typeof Drupal === 'undefined' ? null : Drupal, typeof once === 'undefined' ? null : once);

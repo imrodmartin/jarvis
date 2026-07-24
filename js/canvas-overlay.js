@@ -237,17 +237,51 @@
     refreshers.forEach((refresh) => refresh());
   };
 
+  // Only mutations that could introduce or remove an overlay field are worth a
+  // scan. Observing all of <body> meant every keystroke in a CKEditor field
+  // inside the tray re-ran scan() at the 50ms ceiling for the life of the page,
+  // and each run walked every iframe looking for preview targets.
+  const RELEVANT = (records) => records.some((r) =>
+    [...r.addedNodes, ...r.removedNodes].some((n) =>
+      n.nodeType === 1
+      && (n.matches?.('input[type="number"], form, [data-testid]')
+        || n.querySelector?.('input[type="number"]'))));
+
   Drupal.behaviors.jarvisCanvasOverlay = {
     attach() {
       once('jarvis-overlay-observer', 'body').forEach(() => {
+        // The settings tray is where prop forms live. Fall back to body only if
+        // the tray is not in the DOM yet, and re-target once it appears.
+        const target = () =>
+          document.querySelector('[data-testid="canvas-contextual-panel"]')
+          || document.querySelector('.canvas-settings-tray')
+          || document.body;
+
         // setTimeout, not requestAnimationFrame — rAF stalls in background
         // tabs and the debounce flag would jam permanently.
         let queued = false;
-        new MutationObserver(() => {
-          if (queued) return;
+        const observer = new MutationObserver((records) => {
+          if (queued || !RELEVANT(records)) return;
           queued = true;
           setTimeout(() => { queued = false; scan(); }, 50);
-        }).observe(document.body, { childList: true, subtree: true });
+        });
+        let observed = target();
+        observer.observe(observed, { childList: true, subtree: true });
+
+        // React can replace the tray wholesale; if that happens, move the
+        // observer onto the new node rather than watching a detached one.
+        if (observed === document.body) {
+          const retarget = setInterval(() => {
+            const next = target();
+            if (next !== document.body && next !== observed) {
+              observer.disconnect();
+              observed = next;
+              observer.observe(observed, { childList: true, subtree: true });
+              clearInterval(retarget);
+              scan();
+            }
+          }, 1000);
+        }
         scan();
       });
     },
