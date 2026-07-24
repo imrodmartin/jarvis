@@ -610,3 +610,11 @@ a {
     scroll-behavior: auto !important;
   }
 }
+
+/* Blog block view: the "Read More" row reads smaller than the teaser above it.
+   80% of inherited size, so it still tracks the theme's base font setting.
+   .blog-block is the CSS class set on the view's block display, so this is
+   scoped to that view rather than to every views_field-view-node on the site. */
+.blog-block .views-field-view-node {
+  font-size: 80%;
+}
