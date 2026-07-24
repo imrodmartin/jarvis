@@ -25,6 +25,9 @@
           {% if is_file %}
             <video controls preload="metadata"{% if video.poster is defined and video.poster %} poster="{{ video.poster }}"{% endif %}>
               <source src="{{ src }}">
+              {# ADA (WCAG 1.2.2): captions track for the native player, same as
+                 the video component. Hosted embeds carry their own captions. #}
+              {% if captions_url %}<track kind="captions" src="{{ captions_url }}" srclang="{{ captions_lang|default('en') }}" label="{{ 'Captions'|t }}" default>{% endif %}
             </video>
           {% else %}
             <iframe src="{{ embed_url }}" title="{{ title|default('Video'|t) }}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>

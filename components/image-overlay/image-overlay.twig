@@ -6,6 +6,10 @@
  * classes for background colour + ADA-safe text vars.
  */
 #}
+{# ADA (WCAG 1.3.1): the overlay heading is 1.5rem/700, so it must be a real
+   heading element. person.css/image-overlay.css style the class, not the tag,
+   so the visual result is unchanged. #}
+{% set hl = heading_level|default('h3') %}
 {% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
 {% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : false)) %}
 {% set position = position|default('left') %}
@@ -24,7 +28,7 @@
        above it never fades. #}
     <figcaption class="jarvis-image-overlay__caption jarvis-bg--{{ bg }}">
       <span class="jarvis-image-overlay__bg jarvis-bg--{{ bg }}" style="opacity: {{ overlay_opacity / 100 }};" aria-hidden="true"></span>
-      {% if heading %}<span class="jarvis-image-overlay__heading">{{ heading }}</span>{% endif %}
+      {% if heading %}<{{ hl }} class="jarvis-image-overlay__heading">{{ heading }}</{{ hl }}>{% endif %}
       {% if text %}<span class="jarvis-image-overlay__text">{{ text }}</span>{% endif %}
     </figcaption>
   {% endif %}

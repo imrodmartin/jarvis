@@ -9,6 +9,19 @@ props:
     image:
       title: Image
       $ref: json-schema-definitions://canvas.module/image
+    heading_level:
+      title: 'Heading level'
+      description: 'The overlay heading is styled as a heading, so it must be one in the markup too. Match the page outline.'
+      type: string
+      enum: [h2, h3, h4, h5]
+      'meta:enum':
+        h2: H2
+        h3: H3
+        h4: H4
+        h5: H5
+      default: h3
+      examples:
+        - h3
     heading:
       title: 'Overlay heading'
       type: string

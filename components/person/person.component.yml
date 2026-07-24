@@ -25,6 +25,19 @@ props:
       title: 'Image source URI (internal)'
       # Original stream-wrapper URI; required for image_style to build the Portrait derivative.
       type: string
+    heading_level:
+      title: 'Name heading level'
+      description: 'The name is styled as a heading, so it must be one in the markup too. Match the page outline — one level below the heading above the cards.'
+      type: string
+      enum: [h2, h3, h4, h5]
+      'meta:enum':
+        h2: H2
+        h3: H3
+        h4: H4
+        h5: H5
+      default: h3
+      examples:
+        - h3
     name:
       title: Name
       type: string

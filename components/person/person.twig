@@ -14,7 +14,11 @@
 <div class="jarvis-person jarvis-person--{{ variant }} {{ space }}">
   {% if has_image %}<img src="{{ photo_src }}" alt="{{ image.alt|default('') }}" class="jarvis-person__photo mb-3">{% endif %}
   <div class="jarvis-person__details">
-  {% if name %}<div class="jarvis-person__name text-primary">{{ name }}</div>{% endif %}
+  {# ADA (WCAG 1.3.1): the name is 1.8rem/700, i.e. visually a heading, so it has
+     to be a heading in the markup too. Visual size is unchanged — person.css
+     sets it on the class, not the element. #}
+  {% set h = heading_level|default('h3') %}
+  {% if name %}<{{ h }} class="jarvis-person__name text-primary">{{ name }}</{{ h }}>{% endif %}
   {% if position %}<div class="jarvis-person__position">{{ position }}</div>{% endif %}
   {% if phone %}<div class="jarvis-person__phone"><a href="tel:{{ phone }}">{{ phone }}</a></div>{% endif %}
   {% if email %}<div class="jarvis-person__email"><a href="mailto:{{ email }}">{{ email }}</a></div>{% endif %}

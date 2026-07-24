@@ -60,6 +60,9 @@
   border-radius: 8px;
 }
 .jarvis-image-overlay__heading {
+  /* Now a real heading element (WCAG 1.3.1). The caption is a flex column with
+     its own gap, so the reboot margin has to go or spacing doubles. */
+  margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
   line-height: 1.15;

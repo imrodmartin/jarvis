@@ -49,6 +49,8 @@ props:
     overlay:
       title: 'Overlay opacity (%)'
       type: integer
+      minimum: 0
+      maximum: 100
       default: 40
       examples:
         - 40

@@ -47,6 +47,9 @@
   border-radius: 12px;
 }
 .jarvis-person__name {
+  /* Now a real heading element (WCAG 1.3.1). Reset the reboot margin so the
+     rendered spacing is identical to the <div> this replaced. */
+  margin: 0;
   font-size: 1.8rem;
   font-weight: 700;
   line-height: 1.2;
