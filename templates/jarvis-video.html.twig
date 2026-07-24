@@ -1,0 +1,46 @@
+{#
+/**
+ * @file
+ * Shared video-URL helpers for the video and video-with-sidebar SDCs.
+ *
+ * Both components accept whatever an editor pastes — a YouTube watch link, a
+ * youtu.be share link, a Vimeo page URL, an already-built embed URL, or a direct
+ * media file. The normalisation was duplicated in both templates and differed
+ * only in the variable it read, so a fix to one silently missed the other.
+ *
+ *   {% import '@jarvis/jarvis-video.html.twig' as video %}
+ *   {% set embed_url = video.embed_url(src) %}
+ *   {% set is_file = video.is_file(src) %}
+ */
+#}
+
+{#
+/**
+ * Non-empty when the URL points at a media file rather than a hosted player.
+ */
+#}
+{% macro is_file(url) -%}
+  {%- set u = (url|default(''))|lower -%}
+  {{- ('.mp4' in u or '.webm' in u or '.ogv' in u or '.ogg' in u) ? '1' : '' -}}
+{%- endmacro %}
+
+{#
+/**
+ * Normalise a watch/share URL to its embed form; anything else passes through.
+ *
+ * Splits the ORIGINAL url, never the lowercased copy — YouTube and Vimeo ids
+ * are case-sensitive.
+ */
+#}
+{% macro embed_url(url) -%}
+  {%- set u = (url|default(''))|lower -%}
+  {%- if 'youtube.com/watch' in u -%}
+    https://www.youtube.com/embed/{{- url|split('v=')|last|split('&')|first -}}
+  {%- elseif 'youtu.be/' in u -%}
+    https://www.youtube.com/embed/{{- url|split('youtu.be/')|last|split('?')|first -}}
+  {%- elseif 'vimeo.com/' in u and 'player.vimeo.com' not in u -%}
+    https://player.vimeo.com/video/{{- url|split('vimeo.com/')|last|split('?')|first|split('/')|first -}}
+  {%- else -%}
+    {{- url -}}
+  {%- endif -%}
+{%- endmacro %}

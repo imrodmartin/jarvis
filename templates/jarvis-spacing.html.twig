@@ -8,6 +8,11 @@
  * `{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}` — call sites
  * pass |default()-guarded props so undefined props are safe under
  * strict_variables. One source of truth: change spacing behaviour here.
+ *
+ * no_padding is the last argument and Section is the only component that
+ * declares that prop, so every other caller omits it and it arrives null
+ * (falsy). Passing `no_padding|default(false)` from components that never
+ * define the prop only hardcoded false at 14 call sites.
  */
 #}
 {% macro classes(padding, padding_size, margin, margin_size, vertical_padding, no_padding) -%}

@@ -22,7 +22,7 @@
   inset: 0;
   background: #000;
 }
-/* Text color (background variant): light (#fff) or dark (primary). */
+/* Text color (background variant): the text_color enum is light | black. */
 .jarvis-card--text-light,
 .jarvis-card--text-light :is(.card-title, .card-text) {
   color: #fff;
