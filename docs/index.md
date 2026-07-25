@@ -37,9 +37,11 @@ Jarvis targets Drupal `^11 || ^12` and PHP `>= 8.3`.
 
 ## Learning how it works
 
-- [Architecture walkthrough](training.html): the 30,000 foot view, then a
-  section on each part (components, CSS, JavaScript, template overrides, the
-  custom modules). Written for someone who could build one themselves given
-  time.
-- `TUTORIAL.md` in the theme root: the same system built from an empty folder
-  in twelve numbered steps.
+- [The Jarvis Handbook](jarvis-guide.html): the whole theme in one document.
+  Each chapter explains a part, then hands you the build steps for it, and the
+  last chapter documents all nineteen components with their props, slots, and a
+  worked example. Start here.
+- [Architecture walkthrough](training.html): the explanation half of the
+  handbook on its own, if you want the concepts without the build steps.
+- `TUTORIAL.md` in the theme root: the build half on its own, twelve numbered
+  steps from an empty folder.

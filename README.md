@@ -97,3 +97,10 @@ the site owner's request via the theme settings form and stored locally under
 
 Full documentation is under [`docs/`](docs/) and published at
 https://project.pages.drupalcode.org/jarvis.
+
+Start with [`docs/jarvis-guide.html`](docs/jarvis-guide.html), the Jarvis
+Handbook. It explains each part of the theme, gives you the build steps for
+that part, and documents all nineteen components with their props, slots, and
+a worked example. [`TUTORIAL.md`](TUTORIAL.md) and
+[`docs/training.html`](docs/training.html) are the two halves of it on their
+own, if you want only the build or only the explanation.

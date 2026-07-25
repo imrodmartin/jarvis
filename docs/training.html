@@ -971,22 +971,22 @@ final class MyModuleHooks {
 
 <p>These cost real debugging time. They are here so they cost you less.</p>
 
-<h4>Verify by rendering, not by reading</h4>
+<h3>Verify by rendering, not by reading</h3>
 <p>Checking that a file contains the right text is not verification. Twice on this project a change looked correct in the source, was served correctly, and still broke the page: once a Twig comment inside a tag, once a Bootstrap class that flipped a flex direction. Render the thing and check the result. In PHP use <code>renderInIsolation()</code>. In the browser use <code>getComputedStyle</code>.</p>
 
-<h4>A text format nobody can use is not installed</h4>
+<h3>A text format nobody can use is not installed</h3>
 <p>Shipping <code>filter.format.my_format</code> is half the job. Text formats are permission gated, so without a matching grant only user 1 can use them. User 1 bypasses every permission check, so everything looks fine to you while editors see nothing. Grant the permission explicitly, and grant a restricted format rather than an unrestricted one.</p>
 
-<h4>Recipes refuse configuration that already exists and differs</h4>
+<h3>Recipes refuse configuration that already exists and differs</h3>
 <p>If installing a theme or module makes Drupal auto create something your recipe also ships, the install aborts. Either ship values that match what gets auto created and change them afterwards with a config action, or do not ship that configuration at all.</p>
 
-<h4>Config actions run after config import</h4>
+<h3>Config actions run after config import</h3>
 <p>So an action cannot create something that another shipped configuration validates against during import. If configuration A references configuration B, then B has to be a real file.</p>
 
-<h4>Patch files need wiring, not just existence</h4>
+<h3>Patch files need wiring, not just existence</h3>
 <p>A patch sitting in a <code>patches/</code> folder does nothing on its own. Without a <code>composer-patches</code> entry it never re applies, and if the module directory is gitignored the fix exists only on the machine where it was made. Add <code>composer-exit-on-patch-failure</code> so a stale patch fails loudly instead of silently shipping unpatched code.</p>
 
-<h4>Prefer deleting to adding</h4>
+<h3>Prefer deleting to adding</h3>
 <p>The largest improvements on this project were deletions. Handing the menu to Bootstrap removed 148 lines of JavaScript and about 60 of CSS, and improved accessibility at the same time. Collapsing the colour blocks removed 35 lines. Sharing one contrast engine removed roughly 130. Less code, fewer places for a bug to hide.</p>
 
 <hr>
