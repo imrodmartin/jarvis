@@ -22,6 +22,9 @@ plugins:
 
 nav:
   - Home: index.md
+  # The handbook is a standalone HTML page copied verbatim into the built site,
+  # so it is linked absolutely rather than as a MkDocs page.
+  - The Jarvis Handbook: https://project.pages.drupalcode.org/jarvis/jarvis-guide.html
   - Installation: installation.md
   - Configuration: configuration.md
   - Usage:

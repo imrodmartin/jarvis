@@ -10,6 +10,12 @@ repository — it wires this theme into a fully functional Drupal site (Canvas,
 demo content, forms, workflow, SEO, AI) with one recipe apply. This repo is
 just the theme, included there as a git submodule.
 
+**📘 [The Jarvis Handbook](docs/jarvis-guide.html) is the main documentation.**
+It covers the whole theme in one document: what each part does, the steps to
+build that part yourself, and a reference to all nineteen components with their
+props, slots, and a worked example. Open it in a browser after cloning, or read
+it on the [published docs site](https://project.pages.drupalcode.org/jarvis).
+
 ## Requirements
 
 - PHP `>= 8.3`
@@ -98,9 +104,10 @@ the site owner's request via the theme settings form and stored locally under
 Full documentation is under [`docs/`](docs/) and published at
 https://project.pages.drupalcode.org/jarvis.
 
-Start with [`docs/jarvis-guide.html`](docs/jarvis-guide.html), the Jarvis
-Handbook. It explains each part of the theme, gives you the build steps for
-that part, and documents all nineteen components with their props, slots, and
-a worked example. [`TUTORIAL.md`](TUTORIAL.md) and
-[`docs/training.html`](docs/training.html) are the two halves of it on their
-own, if you want only the build or only the explanation.
+The main document is the handbook, [`docs/jarvis-guide.html`](docs/jarvis-guide.html).
+Everything else in `docs/` is short reference material: installation,
+configuration, and usage.
+
+The handbook is also kept as two halves, for anyone who wants one without the
+other. [`docs/training.html`](docs/training.html) is the explanation on its
+own. [`TUTORIAL.md`](TUTORIAL.md) is the twelve step build on its own.

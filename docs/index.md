@@ -27,7 +27,20 @@ Jarvis targets Drupal `^11 || ^12` and PHP `>= 8.3`.
 - A companion recipe that installs the theme, its modules, and demo content in one
   step.
 
-## Where to start
+## Start here: the Jarvis Handbook
+
+**[Read the Jarvis Handbook](jarvis-guide.html)**
+
+The handbook is the main documentation for this theme. It covers the whole
+system in one document: what each part is and why it exists, the build steps
+for that part, and a closing reference to all nineteen components with their
+props, slots, and a worked example of placing each one. If you read one thing,
+read that.
+
+The pages below are the short reference material, for when you already know
+what you are looking for.
+
+## Reference pages
 
 - [Installation](installation.md): require the theme with Composer, enable it, and
   apply the recipe.
@@ -35,13 +48,11 @@ Jarvis targets Drupal `^11 || ^12` and PHP `>= 8.3`.
 - [Usage](usage/index.md): place components in Canvas and understand the page
   regions.
 
-## Learning how it works
+## The handbook's two halves
 
-- [The Jarvis Handbook](jarvis-guide.html): the whole theme in one document.
-  Each chapter explains a part, then hands you the build steps for it, and the
-  last chapter documents all nineteen components with their props, slots, and a
-  worked example. Start here.
-- [Architecture walkthrough](training.html): the explanation half of the
-  handbook on its own, if you want the concepts without the build steps.
-- `TUTORIAL.md` in the theme root: the build half on its own, twelve numbered
-  steps from an empty folder.
+Both are kept on their own for anyone who wants one without the other.
+
+- [Architecture walkthrough](training.html): the explanation, without the build
+  steps.
+- `TUTORIAL.md` in the theme root: the build, twelve numbered steps from an
+  empty folder.
