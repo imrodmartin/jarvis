@@ -3,6 +3,13 @@
 Jarvis carries WCAG 2.2 AA safeguards so an editor cannot ship unreadable text
 through the theme settings or a component form. Four mechanisms do the work.
 
+All four grade colour the same way, because they share one engine. The sRGB
+conversion, the luminance formula, the contrast ratio and the overlay solvers
+live in `js/wcag.js` for the browser, and in `_jarvis_luminance()` plus
+`_jarvis_contrast_ratio()` in `jarvis.theme` for PHP. Keeping the two in step is
+deliberate. The settings form grades a colour in PHP, the badge beside that same
+field grades it in JavaScript, and the two must not disagree.
+
 ## Automatic overlay contrast
 
 Hero, card, and column layouts that put text over a background image run an

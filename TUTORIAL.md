@@ -1278,18 +1278,22 @@ Because the recipe's Canvas config references the theme, the **order matters**. 
 site:
 
 ```bash
-# 1. Make the theme discoverable and install Canvas first.
-ddev drush theme:enable jarvis -y
-ddev drush en canvas canvas_field_component -y
-ddev drush cr
+# Apply the recipe against a freshly installed site. It installs Canvas,
+# canvas_field_component and the theme itself, in the right order, on its own.
+ddev drush recipe /var/www/html/recipes/jarvis
 
-# 2. Apply the recipe (path is relative to the Drupal root).
-ddev drush recipe web/themes/custom/jarvis/recipe
-
-# 3. Rebuild caches and log in.
+# Rebuild caches and log in.
 ddev drush cr
 ddev drush uli
 ```
+
+> **Do not pre-install Canvas or the theme.** Running `theme:enable jarvis` plus
+> `en canvas` plus `cr` before the recipe breaks it. That rebuild makes Canvas
+> create its component entities and makes Drupal place the theme's blocks, and a
+> recipe refuses to import config that already exists and differs. You get
+> `The configuration '...' exists already and does not match the recipe's
+> configuration`. The recipe lists both modules and the theme in its own
+> `install:` list.
 
 Then verify, in order:
 

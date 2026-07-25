@@ -34,3 +34,12 @@ Jarvis targets Drupal `^11 || ^12` and PHP `>= 8.3`.
 - [Configuration](configuration.md): set colours, fonts, and font sizes.
 - [Usage](usage/index.md): place components in Canvas and understand the page
   regions.
+
+## Learning how it works
+
+- [Architecture walkthrough](training.html): the 30,000 foot view, then a
+  section on each part (components, CSS, JavaScript, template overrides, the
+  custom modules). Written for someone who could build one themselves given
+  time.
+- `TUTORIAL.md` in the theme root: the same system built from an empty folder
+  in twelve numbered steps.

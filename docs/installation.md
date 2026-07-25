@@ -40,27 +40,27 @@ contrib modules to `web/modules/contrib`.
 
 Run these in order:
 
-```bash
-# 1. Enable Canvas and the theme first, then rebuild the cache. Canvas registers
-#    its parametrized image style and the theme's SDC components during this
-#    rebuild. The recipe's config and demo content reference them, so they must
-#    exist before the recipe runs.
-ddev drush pm:install canvas canvas_field_component
-ddev drush theme:install jarvis
-ddev drush cache:rebuild
+Apply the recipe against a freshly installed site. It enables Canvas,
+`canvas_field_component` and the Jarvis theme itself, then imports the config
+and the demo content.
 
-# 2. Apply the recipe, then rebuild again. Pass the recipe as an absolute
-#    container path. ddev drush resolves relative paths from the container
-#    working directory, not the project root.
-ddev drush recipe /var/www/html/web/themes/custom/jarvis/recipe
-ddev drush cache:rebuild
+```bash
+# Pass the recipe as an absolute container path. ddev drush resolves relative
+# paths from the container working directory, not the project root.
+ddev drush recipe /var/www/html/recipes/jarvis
+ddev drush cache:rebuild   # also organises the Canvas component folders
 ```
 
-!!! warning "Order matters"
-    If you apply the recipe before enabling Canvas and the theme and rebuilding,
-    the import fails with `getParametrizedImageStyle(): ... null returned` or
-    `Missing component source`. Canvas needs the intermediate `cache:rebuild` to
-    register its image style and the theme's components.
+!!! warning "Do not pre-install Canvas or the theme"
+    Earlier versions of this page told you to run `pm:install canvas` plus
+    `theme:install jarvis` plus `cache:rebuild` first. That breaks the install.
+    The rebuild makes Canvas create its component entities and makes Drupal
+    place the theme's blocks. A recipe refuses to import config that already
+    exists and differs, so you get `The configuration '...' exists already and
+    does not match the recipe's configuration`.
+
+    The recipe lists both modules and the theme in its own `install:` list, so
+    it creates everything in the right order on its own.
 
 ## What the recipe sets up
 

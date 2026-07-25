@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Understanding the Jarvis Theme: An Architecture Walkthrough</title>
+<style>
+  :root {
+    --ink: #1b2a4a; --body: #2b3444; --muted: #5b6577; --rule: #dfe4ec;
+    --blue: #2d6cdf; --blue-dark: #1e4fa8; --bg: #ffffff; --panel: #f6f8fb;
+    --code-bg: #1b2333; --code-ink: #e6edf7;
+    --warn-bg: #fff8e6; --warn-edge: #e0a800;
+    --note-bg: #eef4ff; --note-edge: #2d6cdf;
+    --good-bg: #edf8f0; --good-edge: #2e7d46;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--body);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 96px; }
+  header.mast { background: linear-gradient(160deg, #1b2a4a, #2d6cdf); color: #fff; padding: 56px 24px 48px; margin-bottom: 40px; }
+  header.mast .wrap { padding-bottom: 0; }
+  header.mast h1 { margin: 0 0 12px; font-size: 2.4rem; line-height: 1.15; }
+  header.mast p { margin: 0; font-size: 1.1rem; opacity: .92; max-width: 62ch; }
+  .kicker { text-transform: uppercase; letter-spacing: .12em; font-size: .76rem; font-weight: 700; opacity: .8; margin-bottom: 10px; }
+  h2 { font-size: 1.7rem; color: var(--ink); margin: 56px 0 8px; padding-bottom: 8px; border-bottom: 2px solid var(--rule); }
+  h3 { font-size: 1.22rem; color: var(--ink); margin: 34px 0 6px; }
+  h4 { font-size: 1.02rem; color: var(--ink); margin: 24px 0 4px; }
+  p, li { max-width: 72ch; }
+  a { color: var(--blue-dark); }
+  .lede { font-size: 1.06rem; color: var(--muted); }
+  nav.toc { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 20px 24px; }
+  nav.toc h2 { margin: 0 0 10px; font-size: 1.05rem; border: 0; padding: 0; }
+  nav.toc ol { margin: 0; padding-left: 20px; }
+  nav.toc li { margin: 3px 0; }
+  nav.toc a { text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+  .codewrap { position: relative; margin: 16px 0 22px; }
+  .codewrap .label { font: 600 .74rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .08em; display: block; margin-bottom: 6px; }
+  pre { background: var(--code-bg); color: var(--code-ink); padding: 16px 18px; border-radius: 8px;
+    overflow-x: auto; font: 13.5px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; margin: 0; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  p code, li code, td code, .box code { background: var(--panel); border: 1px solid var(--rule);
+    padding: 1px 5px; border-radius: 4px; font-size: .88em; }
+  .box pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+  .copy { position: absolute; top: 26px; right: 10px; background: rgba(255,255,255,.12); color: #fff;
+    border: 1px solid rgba(255,255,255,.28); border-radius: 6px; padding: 4px 10px; font-size: .76rem; cursor: pointer; }
+  .copy:hover { background: rgba(255,255,255,.24); }
+  .copy.done { background: #2e7d46; border-color: #2e7d46; }
+  .box { border-left: 4px solid; border-radius: 6px; padding: 14px 18px; margin: 20px 0; }
+  .box p { margin: 0 0 8px; } .box p:last-child { margin: 0; }
+  .box .t { font-weight: 700; display: block; margin-bottom: 4px; }
+  .box pre { margin: 8px 0; }
+  .note { background: var(--note-bg); border-color: var(--note-edge); }
+  .warn { background: var(--warn-bg); border-color: var(--warn-edge); }
+  .good { background: var(--good-bg); border-color: var(--good-edge); }
+  table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: .94rem; }
+  th, td { border: 1px solid var(--rule); padding: 8px 11px; text-align: left; vertical-align: top; }
+  th { background: var(--panel); font-weight: 600; color: var(--ink); }
+  .tree { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 16px 18px;
+    font: 13.5px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-x: auto; white-space: pre; margin: 18px 0; }
+  hr { border: 0; border-top: 1px solid var(--rule); margin: 48px 0; }
+  footer { color: var(--muted); font-size: .9rem; }
+  @media (max-width: 640px) { header.mast h1 { font-size: 1.8rem; } body { font-size: 16px; } }
+  @media print { header.mast { background: none; color: #000; } .copy { display: none; }
+    pre { background: #f4f4f4; color: #000; border: 1px solid #ccc; } }
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="kicker">DrupalHelps Training</div>
+    <h1>Understanding the Jarvis Theme</h1>
+    <p>Start with the big picture, then take each part on its own: components, CSS, JavaScript, template overrides, and the custom modules. By the end you should be able to build something like it.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+<p class="lede">This guide assumes you know Drupal as a site builder. You have made content types, placed blocks, and edited a view. You do not need theming experience. Every term gets explained the first time it shows up, and every code sample is real code from the working theme.</p>
+
+<div class="note box">
+  <span class="t">Looking for step by step instead?</span>
+  <p><code>TUTORIAL.md</code> in the theme root builds the theme from an empty folder in twelve numbered steps. This document is the companion to it: the same system explained by subsystem, so you can dip into whichever part you need.</p>
+</div>
+
+<nav class="toc">
+  <h2>What we will cover</h2>
+  <ol>
+    <li><a href="#view">The 30,000 foot view</a></li>
+    <li><a href="#sdc">Single Directory Components</a></li>
+    <li><a href="#css">CSS and the theming contract</a></li>
+    <li><a href="#js">JavaScript and Drupal behaviors</a></li>
+    <li><a href="#templates">Template overrides and preprocess</a></li>
+    <li><a href="#modules">The custom modules</a></li>
+    <li><a href="#build">Build order: making one yourself</a></li>
+    <li><a href="#gotchas">Hard won lessons</a></li>
+  </ol>
+</nav>
+
+<hr>
+
+<h2 id="view">1. The 30,000 foot view</h2>
+
+<h3>The problem this theme solves</h3>
+
+<p>A traditional Drupal theme styles whatever Drupal hands it: node templates, field templates, views templates. The editor gets very little say over layout, and every new design need turns into a developer request.</p>
+
+<p>Jarvis works differently. It ships a library of reusable building blocks (a hero, a card, a stat, a two column layout) and lets editors assemble pages from them visually using Drupal Canvas. Canvas is the drag and drop page builder in Drupal 11. The theme's job becomes three things: define the blocks, style them, and make sure an editor cannot accidentally publish something unreadable.</p>
+
+<p>That last part matters more than it sounds. Give someone a colour picker and an image upload, and eventually you get pale grey text on a bright photo. A good share of this theme exists to prevent exactly that.</p>
+
+<h3>The three pieces</h3>
+
+<p>The project spans three things across two Git repositories. Knowing which piece owns what saves a lot of confusion later.</p>
+
+<table>
+  <tr><th>Piece</th><th>Lives in</th><th>Owns</th></tr>
+  <tr>
+    <td><strong>The theme</strong><br><code>jarvis</code></td>
+    <td>Its own repo, pulled in as a Git submodule</td>
+    <td>Components, CSS, JavaScript, template overrides, theme settings</td>
+  </tr>
+  <tr>
+    <td><strong>Two custom modules</strong><br><code>jarvis_blocks</code>, <code>jarvis_canvas</code></td>
+    <td>The recipe repo, under <code>web/modules/custom</code></td>
+    <td>Behaviour a theme is not allowed to do</td>
+  </tr>
+  <tr>
+    <td><strong>The recipe</strong><br><code>recipes/jarvis</code></td>
+    <td>The recipe repo</td>
+    <td>Configuration and demo content. Turns an empty Drupal into a working site</td>
+  </tr>
+</table>
+
+<div class="note box">
+  <span class="t">Why modules at all?</span>
+  <p>A theme's hooks only run while that theme is active. Node edit forms usually render in the admin theme, so a theme hook cannot reach them. Anything that must work regardless of the active theme has to live in a module. That one rule explains most of what these two modules do.</p>
+</div>
+
+<h3>How a page actually renders</h3>
+
+<p>Follow one request from start to finish. This is the mental model everything else hangs on.</p>
+
+<div class="tree">1. Drupal builds the page and fills its regions
+   (header, primary_menu, content, footer, and the rest)
+
+2. jarvis.theme runs hook_preprocess_html()
+   Reads theme settings, writes CSS custom properties into an inline style tag:
+   --bs-primary, --jarvis-fs-h1, --jarvis-bg-1-text ...
+
+3. page.html.twig lays out the regions
+   Full width bands, boxed containers, sidebars that collapse when empty
+
+4. Inside the content region, Canvas renders a component tree
+   Each entry is a component: jarvis:hero, jarvis:two-column, jarvis:card ...
+
+5. Each component's Twig prints markup and Bootstrap classes,
+   reading the CSS custom properties written in step 2
+
+6. Attached JavaScript runs as Drupal behaviors
+   contrast.js measures the background image and raises the overlay
+   until the text passes WCAG AA</div>
+
+<p>Steps 2 and 5 are the pair that matters. Theme settings do not write CSS files. They write <em>variables</em>, and the stylesheet reads them. That indirection is what lets a site builder change the whole palette without a developer touching a stylesheet.</p>
+
+<h3>The directory map</h3>
+
+<div class="tree">web/themes/custom/jarvis/
+├── jarvis.info.yml           Theme definition: regions, libraries, base theme
+├── jarvis.libraries.yml      Asset bundles (CSS and JS grouped into libraries)
+├── jarvis.theme              PHP: preprocess hooks and shared helpers
+├── theme-settings.php        PHP: the admin form for colours, fonts, sizes
+├── components/               One folder per Single Directory Component
+│   ├── hero/
+│   │   ├── hero.component.yml   Schema: props and slots
+│   │   ├── hero.twig            Markup
+│   │   └── hero.css             Styles, loaded only when the component renders
+│   └── card/ text/ stat/ two-column/ ...   (19 in total)
+├── css/
+│   ├── overrides.css         The main stylesheet
+│   ├── ckeditor5.css         Styles the rich text editing area
+│   └── canvas-overlay.css    Styles the editor tooling
+├── js/
+│   ├── wcag.js               The shared contrast engine
+│   ├── contrast.js           Live site: auto raises image overlays
+│   ├── canvas-overlay.js     Editor: overlay slider and contrast badge
+│   └── color-settings.js     Settings form: live contrast badges
+├── templates/
+│   ├── page.html.twig                  Region layout
+│   ├── menu--main.html.twig            Main menu markup
+│   ├── jarvis-spacing.html.twig        Shared Twig macro
+│   └── jarvis-columns-shell.html.twig  Shared layout wrapper
+└── docs/                     This documentation</div>
+
+<hr>
+
+<h2 id="sdc">2. Single Directory Components</h2>
+
+<h3>What a component is</h3>
+
+<p>A Single Directory Component (SDC) is a Drupal core feature. It is a folder holding everything one interface element needs: a schema file describing its inputs, a Twig template producing its markup, and optionally its own CSS and JavaScript. Put the folder in <code>components/</code> and Drupal finds it. There is nothing to register.</p>
+
+<p>The payoff is that the component becomes addressable. Render it from Twig, from PHP, from a Views row template, or from a drag and drop editor. One definition, many callers.</p>
+
+<h3>Anatomy</h3>
+
+<p>Every component has at least two files, named after the folder.</p>
+
+<div class="tree">components/text/
+├── text.component.yml   The schema. What can go in
+├── text.twig            The markup. What comes out
+└── text.css             Optional. Loaded only when this component renders</div>
+
+<h4>Props and slots: the two kinds of input</h4>
+
+<p>This distinction trips up nearly everyone at first, so get it straight early.</p>
+
+<table>
+  <tr><th></th><th>Props</th><th>Slots</th></tr>
+  <tr><td>Hold</td><td>Values: strings, numbers, booleans, choices, images</td><td>Other rendered content, including other components</td></tr>
+  <tr><td>Declared under</td><td><code>props: properties:</code></td><td><code>slots:</code></td></tr>
+  <tr><td>Editor sees</td><td>A form field in the settings tray</td><td>A drop target on the page</td></tr>
+  <tr><td>Good for</td><td>A heading, a colour choice, an alignment</td><td>The contents of a column</td></tr>
+</table>
+
+<p>A two column layout has slots, because you drop things into it. A stat card has props, because you type values into it. A card has props only, because its body is a rich text prop rather than a drop target.</p>
+
+<h3>Reading a real schema</h3>
+
+<p>Here is the Text component, trimmed to the interesting parts.</p>
+
+<div class="codewrap">
+  <span class="label">components/text/text.component.yml</span>
+  <pre><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Text
+status: stable
+description: 'Rich text block with width and alignment controls.'
+category: Jarvis
+
+props:
+  type: object
+  required:
+    - body
+  properties:
+
+    body:
+      title: Body
+      type: string
+      # Tells Canvas this is HTML, so it offers a rich text editor
+      # instead of a plain textfield.
+      contentMediaType: text/html
+      'x-formatting-context': block
+      examples:
+        - '&lt;h2&gt;Section heading&lt;/h2&gt;&lt;p&gt;Body copy.&lt;/p&gt;'
+
+    width:
+      title: Width
+      type: string
+      # enum gives a select list instead of a free text field.
+      enum: [narrow, normal, wide]
+      # meta:enum supplies the human labels for those machine values.
+      'meta:enum':
+        narrow: Narrow
+        normal: Normal
+        wide: Wide
+      default: normal
+      examples:
+        - normal</code></pre>
+</div>
+
+<p>Four keys do most of the work.</p>
+
+<ul>
+  <li><code>required</code> lists props the component cannot render without. Canvas will not let an editor save an empty one.</li>
+  <li><code>enum</code> turns a field into a select list. Always pair it with <code>meta:enum</code> so editors see words instead of machine names.</li>
+  <li><code>default</code> is used when nothing is supplied.</li>
+  <li><code>examples</code> feeds the preview in the component picker.</li>
+</ul>
+
+<div class="note box">
+  <span class="t">Give image components an example</span>
+  <p>An image based component with no <code>examples</code> on its image prop previews as an empty box, because there is nothing to draw. Point the example at a real file. Canvas turns a path like <code>/sites/default/files/2026-07/banner.png</code> into a working URL.</p>
+</div>
+
+<h3>Writing the Twig</h3>
+
+<p>The template receives every prop as a variable. Here is the whole Text component.</p>
+
+<div class="codewrap">
+  <span class="label">components/text/text.twig</span>
+  <pre><code>{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true)) %}
+{% set width = width|default('normal') %}
+{% set align = align|default('start') %}
+{% set col = { narrow: 'col-lg-6', normal: 'col-lg-8', wide: 'col-12' }[width] %}
+{% set align_class = { start: 'text-start', center: 'text-center', end: 'text-end' }[align] %}
+&lt;div class="jarvis-text container {{ space }}"&gt;
+  &lt;div class="row justify-content-center"&gt;
+    &lt;div class="{{ col }} {{ align_class }}"&gt;
+      {{ body|raw }}
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</div>
+
+<p>Three patterns worth copying.</p>
+
+<p><strong>Map choices to classes with a Twig hash.</strong> The line <code>{ narrow: 'col-lg-6', ... }[width]</code> is a lookup table. It keeps class names next to the values they belong to, and it fails loudly if you add an enum value and forget to map it.</p>
+
+<p><strong>Guard every optional prop with <code>|default()</code>.</strong> Drupal can run Twig in strict mode, where reading an undefined variable is a fatal error rather than an empty string. The filter makes the template safe either way.</p>
+
+<p><strong>Use <code>|raw</code> only on already filtered HTML.</strong> The <code>body</code> prop went through Drupal's text format system, which strips dangerous markup, so printing it raw is correct. Never use <code>|raw</code> on a plain string an editor typed.</p>
+
+<div class="warn box">
+  <span class="t">A Twig comment inside a tag is not a comment</span>
+  <p>Twig comments work between tags, not inside one. This looks harmless and takes the component down with a lexer error:</p>
+  <pre><code>{% set map = {
+  none: ['a'],
+  {# explaining the next line #}
+  dark: ['b'],
+} %}</code></pre>
+  <p>Put the note above the <code>{% set %}</code> instead. This exact mistake broke three components on this project.</p>
+</div>
+
+<h3>Sharing code between components</h3>
+
+<p>Nineteen components will repeat themselves. Twig gives you two tools, and they solve different problems.</p>
+
+<h4>A macro, for computing values</h4>
+
+<p>Every component accepts padding and margin props. Rather than repeat the class building logic nineteen times, one macro owns it.</p>
+
+<div class="codewrap">
+  <span class="label">templates/jarvis-spacing.html.twig</span>
+  <pre><code>{% macro classes(padding, padding_size, margin, margin_size, vertical_padding, no_padding) -%}
+  {{- [
+    padding != 'none' ? 'jp-p-' ~ padding ~ '-' ~ padding_size : '',
+    margin != 'none' ? 'jp-m-' ~ margin ~ '-' ~ margin_size : '',
+    vertical_padding ? 'jp-vpad' : '',
+    no_padding ? 'jp-nopad' : '',
+  ]|join(' ')|trim -}}
+{%- endmacro %}</code></pre>
+</div>
+
+<p>Call it with one import and one line. Change spacing behaviour once, and every component follows.</p>
+
+<h4>An embed, for sharing markup</h4>
+
+<p>The one, two, and three column layouts were originally near identical files. Each carried the same wrapper, background handling, and contrast matrix. Only the column divs differed. That is a job for <code>{% embed %}</code>, which pulls in a shared template and lets the caller fill named blocks.</p>
+
+<div class="codewrap">
+  <span class="label">components/two-column/two-column.twig</span>
+  <pre><code>{% set cols = {
+  even: ['col-12 col-md-6', 'col-12 col-md-6'],
+  'wide-left': ['col-12 col-md-8', 'col-12 col-md-4'],
+  'wide-right': ['col-12 col-md-4', 'col-12 col-md-8'],
+}[ratio|default('even')] %}
+
+{% embed '@jarvis/jarvis-columns-shell.html.twig' with { count: 2 } %}
+  {% block columns %}
+    &lt;div class="{{ cols[0] }}"&gt;{{ first }}&lt;/div&gt;
+    &lt;div class="{{ cols[1] }}"&gt;{{ second }}&lt;/div&gt;
+  {% endblock %}
+{% endembed %}</code></pre>
+</div>
+
+<p>The shell declares the block the caller fills.</p>
+
+<div class="codewrap">
+  <span class="label">templates/jarvis-columns-shell.html.twig (ending)</span>
+  <pre><code>&lt;div class="jarvis-columns jarvis-columns--{{ count }} {{ space }} {{ bg_class }}"&gt;
+  &lt;div class="{{ container }}"&gt;
+    &lt;div class="row {{ gap_class }}"&gt;
+      {% block columns %}{% endblock %}
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</div>
+
+<p>Notice the embed does not use <code>only</code>. That means the shell still sees every variable the caller has, so the shared props resolve without being restated at three call sites. It is deliberate, and it deserves a comment so nobody tidies it away later.</p>
+
+<div class="good box">
+  <span class="t">The result</span>
+  <p>The one column component went from 54 lines to 16. More usefully, a fix to the contrast logic now happens in one file instead of three.</p>
+</div>
+
+<h3>How Canvas sees your components</h3>
+
+<p>With Canvas installed, Drupal creates a configuration entity per component, named <code>canvas.component.sdc.jarvis.&lt;name&gt;</code>. It records which field widget each prop uses, and a version hash of the schema.</p>
+
+<p>Two consequences show up quickly.</p>
+
+<p><strong>Placed components pin a version.</strong> When an editor places a card, the placement records the schema hash at that moment. Change the schema later and existing placements keep the old version until they are re placed or migrated. Canvas keeps old versions inside the config entity so nothing breaks.</p>
+
+<p><strong>Not every schema edit moves the hash.</strong> Useful to know before re exporting configuration.</p>
+
+<table>
+  <tr><th>Change</th><th>Moves the version hash?</th></tr>
+  <tr><td>Adding or changing an <code>enum</code>, <code>type</code>, or <code>default</code></td><td>Yes</td></tr>
+  <tr><td>Adding <code>examples</code> to a <strong>prop</strong></td><td>No</td></tr>
+  <tr><td>Adding a <code>description</code> to a prop</td><td>No</td></tr>
+  <tr><td>Adding <code>examples</code> to a <strong>slot</strong></td><td>Yes</td></tr>
+</table>
+
+<hr>
+
+<h2 id="css">3. CSS and the theming contract</h2>
+
+<h3>Bootstrap as the base</h3>
+
+<p>Jarvis ships Bootstrap 5 and uses its grid, utilities, and components. That is a deliberate trade. You inherit a well tested responsive grid and a large utility vocabulary. In exchange you accept Bootstrap's conventions and its file size.</p>
+
+<p>Components use Bootstrap classes directly in their Twig: <code>container</code>, <code>row</code>, <code>col-lg-8</code>, <code>text-center</code>. The theme's own CSS handles only what Bootstrap does not.</p>
+
+<h3>Custom properties are the contract</h3>
+
+<p>This is the central idea of the stylesheet, so it is worth slowing down for.</p>
+
+<p>The theme has seven or eight coloured surfaces: a primary band, a dark band, two arbitrary editor chosen backgrounds, a photo background, a light band, and cards that sit on top of any of them. Every one needs its text, headings, and links to stay readable.</p>
+
+<p>The naive approach repeats a block of colour declarations per surface. This theme did that originally. The block was nine lines and appeared seven times.</p>
+
+<p>The better approach: each surface declares only what it <em>is</em>, and one shared rule wires it up.</p>
+
+<div class="codewrap">
+  <span class="label">css/overrides.css</span>
+  <pre><code>/* One foreground contract for every surface. Each variant declares only what
+   it IS, and this rule maps that onto every colour variable the theme and
+   Bootstrap read. */
+.jarvis-bg--primary,
+.jarvis-bg--secondary,
+.jarvis-bg--dark,
+.jarvis-bg--light,
+.jarvis-bg--bg1,
+.jarvis-bg--bg2,
+.jarvis-bg--image,
+.jarvis-columns .jarvis-card:not(.jarvis-card--background) {
+  color: var(--jarvis-on);
+  --bs-body-color: var(--jarvis-on);
+  --bs-body-color-rgb: var(--jarvis-on-rgb);
+  --bs-heading-color: var(--jarvis-on);
+  --jarvis-heading-color: var(--jarvis-on);
+  --bs-emphasis-color: var(--jarvis-on);
+  --bs-link-color: var(--jarvis-link, var(--jarvis-on));
+  --bs-link-color-rgb: var(--jarvis-link-rgb, var(--jarvis-on-rgb));
+  --bs-link-hover-color: var(--jarvis-link-hover, var(--jarvis-on));
+}
+
+/* Now each surface is three or four lines. */
+.jarvis-bg--primary {
+  background: var(--bs-primary, #2d6cdf);
+  --jarvis-on: #fff;
+  --jarvis-on-rgb: 255, 255, 255;
+  --jarvis-link-hover: #e6e6e6;
+}
+
+.jarvis-bg--light {
+  background: #f5f5f5;
+  --jarvis-on: #000;
+  --jarvis-on-rgb: 0, 0, 0;
+  --jarvis-link-hover: #333333;
+}</code></pre>
+</div>
+
+<p>Two details make this work.</p>
+
+<p><strong>Custom properties resolve per element.</strong> A card inside a dark section inherits <code>--jarvis-on: #fff</code>, but the card's own rule sets <code>--jarvis-on: #1a1a1a</code> on itself, and a declaration that applies to the element beats an inherited one. The card gets dark text on its light surface with no override gymnastics.</p>
+
+<p><strong>Setting Bootstrap's variables steers Bootstrap's components.</strong> Assigning <code>--bs-body-color</code> and its siblings makes every Bootstrap element inside the section follow along, without targeting each one.</p>
+
+<h3>From theme settings to CSS variables</h3>
+
+<p>The admin form does not write a stylesheet. It writes configuration, and a preprocess hook turns that into variables in an inline style tag.</p>
+
+<div class="codewrap">
+  <span class="label">jarvis.theme</span>
+  <pre><code>function jarvis_preprocess_html(array &amp;$variables) {
+  $lines = [];
+  foreach (_jarvis_colors() as $key =&gt; $info) {
+    [, $var, $rgb] = $info;
+    $val = theme_get_setting($key);
+    // Only emit a valid hex. This closes CSS injection through a setting.
+    if (!is_string($val) || !preg_match('/^#[0-9a-fA-F]{6}$/', $val)) {
+      continue;
+    }
+    $lines[] = "$var:$val;";
+    if ($rgb) {
+      $r = hexdec(substr($val, 1, 2));
+      $g = hexdec(substr($val, 3, 2));
+      $b = hexdec(substr($val, 5, 2));
+      $lines[] = "{$var}-rgb:$r,$g,$b;";
+    }
+  }
+
+  $variables['#attached']['html_head'][] = [
+    [
+      '#tag' =&gt; 'style',
+      // html:root beats a plain :root in overrides.css regardless of order.
+      '#value' =&gt; 'html:root{' . implode('', $lines) . '}',
+    ],
+    'jarvis-colors',
+  ];
+}</code></pre>
+</div>
+
+<p>Three things to copy from this.</p>
+
+<ul>
+  <li><strong>Validate before emitting.</strong> A setting goes straight into a stylesheet. Without the hex check, a stored value could close the style block and inject anything.</li>
+  <li><strong>Use <code>html:root</code>, not <code>:root</code>.</strong> One more point of specificity, so it wins over the defaults in the stylesheet no matter which loads first.</li>
+  <li><strong>One list, two consumers.</strong> <code>_jarvis_colors()</code> is shared by the settings form and the output, so the two cannot drift apart.</li>
+</ul>
+
+<h3>Computing a safe text colour</h3>
+
+<p>Two background colours are whatever the site builder picked. The theme cannot hardcode text colour against an unknown background, so it calculates one.</p>
+
+<div class="codewrap">
+  <span class="label">jarvis.theme</span>
+  <pre><code>/**
+ * Relative luminance of a '#rrggbb' colour, per WCAG 2.x.
+ */
+function _jarvis_luminance(string $hex): float {
+  $c = [];
+  foreach ([1, 3, 5] as $i) {
+    $v = hexdec(substr($hex, $i, 2)) / 255;
+    $c[] = $v &lt;= 0.03928 ? $v / 12.92 : (($v + 0.055) / 1.055) ** 2.4;
+  }
+  return 0.2126 * $c[0] + 0.7152 * $c[1] + 0.0722 * $c[2];
+}
+
+function _jarvis_contrast_ratio(string $a, string $b): float {
+  $l1 = _jarvis_luminance($a);
+  $l2 = _jarvis_luminance($b);
+  return (max($l1, $l2) + 0.05) / (min($l1, $l2) + 0.05);
+}
+
+// In the preprocess hook, pick whichever wins:
+$light = _jarvis_contrast_ratio($val, '#ffffff') &gt;= _jarvis_contrast_ratio($val, '#000000');
+$lines[] = "{$var}-text:" . ($light ? '#fff' : '#000') . ';';</code></pre>
+</div>
+
+<p>The CSS then reads <code>--jarvis-bg-1-text</code> and never needs to know what the background colour is.</p>
+
+<h3>Styling the editing area</h3>
+
+<p>Authors write in CKEditor 5. By default that editing area inherits the admin theme's typography, so what they type looks nothing like what publishes. The fix is one key in the info file plus a stylesheet.</p>
+
+<div class="codewrap">
+  <span class="label">jarvis.info.yml</span>
+  <pre><code>ckeditor5-stylesheets:
+  - css/ckeditor5.css</code></pre>
+</div>
+
+<p>Two traps here, both of which cost real time on this project.</p>
+
+<div class="warn box">
+  <span class="t">Core does not scope the file for you</span>
+  <p>CKEditor 5 in Drupal is inline, not an iframe, and core loads your stylesheet as a plain library. An unscoped rule restyles the whole admin page. Scope every rule to <code>.ck-content</code>.</p>
+</div>
+
+<div class="warn box">
+  <span class="t">CKEditor's own styles land after yours</span>
+  <p>CKEditor injects around seventy <code>.ck-content</code> rules as an inline style tag, which comes later in the document. At equal specificity theirs win, so your base font, blockquote, and pre rules get silently overridden. Doubling the class beats them without reaching for <code>!important</code>:</p>
+  <pre><code>.ck-content.ck-content blockquote {
+  border-inline-start: 4px solid var(--bs-primary, #2d6cdf);
+}</code></pre>
+</div>
+
+<div class="note box">
+  <span class="t">Variables are missing in the editor</span>
+  <p>Node forms render in the admin theme, so <code>hook_preprocess_html()</code> never runs and the <code>--jarvis-*</code> variables are absent. Give every value a fallback, and if you want the editor to track configured sizes, emit them from a <em>module</em> hook scoped to <code>.ck-content</code>. Convert <code>rem</code> to <code>em</code> when you do, because <code>rem</code> resolves against the admin theme's root, which you must not touch.</p>
+</div>
+
+<hr>
+
+<h2 id="js">4. JavaScript and Drupal behaviors</h2>
+
+<h3>Behaviors, not DOMContentLoaded</h3>
+
+<p>Drupal re renders parts of a page constantly: AJAX views pagers, modal dialogs, the Canvas preview. Code that runs once on page load misses all of it.</p>
+
+<p>The correct pattern is a behavior plus <code>once()</code>. The behavior runs again on every re render, and <code>once()</code> guarantees each element is processed exactly one time.</p>
+
+<div class="codewrap">
+  <span class="label">The pattern</span>
+  <pre><code>(function (Drupal, once) {
+  'use strict';
+
+  function enhance(element) {
+    // do the work
+  }
+
+  Drupal.behaviors.myFeature = {
+    attach: function (context) {
+      // context is the newly added part of the page, or the whole document
+      once('my-feature', '.my-selector', context).forEach(enhance);
+    }
+  };
+})(Drupal, once);</code></pre>
+</div>
+
+<p>Declare the dependencies, or <code>Drupal</code> and <code>once</code> will be undefined.</p>
+
+<div class="codewrap">
+  <span class="label">jarvis.libraries.yml</span>
+  <pre><code>contrast:
+  version: 1.0.5
+  js:
+    js/contrast.js: {}
+  dependencies:
+    - jarvis/wcag
+    - core/once
+    - core/drupal</code></pre>
+</div>
+
+<div class="warn box">
+  <span class="t">This is a real bug, not a theoretical one</span>
+  <p>The contrast script originally ran once on <code>DOMContentLoaded</code> with a manual flag. Any section arriving later, from a views pager or a Canvas refresh, kept the editor's raw overlay value with no contrast tuning at all. Which is exactly the case the safety net exists for.</p>
+</div>
+
+<h3>One engine, several consumers</h3>
+
+<p>Three scripts need WCAG contrast maths: the live site, the Canvas editor badge, and the settings form. Two PHP functions need it too.</p>
+
+<p>They started as five copies, and copies drift. One used <code>Math.pow</code> and another <code>**</code>. One took hex strings, another took channel numbers. The 4.5 threshold was written three different ways.</p>
+
+<p>Now one file owns it and exposes an API.</p>
+
+<div class="codewrap">
+  <span class="label">js/wcag.js (shape)</span>
+  <pre><code>(function (root) {
+  'use strict';
+
+  var NEED = 4.5;        // WCAG AA for normal text
+  var TEXT = 1;          // luminance of #fff
+  var DARK_TEXT = 0.011; // luminance of #212529
+
+  function chan(c) {
+    c /= 255;
+    return c &lt;= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  }
+  function lum(r, g, b) {
+    return 0.2126 * chan(r) + 0.7152 * chan(g) + 0.0722 * chan(b);
+  }
+  function contrast(l1, l2) {
+    return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+  }
+
+  var api = { NEED: NEED, lum: lum, contrast: contrast /* , ... */ };
+
+  if (typeof module !== 'undefined' &amp;&amp; module.exports) {
+    module.exports = api;
+    selfCheck();       // runs under `node js/wcag.js`
+    return;
+  }
+  root.jarvisWcag = api;
+})(typeof window === 'undefined' ? this : window);</code></pre>
+</div>
+
+<p>Consumers take what they need.</p>
+
+<div class="codewrap">
+  <span class="label">js/contrast.js</span>
+  <pre><code>(function (Drupal, once, wcag) {
+  'use strict';
+
+  var extremeBlock = wcag.extremeBlock;
+  var neededAlpha = wcag.neededAlpha;
+  var neededAlphaLight = wcag.neededAlphaLight;
+
+  // ... use them ...
+
+})(Drupal, once, window.jarvisWcag);</code></pre>
+</div>
+
+<h3>Leave a runnable check behind</h3>
+
+<p>The engine carries a self check that runs under Node and is skipped in the browser. No test framework, no configuration, one command.</p>
+
+<div class="codewrap">
+  <span class="label">Run it</span>
+  <pre><code>node js/wcag.js
+# wcag self-check ok</code></pre>
+</div>
+
+<div class="warn box">
+  <span class="t">Test the real function, not a copy of it</span>
+  <p>An earlier version of this check re implemented the maths inside the test block, because the module exported nothing. The assertions passed happily while the real solver was wrong. If your self check cannot reach the actual exported functions, it is checking nothing.</p>
+</div>
+
+<h3>What the contrast script actually does</h3>
+
+<p>Worth understanding, because it is the heart of the accessibility work.</p>
+
+<ol>
+  <li>Find elements that have a background image and an overlay layer.</li>
+  <li>Draw the image into a 16 by 16 canvas and read the pixels.</li>
+  <li>Split that into sixteen 4 by 4 blocks and average each.</li>
+  <li>Pick the worst block: the brightest if the text is white, the darkest if the text is dark.</li>
+  <li>Step the overlay opacity up until the text clears 4.5:1 against that block.</li>
+</ol>
+
+<p>Sampling blocks rather than a whole image average is the point. Text can cross a bright patch that an average would hide. The editor's chosen opacity is a floor. It is never lowered, only raised when the image demands it.</p>
+
+<hr>
+
+<h2 id="templates">5. Template overrides and preprocess</h2>
+
+<h3>How Drupal picks a template</h3>
+
+<p>Drupal looks for templates by name, most specific first. Put a file with the right name in your theme's <code>templates/</code> folder and it wins. There is no registration step, but you do need a cache rebuild after adding one.</p>
+
+<table>
+  <tr><th>File name</th><th>Overrides</th></tr>
+  <tr><td><code>page.html.twig</code></td><td>Every page's region layout</td></tr>
+  <tr><td><code>menu--main.html.twig</code></td><td>Just the main menu</td></tr>
+  <tr><td><code>node--article--teaser.html.twig</code></td><td>Article nodes in teaser view mode</td></tr>
+  <tr><td><code>block--my-block-id.html.twig</code></td><td>One specific placed block</td></tr>
+</table>
+
+<h3>Regions and the page template</h3>
+
+<p>Regions are declared in the info file. Anything not listed there cannot receive a block.</p>
+
+<div class="codewrap">
+  <span class="label">jarvis.info.yml</span>
+  <pre><code>regions:
+  header: Header
+  primary_menu: 'Primary menu'
+  breadcrumb: Breadcrumb
+  help: Help
+  page_title: 'Page title'
+  hero: Hero
+  highlighted: Highlighted
+  content_top: 'Content top'
+  sidebar_left: 'Left sidebar'
+  content: Content
+  sidebar_right: 'Right sidebar'
+  content_bottom: 'Content bottom'
+  footer: Footer</code></pre>
+</div>
+
+<p>The page template decides which regions are full width bands and which are boxed, and collapses sidebars when they hold nothing.</p>
+
+<div class="codewrap">
+  <span class="label">templates/page.html.twig (excerpt)</span>
+  <pre><code>{% set has_sidebar = not sidebar_left_empty or not sidebar_right_empty %}
+{% if has_sidebar %}
+  &lt;div class="container jarvis-region jarvis-main"&gt;
+    &lt;div class="row g-4"&gt;
+      {% if not sidebar_left_empty %}
+        &lt;aside class="col-12 col-lg-3 jarvis-sidebar" role="complementary"&gt;
+          {{ sidebar_left_markup|raw }}
+        &lt;/aside&gt;
+      {% endif %}
+      {# `col` alone flexes to fill whatever the sidebars leave #}
+      &lt;div class="col jarvis-content"&gt;{{ page.content }}&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+{% else %}
+  {# No sidebars: edge to edge, so a full width layout can break out #}
+  &lt;div class="jarvis-content jarvis-content--full"&gt;{{ page.content }}&lt;/div&gt;
+{% endif %}</code></pre>
+</div>
+
+<h3>Preprocess: preparing variables before Twig</h3>
+
+<p>A preprocess hook runs before a template renders and can add or change the variables it receives. It is where PHP work belongs, so templates stay readable.</p>
+
+<p>Those <code>sidebar_left_empty</code> flags come from one. Testing emptiness turned out to be harder than expected, and the reason is instructive.</p>
+
+<div class="codewrap">
+  <span class="label">jarvis.theme</span>
+  <pre><code>function jarvis_preprocess_page(array &amp;$variables) {
+  $renderer = \Drupal::service('renderer');
+  foreach (['header', 'hero', 'sidebar_left', 'sidebar_right'] as $region) {
+    $markup = !empty($variables['page'][$region])
+      ? (string) $renderer-&gt;render($variables['page'][$region])
+      : '';
+    $variables[$region . '_markup'] = $markup;
+
+    // The Canvas editor wraps even an EMPTY region in comment markers plus a
+    // bare div. So "empty" means: no text once tags and comments are stripped,
+    // AND no visual element. An image only sidebar has no text but is not empty.
+    $stripped = preg_replace('/&lt;!--.*?--&gt;/s', '', $markup);
+    $variables[$region . '_empty'] = trim(strip_tags($stripped)) === ''
+      &amp;&amp; !preg_match('/&lt;(img|picture|video|iframe|svg|canvas|embed)\b/i', $stripped);
+  }
+}</code></pre>
+</div>
+
+<p>Without that, a plain <code>{% if page.hero %}</code> reads an empty region as full inside the editor, and the hero paints a 420 pixel gradient band over nothing.</p>
+
+<h3>A menu template worth studying</h3>
+
+<p>Drupal's menu block emits a bare <code>nav</code> and <code>ul</code> with no classes. To get Bootstrap dropdowns you supply the markup Bootstrap's JavaScript binds to.</p>
+
+<div class="codewrap">
+  <span class="label">templates/menu--main.html.twig (excerpt)</span>
+  <pre><code>{% macro build(items, depth, attributes) %}
+  {% import _self as menus %}
+  {% if items %}
+    {% if depth == 0 %}
+      &lt;ul{{ attributes.addClass('jarvis-menu') }}&gt;
+    {% else %}
+      &lt;ul class="dropdown-menu"&gt;
+    {% endif %}
+    {% for item in items %}
+      {% set has_children = item.below is not empty %}
+      {% set is_parent = has_children and depth == 0 %}
+      &lt;li{{ item.attributes.addClass(depth == 0 ? 'nav-item' : '', is_parent ? 'dropdown' : '') }}&gt;
+        {% if is_parent %}
+          {# The link still navigates. A separate split button opens the panel,
+             because data-bs-toggle on the link itself swallows the click. #}
+          &lt;a href="{{ item.url }}" class="nav-link"&gt;{{ item.title }}&lt;/a&gt;
+          &lt;button type="button" class="nav-link dropdown-toggle dropdown-toggle-split"
+                  data-bs-toggle="dropdown" aria-expanded="false"&gt;
+            &lt;span class="visually-hidden"&gt;{{ 'Show submenu for @title'|t({'@title': item.title}) }}&lt;/span&gt;
+          &lt;/button&gt;
+          {{ menus.build(item.below, depth + 1, attributes) }}
+        {% else %}
+          &lt;a href="{{ item.url }}" class="{{ depth == 0 ? 'nav-link' : 'dropdown-item' }}"&gt;{{ item.title }}&lt;/a&gt;
+        {% endif %}
+      &lt;/li&gt;
+    {% endfor %}
+    &lt;/ul&gt;
+  {% endif %}
+{% endmacro %}</code></pre>
+</div>
+
+<p>Handing the behaviour to Bootstrap deleted 148 lines of hand rolled JavaScript, and brought keyboard navigation, Escape to close, click outside dismissal, and the <code>aria-expanded</code> contract with it.</p>
+
+<div class="warn box">
+  <span class="t">Do not add .navbar-nav unless you mean it</span>
+  <p>Bootstrap sets <code>flex-direction: column</code> on <code>.navbar-nav</code> and only flips it to row inside a <code>.navbar-expand-*</code> wrapper. Adding that class to a menu list outside a full Bootstrap navbar stacks the menu vertically. Set your own <code>flex-direction: row</code> explicitly so no class can flip it.</p>
+</div>
+
+<hr>
+
+<h2 id="modules">6. The custom modules</h2>
+
+<h3>jarvis_blocks: rendering content blocks through components</h3>
+
+<p>Drupal's custom block types render as a stack of fields. Jarvis already has good looking components, so this module intercepts the render and swaps the field output for the matching component.</p>
+
+<div class="codewrap">
+  <span class="label">web/modules/custom/jarvis_blocks/src/Hook/JarvisBlocksHooks.php</span>
+  <pre><code>&lt;?php
+
+declare(strict_types=1);
+
+namespace Drupal\jarvis_blocks\Hook;
+
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\block_content\BlockContentInterface;
+
+final class JarvisBlocksHooks {
+
+  private const MAP = [
+    'hero' =&gt; 'jarvis:hero',
+    'card' =&gt; 'jarvis:card',
+    'text' =&gt; 'jarvis:text',
+  ];
+
+  #[Hook('preprocess_block')]
+  public function preprocessBlock(array &amp;$variables): void {
+    $content = $variables['content'] ?? [];
+    $bc = $content['#block_content'] ?? NULL;
+    if (!$bc instanceof BlockContentInterface) {
+      return;
+    }
+    $bundle = $bc-&gt;bundle();
+    if (empty(self::MAP[$bundle])) {
+      return;
+    }
+
+    $cacheability = CacheableMetadata::createFromRenderArray($content);
+    $props = $this-&gt;buildProps($bundle, $bc, $cacheability);
+
+    $component = [
+      '#type' =&gt; 'component',
+      '#component' =&gt; self::MAP[$bundle],
+      '#props' =&gt; $props,
+    ];
+    // Copy cacheability ONLY, never $content['#cache'] wholesale.
+    $cacheability-&gt;applyTo($component);
+    $variables['content'] = $component;
+  }
+}</code></pre>
+</div>
+
+<div class="warn box">
+  <span class="t">Never copy #cache wholesale</span>
+  <p>That array carries <code>keys</code> and <code>bin</code>, which name the block's own render cache entry. Reusing them writes your component markup into that entry, so any other render path for the same entity serves it back, or clobbers it. Copy cacheability only, with <code>CacheableMetadata</code>.</p>
+</div>
+
+<h3>jarvis_canvas: the Canvas glue</h3>
+
+<p>Four hooks, each solving a specific problem.</p>
+
+<table>
+  <tr><th>Hook</th><th>Job</th></tr>
+  <tr><td><code>canvas_storable_prop_shape_alter</code></td><td>Swap Canvas's locked text format for the site's own on opted in props</td></tr>
+  <tr><td><code>node_type_insert</code></td><td>Create a Canvas template for each new content type</td></tr>
+  <tr><td><code>node_type_delete</code></td><td>Remove it again, since Drupal will not cascade the delete</td></tr>
+  <tr><td><code>rebuild</code></td><td>Organise components into folders in the editor</td></tr>
+</table>
+
+<div class="warn box">
+  <span class="t">A disabled template is not the same as no template</span>
+  <p>Canvas swaps the view display for any content template whose status is TRUE, and unsets <code>#theme</code> along with it. Create one enabled but empty, and every node of that type renders as a blank page until somebody opens the editor. Create it disabled instead. It stays editable, it just does not take over output before it has anything to show.</p>
+</div>
+
+<h3>Write hooks as classes</h3>
+
+<p>Procedural hook functions are removed in Drupal 12. Use the attribute form in a class under <code>src/Hook/</code>. Drupal finds it automatically, and you get constructor injection instead of <code>\Drupal::</code> calls.</p>
+
+<div class="codewrap">
+  <span class="label">The shape</span>
+  <pre><code>namespace Drupal\my_module\Hook;
+
+use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Render\RendererInterface;
+
+final class MyModuleHooks {
+
+  public function __construct(
+    private readonly RendererInterface $renderer,
+  ) {}
+
+  #[Hook('preprocess_block')]
+  public function preprocessBlock(array &amp;$variables): void {
+    // ...
+  }
+}</code></pre>
+</div>
+
+<p>The <code>.module</code> file can then be empty, or removed entirely. Drupal 11 does not require one.</p>
+
+<hr>
+
+<h2 id="build">7. Build order: making one yourself</h2>
+
+<p>Starting from nothing, this order avoids the most rework.</p>
+
+<ol>
+  <li><strong>Skeleton.</strong> Create <code>jarvis.info.yml</code> with a name, type, core version, and regions. Add <code>jarvis.libraries.yml</code> with one global library. Install the theme and confirm it renders.</li>
+  <li><strong>Page template.</strong> Override <code>page.html.twig</code> and print each region. Decide which are full width and which are boxed. Get the shell right before styling anything.</li>
+  <li><strong>Base CSS.</strong> Bring in Bootstrap. Add <code>overrides.css</code> for what Bootstrap does not cover.</li>
+  <li><strong>First component.</strong> Build the simplest one, something like Text. Two files. Render it from a Twig template to prove the pipeline works.</li>
+  <li><strong>Shared helpers.</strong> Once three or four components repeat the same props, extract the macro. Do not do this first. You will not know what to share until you have felt the repetition.</li>
+  <li><strong>The rest of the components.</strong> Now they go quickly, because the patterns are set.</li>
+  <li><strong>Theme settings.</strong> Add <code>theme-settings.php</code> and the preprocess hook that turns settings into CSS variables.</li>
+  <li><strong>JavaScript.</strong> Add behaviors for anything that needs measuring or interaction. Keep the maths in one file.</li>
+  <li><strong>Modules.</strong> Only when you hit something a theme cannot do. Not before.</li>
+  <li><strong>Recipe.</strong> Export configuration and demo content so the whole thing installs from empty.</li>
+</ol>
+
+<div class="good box">
+  <span class="t">Test the install from empty, early and often</span>
+  <p>A recipe that has never been installed on a blank database is a recipe that does not work. On this project the first real attempt failed four separate times, each a different collision between shipped configuration and configuration Drupal creates on its own. Every one of them was invisible on the development site.</p>
+</div>
+
+<hr>
+
+<h2 id="gotchas">8. Hard won lessons</h2>
+
+<p>These cost real debugging time. They are here so they cost you less.</p>
+
+<h4>Verify by rendering, not by reading</h4>
+<p>Checking that a file contains the right text is not verification. Twice on this project a change looked correct in the source, was served correctly, and still broke the page: once a Twig comment inside a tag, once a Bootstrap class that flipped a flex direction. Render the thing and check the result. In PHP use <code>renderInIsolation()</code>. In the browser use <code>getComputedStyle</code>.</p>
+
+<h4>A text format nobody can use is not installed</h4>
+<p>Shipping <code>filter.format.my_format</code> is half the job. Text formats are permission gated, so without a matching grant only user 1 can use them. User 1 bypasses every permission check, so everything looks fine to you while editors see nothing. Grant the permission explicitly, and grant a restricted format rather than an unrestricted one.</p>
+
+<h4>Recipes refuse configuration that already exists and differs</h4>
+<p>If installing a theme or module makes Drupal auto create something your recipe also ships, the install aborts. Either ship values that match what gets auto created and change them afterwards with a config action, or do not ship that configuration at all.</p>
+
+<h4>Config actions run after config import</h4>
+<p>So an action cannot create something that another shipped configuration validates against during import. If configuration A references configuration B, then B has to be a real file.</p>
+
+<h4>Patch files need wiring, not just existence</h4>
+<p>A patch sitting in a <code>patches/</code> folder does nothing on its own. Without a <code>composer-patches</code> entry it never re applies, and if the module directory is gitignored the fix exists only on the machine where it was made. Add <code>composer-exit-on-patch-failure</code> so a stale patch fails loudly instead of silently shipping unpatched code.</p>
+
+<h4>Prefer deleting to adding</h4>
+<p>The largest improvements on this project were deletions. Handing the menu to Bootstrap removed 148 lines of JavaScript and about 60 of CSS, and improved accessibility at the same time. Collapsing the colour blocks removed 35 lines. Sharing one contrast engine removed roughly 130. Less code, fewer places for a bug to hide.</p>
+
+<hr>
+
+<footer>
+  <p>Jarvis is a component driven Drupal 11 theme built on Bootstrap 5, for Drupal Canvas and Layout Builder, with WCAG 2.2 AA safeguards built in.</p>
+  <p>Written for DrupalHelps. Every code sample here is taken from the working theme.</p>
+</footer>
+
+</div>
+
+<script>
+document.querySelectorAll('.codewrap').forEach(function (wrap) {
+  var pre = wrap.querySelector('pre');
+  if (!pre) { return; }
+  var btn = document.createElement('button');
+  btn.className = 'copy';
+  btn.type = 'button';
+  btn.textContent = 'Copy';
+  btn.addEventListener('click', function () {
+    var text = pre.innerText;
+    var done = function () {
+      btn.textContent = 'Copied';
+      btn.classList.add('done');
+      setTimeout(function () {
+        btn.textContent = 'Copy';
+        btn.classList.remove('done');
+      }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () {});
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+  });
+  wrap.appendChild(btn);
+});
+</script>
+
+</body>
+</html>
