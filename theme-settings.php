@@ -273,25 +273,6 @@ function jarvis_font_settings_submit(array &$form, FormStateInterface $form_stat
 }
 
 /**
- * WCAG relative-luminance contrast ratio between two #rrggbb colors.
- *
- * Same math as js/contrast.js; used for the non-blocking AA warning below.
- */
-function _jarvis_contrast_ratio(string $a, string $b): float {
-  $lum = function (string $hex): float {
-    $c = [];
-    foreach ([1, 3, 5] as $i) {
-      $v = hexdec(substr($hex, $i, 2)) / 255;
-      $c[] = $v <= 0.03928 ? $v / 12.92 : (($v + 0.055) / 1.055) ** 2.4;
-    }
-    return 0.2126 * $c[0] + 0.7152 * $c[1] + 0.0722 * $c[2];
-  };
-  $l1 = $lum($a);
-  $l2 = $lum($b);
-  return (max($l1, $l2) + 0.05) / (min($l1, $l2) + 0.05);
-}
-
-/**
  * Foreground/background pairs checked for WCAG contrast.
  *
  * Shared by the live JS badges (via drupalSettings) and the save-time warning

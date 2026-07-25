@@ -15,16 +15,11 @@
  * data attribute (React strips classes but leaves our data-*), and a
  * MutationObserver re-enhances fields after re-renders.
  */
-((Drupal, once) => {
-  const NEED = 4.5;
-  const DARK_TEXT_L = 0.011; // relative luminance of #212529 body text
-
-  const chan = (c) => {
-    c /= 255;
-    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  };
-  const lum = (r, g, b) => 0.2126 * chan(r) + 0.7152 * chan(g) + 0.0722 * chan(b);
-  const contrast = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+((Drupal, once, wcag) => {
+  // Shared engine — see js/wcag.js, attached via the jarvis/wcag dependency.
+  const { NEED, DARK_TEXT: DARK_TEXT_L, lum, contrast, darken, lighten } = wcag;
+  // Aliased: `blocks` is also used as a callback parameter further down.
+  const blockAverages = wcag.blocks;
 
   const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
 
@@ -43,20 +38,7 @@
         const cx = cv.getContext('2d');
         cx.drawImage(img, 0, 0, 16, 16);
         const d = cx.getImageData(0, 0, 16, 16).data;
-        const blocks = [];
-        for (let by = 0; by < 16; by += 4) {
-          for (let bx = 0; bx < 16; bx += 4) {
-            let r = 0; let g = 0; let b = 0; let n = 0;
-            for (let y = by; y < by + 4; y++) {
-              for (let x = bx; x < bx + 4; x++) {
-                const i = (y * 16 + x) * 4;
-                r += d[i]; g += d[i + 1]; b += d[i + 2]; n++;
-              }
-            }
-            blocks.push([r / n, g / n, b / n]);
-          }
-        }
-        blocksCache[url] = blocks;
+        blocksCache[url] = blockAverages(d, 16, 4);
       }
       catch (e) {
         blocksCache[url] = null;
@@ -92,14 +74,10 @@
   const ratioFor = (avg, a, lightText) => {
     if (lightText) {
       // Black overlay at alpha a scales each channel; white text on top.
-      return contrast(1, lum(avg[0] * (1 - a), avg[1] * (1 - a), avg[2] * (1 - a)));
+      return contrast(1, lum(...darken(avg, a)));
     }
     // Light overlay blends toward white; dark text on top.
-    return contrast(DARK_TEXT_L, lum(
-      avg[0] + (255 - avg[0]) * a,
-      avg[1] + (255 - avg[1]) * a,
-      avg[2] + (255 - avg[2]) * a
-    ));
+    return contrast(DARK_TEXT_L, lum(...lighten(avg, a)));
   };
 
   const updateBadge = (badge, pct) => {
@@ -286,4 +264,4 @@
       });
     },
   };
-})(Drupal, once);
+})(Drupal, once, window.jarvisWcag);

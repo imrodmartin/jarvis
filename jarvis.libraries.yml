@@ -25,14 +25,22 @@ fontawesome:
     theme:
       https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css: { type: external, minified: true }
 
+# Single WCAG contrast engine shared by the live-site auto-contrast, the Canvas
+# editor badge and the theme-settings badges. `node js/wcag.js` self-checks it.
+wcag:
+  version: 1.x
+  js:
+    js/wcag.js: {}
+
 # Shared WCAG overlay auto-contrast for hero, card + column layouts
 # (see js/contrast.js). Attached per component via libraryOverrides in their
 # component.yml files.
 contrast:
-  version: 1.0.4
+  version: 1.0.5
   js:
     js/contrast.js: {}
   dependencies:
+    - jarvis/wcag
     # Attached as a Drupal behavior so late-arriving sections (Views AJAX,
     # Canvas preview refresh) get their overlays tuned too.
     - core/once
@@ -61,6 +69,7 @@ canvas-overlay:
   js:
     js/canvas-overlay.js: {}
   dependencies:
+    - jarvis/wcag
     - core/once
     - core/drupal
 
@@ -72,6 +81,7 @@ color-settings:
   js:
     js/color-settings.js: {}
   dependencies:
+    - jarvis/wcag
     - core/once
     - core/drupal
 

@@ -7,27 +7,17 @@
  *   for small text (AA 4.5:1) and large text (AA 3:1), and a one-click
  *   suggestion when small text fails.
  */
-((Drupal, drupalSettings, once) => {
+((Drupal, drupalSettings, once, wcag) => {
   const HEX = /^#[0-9a-fA-F]{6}$/;
-  const SMALL = 4.5;
+  const SMALL = wcag.NEED;   // AA, small text — same threshold the engine solves to
   const LARGE = 3;
 
-  const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+  const rgb = wcag.rgbFromHex;
   const toHex = (c) => `#${c.map((v) => v.toString(16).padStart(2, '0')).join('')}`;
 
-  const luminance = (hex) => {
-    const [r, g, b] = rgb(hex).map((v) => {
-      const s = v / 255;
-      return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
-    });
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  };
-
-  const ratio = (a, b) => {
-    const l1 = luminance(a);
-    const l2 = luminance(b);
-    return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
-  };
+  // Shared engine — see js/wcag.js, attached via the jarvis/wcag dependency.
+  const luminance = wcag.lumHex;
+  const ratio = wcag.ratioHex;
 
   // Nearest fg that reaches `target` against bg: blend fg toward black and
   // toward white in 5% steps, return the first (least-changed) one that passes.
@@ -169,4 +159,4 @@
       });
     },
   };
-})(Drupal, drupalSettings, once);
+})(Drupal, drupalSettings, once, window.jarvisWcag);
