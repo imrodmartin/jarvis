@@ -1,0 +1,163 @@
+.jarvis-video-bg {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  /* Fixed min-heights, NOT vh: Canvas renders in an auto-height preview iframe
+     where viewport units feed back into the iframe height and break scrolling. */
+  background-color: #000;
+}
+.jarvis-video-bg--small {
+  min-height: 320px;
+}
+.jarvis-video-bg--medium {
+  min-height: 480px;
+}
+.jarvis-video-bg--large {
+  min-height: 640px;
+}
+
+/* Background footage: cover the band, centred, behind everything. */
+.jarvis-video-bg__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  border: 0;
+  pointer-events: none;
+}
+/* Dimming layer — the "background opacity" slider paints its opacity inline. */
+.jarvis-video-bg__dim {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  z-index: 1;
+}
+.jarvis-video-bg__inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding-block: 40px;
+}
+
+/* Stands in for a Bootstrap .row — see the note in the twig. */
+.jarvis-video-bg__row {
+  display: flex;
+}
+
+/* Text card. jarvis-bg--* stays on the card only for its ADA-safe text vars;
+   the colour itself is painted by __card-bg so opacity never touches the text
+   (same split as image-overlay). Two classes so a layout-level padding reset
+   can't win the specificity tie and flatten the text against the edge. */
+.jarvis-video-bg .jarvis-video-bg__card {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  padding: 36px 40px;
+  background: transparent !important;
+}
+.jarvis-video-bg__card-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.jarvis-video-bg__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+}
+/* No card colour: the text sits on the footage, so it needs its own shadow to
+   stay legible whatever the frame behind it happens to be. */
+.jarvis-video-bg__card--bare .jarvis-video-bg__content {
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+.jarvis-video-bg__card--bare .jarvis-video-bg__title {
+  color: #fff;
+}
+
+.jarvis-video-bg__title {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--bs-heading-color, inherit);
+}
+.jarvis-video-bg__body {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+.jarvis-video-bg__heading {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.jarvis-video-bg__button {
+  margin-top: 4px;
+}
+
+/* Centre / right variants: the card's own text follows its placement. */
+.jarvis-video-bg--center .jarvis-video-bg__content {
+  align-items: center;
+  text-align: center;
+}
+.jarvis-video-bg--right .jarvis-video-bg__content {
+  align-items: flex-end;
+  text-align: right;
+}
+
+/* WCAG 2.2.2 pause control. Small, corner-anchored, visible focus ring. */
+.jarvis-video-bg__toggle {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 3;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  cursor: pointer;
+}
+.jarvis-video-bg__toggle:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+/* Label is for screen readers; the glyph is drawn with ::before. */
+.jarvis-video-bg__toggle-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.jarvis-video-bg__toggle::before {
+  content: "\275A\275A"; /* ❚❚ pause */
+  font-size: 0.9rem;
+  line-height: 1;
+}
+.jarvis-video-bg__toggle[aria-pressed="true"]::before {
+  content: "\25B6"; /* ▶ play */
+}
+
+@media (max-width: 767.98px) {
+  .jarvis-video-bg .jarvis-video-bg__card {
+    max-width: none;
+    padding: 24px 20px;
+  }
+  .jarvis-video-bg__title {
+    font-size: 1.9rem;
+  }
+}

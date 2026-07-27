@@ -17,6 +17,22 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Responsive media floor. Bootstrap 5 has no global rule for this — its reboot
+   only sets `img,svg{vertical-align:middle}` and responsiveness is opt-in via
+   .img-fluid. Jarvis SDCs opt in themselves (image.twig uses img-fluid w-100,
+   card.css sets width:100%), so anything rendered OUTSIDE a component —
+   default field templates on a non-Canvas content type, CKEditor body content,
+   pasted tables and code blocks — keeps its native size and overflows the
+   viewport (a 2000px hero pushed the whole page sideways).
+   Element selectors (0,0,1) so every existing class rule still wins:
+   .jarvis-image--match-height's height:100% and Bootstrap's .h-100 are unaffected. */
+img, svg, video, iframe, table, pre {
+  max-width: 100%;
+}
+img, video {
+  height: auto;
+}
+
 /* Page title bold by default — scoped to beat Bootstrap's heading weight. */
 .jarvis-page-title h1,
 .jarvis-page-title .page-title {

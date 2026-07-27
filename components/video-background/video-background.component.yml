@@ -1,0 +1,158 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Video Background'
+status: stable
+description: 'Full-width band with an uploaded video playing behind a text card (left, centre or right). The video has its own opacity/dimming slider.'
+category: Jarvis
+libraryOverrides:
+  dependencies:
+    - core/drupal
+    - core/once
+props:
+  type: object
+  properties:
+    video:
+      title: Video
+      description: 'Pick or upload a video with the media manager. Bound to the Video media type (uploaded file), not the remote/oEmbed one — background footage has to be served from this site. Plays muted and looped, so use footage without speech.'
+      $ref: json-schema-definitions://canvas.module/video
+    height:
+      title: 'Band height'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (320px)'
+        medium: 'Medium (480px)'
+        large: 'Large (640px)'
+      default: medium
+      examples:
+        - medium
+    overlay:
+      title: 'Background dimming (%)'
+      description: 'Darkens the video behind the text. 0 = untouched video, 100 = solid black.'
+      type: integer
+      minimum: 0
+      maximum: 100
+      default: 30
+      examples:
+        - 30
+    align:
+      title: 'Text card position'
+      type: string
+      enum: [left, center, right]
+      'meta:enum':
+        left: Left
+        center: Centre
+        right: Right
+      default: left
+      examples:
+        - left
+    box_background:
+      title: 'Text card colour'
+      # Reuses the theme's jarvis-bg--* classes (background + ADA-safe text vars).
+      type: string
+      enum: [dark, light, primary, secondary, bg1, bg2, none]
+      'meta:enum':
+        dark: 'Dark (#1a1a1a)'
+        light: 'Light (#f5f5f5)'
+        primary: Primary
+        secondary: Secondary
+        bg1: 'Background 1'
+        bg2: 'Background 2'
+        none: 'None (text straight on the video)'
+      default: dark
+      examples:
+        - dark
+    box_opacity:
+      title: 'Text card opacity (%)'
+      description: 'Opacity of the coloured card only. The text on top of it stays fully opaque.'
+      type: integer
+      minimum: 0
+      maximum: 100
+      default: 85
+      examples:
+        - 85
+    title:
+      title: Title
+      type: string
+      examples:
+        - 'Find your place at Governors State'
+    title_level:
+      title: 'Title level'
+      description: 'Use H1 only once per page.'
+      type: string
+      enum: [h1, h2, h3, h4]
+      'meta:enum':
+        h1: 'H1 (page title)'
+        h2: H2
+        h3: H3
+        h4: H4
+      default: h2
+      examples:
+        - h2
+    body:
+      title: Body
+      type: string
+      examples:
+        - 'A diverse and supportive community helps you gain the knowledge, skills and confidence to achieve your goals and succeed.'
+    heading:
+      title: 'Heading (smaller text)'
+      description: 'A short bold line under the body copy.'
+      type: string
+      examples:
+        - 'We Are GovState!'
+    button_text:
+      title: 'Button text'
+      type: string
+      examples:
+        - 'Request Info'
+    button_href:
+      title: 'Button link'
+      type: string
+      format: uri-reference
+      examples:
+        - '/node/1'
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: false

@@ -1,0 +1,58 @@
+{#
+/**
+ * @file
+ * Jarvis Video Background SDC. A full-width band with an uploaded (media
+ * library) video playing behind a text card. The card reuses the theme's
+ * jarvis-bg--* classes for its colour + ADA-safe text vars; the colour itself
+ * is painted by a separate __bg layer so box_opacity never fades the text.
+ */
+#}
+{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : false)) %}
+{% set align = align|default('left') %}
+{% set justify_class = { left: 'justify-content-start', center: 'justify-content-center', right: 'justify-content-end' }[align] %}
+{% set height = height|default('medium') %}
+{% set overlay = overlay is defined ? overlay : 30 %}
+{% set box_background = box_background|default('dark') %}
+{% set box_opacity = box_opacity is defined ? box_opacity : 85 %}
+{% set src = video.src is defined ? video.src : '' %}
+{% set poster = video.poster is defined ? video.poster : '' %}
+{% set tl = title_level|default('h2') %}
+<section class="jarvis-video-bg jarvis-video-bg--{{ height }} jarvis-video-bg--{{ align }} {{ space }}">
+  {% if src %}
+    {# Decorative background footage: muted + aria-hidden, and kept out of the
+       tab order. WCAG 2.2.2 — anything that moves for 5s+ needs a pause
+       control, supplied below and wired up in video-background.js. The JS also
+       leaves it paused on the poster when prefers-reduced-motion is set. #}
+    <video class="jarvis-video-bg__media" autoplay loop muted playsinline preload="metadata"{% if poster %} poster="{{ poster }}"{% endif %} aria-hidden="true" tabindex="-1">
+      <source src="{{ src }}">
+    </video>
+  {% endif %}
+  <div class="jarvis-video-bg__dim" style="opacity: {{ overlay / 100 }};" aria-hidden="true"></div>
+  <div class="container jarvis-video-bg__inner">
+    {# Deliberately NOT a Bootstrap .row: overrides.css has a descendant rule
+       (.jarvis-columns .row > *) that zeroes the top padding of every row child,
+       which stripped the card's padding whenever this sat in a column layout.
+       Own flex class, Bootstrap's justify-content-* utilities on top. #}
+    <div class="jarvis-video-bg__row {{ justify_class }}">
+      <div class="jarvis-video-bg__card {{ box_background != 'none' ? 'jarvis-bg--' ~ box_background : 'jarvis-video-bg__card--bare' }}">
+        {% if box_background != 'none' %}
+          <span class="jarvis-video-bg__card-bg jarvis-bg--{{ box_background }}" style="opacity: {{ box_opacity / 100 }};" aria-hidden="true"></span>
+        {% endif %}
+        <div class="jarvis-video-bg__content">
+          {% if title %}<{{ tl }} class="jarvis-video-bg__title">{{ title }}</{{ tl }}>{% endif %}
+          {% if body %}<div class="jarvis-video-bg__body">{{ body }}</div>{% endif %}
+          {% if heading %}<p class="jarvis-video-bg__heading">{{ heading }}</p>{% endif %}
+          {% if button_text and button_href %}
+            <a href="{{ button_href }}" class="btn btn-primary jarvis-video-bg__button">{{ button_text }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if src %}
+    <button type="button" class="jarvis-video-bg__toggle" data-jarvis-video-bg-toggle aria-pressed="false">
+      <span class="jarvis-video-bg__toggle-label">{{ 'Pause background video'|t }}</span>
+    </button>
+  {% endif %}
+</section>
