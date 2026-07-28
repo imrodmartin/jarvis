@@ -217,7 +217,7 @@
   .jarvis-bg--bg2,
   .jarvis-bg--dark,
   .jarvis-bg--image
-) .jarvis-timeline__marker::after {
+) .jarvis-timeline__step:not(:last-child) .jarvis-timeline__marker::after {
   background: rgba(255, 255, 255, 0.25);
 }
 
