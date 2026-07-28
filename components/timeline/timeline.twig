@@ -78,6 +78,20 @@
                tabindex="0">{{ step.content|raw }}</div>
         {% endfor %}
       </div>
+    {% elseif mode == 'accordion' %}
+      <div class="jarvis-timeline__items">
+        {% for step in steps %}
+          {# name= makes the group exclusive with no JS. Unsupported in older
+             browsers, where steps simply open independently — cosmetic only. #}
+          <details class="jarvis-timeline__item" name="jt-{{ uid }}"{% if loop.first %} open{% endif %}>
+            <summary class="jarvis-timeline__summary">
+              {{ tl.marker(step.icon, loop.index) }}
+              <span class="jarvis-timeline__label">{{ step.label }}</span>
+            </summary>
+            <div class="jarvis-timeline__content">{{ step.content|raw }}</div>
+          </details>
+        {% endfor %}
+      </div>
     {% endif %}
   </div>
 {% endif %}
