@@ -51,6 +51,9 @@
   white-space: nowrap;
   color: var(--bs-body-color);
 }
+.jarvis-timeline__nav .nav-link:hover {
+  color: var(--bs-nav-link-hover-color);
+}
 .jarvis-timeline--icon-above .jarvis-timeline__nav .nav-link {
   flex-direction: column;
   gap: 0.35rem;
@@ -141,10 +144,11 @@
   margin-block: 0 0.5rem;
 }
 
-/* --- Mobile ---
+/* --- Tabs strip (all widths) ---
    Bootstrap's .nav-tabs wraps by default. Six tabs at 375px then become a
    three-line block that pushes the panel below the fold, so pin the strip to
-   one line and let it scroll. */
+   one line and let it scroll. These rules are unconditional — only the
+   @media block further down is width-gated. */
 .jarvis-timeline__nav {
   flex-wrap: nowrap;
   overflow-x: auto;
@@ -193,22 +197,25 @@
   .jarvis-bg--bg1,
   .jarvis-bg--bg2,
   .jarvis-bg--dark,
-  .jarvis-bg--light,
   .jarvis-bg--image
 ) .jarvis-timeline {
   --jarvis-timeline-accent: var(--bs-body-color);
 }
 
-/* Rules and the rail connector need to read on the coloured fill too. */
+/* Rules and the rail connector need to read on the coloured fill too. Follows
+   the section's own ADA-safe foreground (--bs-body-color-rgb, set for every
+   .jarvis-bg--* by overrides.css) rather than a fixed white, so it also works
+   on --light where the foreground is black. */
 :is(
   .jarvis-bg--primary,
   .jarvis-bg--secondary,
   .jarvis-bg--bg1,
   .jarvis-bg--bg2,
   .jarvis-bg--dark,
+  .jarvis-bg--light,
   .jarvis-bg--image
 ) .jarvis-timeline__item {
-  border-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(var(--bs-body-color-rgb), 0.25);
 }
 :is(
   .jarvis-bg--primary,
@@ -216,9 +223,10 @@
   .jarvis-bg--bg1,
   .jarvis-bg--bg2,
   .jarvis-bg--dark,
+  .jarvis-bg--light,
   .jarvis-bg--image
 ) .jarvis-timeline__step:not(:last-child) .jarvis-timeline__marker::after {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(var(--bs-body-color-rgb), 0.25);
 }
 
 /* Bootstrap's tab chrome is light-theme by default: a white active tab on a
@@ -229,11 +237,12 @@
   .jarvis-bg--bg1,
   .jarvis-bg--bg2,
   .jarvis-bg--dark,
+  .jarvis-bg--light,
   .jarvis-bg--image
 ) .jarvis-timeline__nav {
-  --bs-nav-tabs-border-color: rgba(255, 255, 255, 0.25);
+  --bs-nav-tabs-border-color: rgba(var(--bs-body-color-rgb), 0.25);
   --bs-nav-tabs-link-active-color: var(--bs-body-color);
   --bs-nav-tabs-link-active-bg: transparent;
   --bs-nav-tabs-link-active-border-color: currentColor;
-  --bs-nav-tabs-link-hover-border-color: rgba(255, 255, 255, 0.4);
+  --bs-nav-tabs-link-hover-border-color: rgba(var(--bs-body-color-rgb), 0.4);
 }

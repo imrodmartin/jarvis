@@ -45,6 +45,7 @@ props:
         - medium
     align:
       title: Alignment
+      description: 'Applies to the tabs strip only — accordion and rail are always left aligned.'
       type: string
       enum: [start, center]
       'meta:enum':

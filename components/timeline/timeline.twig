@@ -96,7 +96,7 @@
       {# Plain markup, not <details open> with the toggle suppressed — a
          focusable summary that does nothing is worse than no summary.
          <ol> because step order carries meaning. #}
-      <ol class="jarvis-timeline__rail">
+      <ol class="jarvis-timeline__rail" role="list">
         {% for step in steps %}
           <li class="jarvis-timeline__step">
             <span class="jarvis-timeline__marker">{{ tl.marker(step.icon, loop.index) }}</span>
