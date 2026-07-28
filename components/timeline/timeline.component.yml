@@ -1,0 +1,216 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Timeline
+status: stable
+description: 'Steps with an icon, a name and rich text — shown as tabs, an accordion or a vertical rail.'
+category: Jarvis
+libraryOverrides:
+  dependencies:
+    - jarvis/fontawesome
+props:
+  type: object
+  properties:
+    display:
+      title: Display
+      description: 'Tabs is the default. Rail shows every step open at once.'
+      type: string
+      enum: [tabs, accordion, rail]
+      'meta:enum':
+        tabs: Tabs
+        accordion: Accordion
+        rail: 'Vertical rail'
+      default: tabs
+      examples:
+        - tabs
+    icon_position:
+      title: 'Icon position'
+      description: 'Above the name, or beside it. Applies to tabs only — accordion and rail are always inline.'
+      type: string
+      enum: [above, inline]
+      'meta:enum':
+        above: 'Above the name'
+        inline: 'Beside the name'
+      default: above
+      examples:
+        - above
+    icon_size:
+      title: 'Icon size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (24px)'
+        medium: 'Medium (32px)'
+        large: 'Large (48px)'
+      default: medium
+      examples:
+        - medium
+    align:
+      title: Alignment
+      type: string
+      enum: [start, center]
+      'meta:enum':
+        start: 'Left aligned'
+        center: Centered
+      default: center
+      examples:
+        - center
+    heading_level:
+      title: 'Heading level'
+      description: 'Used by the vertical rail only. In tabs the name is a button and in the accordion it is a summary, so neither is a heading.'
+      type: string
+      enum: [h2, h3, h4]
+      'meta:enum':
+        h2: 'Heading 2'
+        h3: 'Heading 3'
+        h4: 'Heading 4'
+      default: h3
+      examples:
+        - h3
+    step1_icon: &icon
+      title: 'Step 1 icon'
+      description: 'Choosing None shows the step number in a circle instead.'
+      # Value is the full Font Awesome class string, printed straight into the <i>.
+      type: string
+      enum:
+        - 'none'
+        - 'fa-solid fa-calendar-days'
+        - 'fa-solid fa-clipboard-check'
+        - 'fa-solid fa-file-lines'
+        - 'fa-solid fa-envelope'
+        - 'fa-solid fa-user-plus'
+        - 'fa-solid fa-users'
+        - 'fa-solid fa-graduation-cap'
+        - 'fa-solid fa-magnifying-glass'
+        - 'fa-solid fa-comments'
+        - 'fa-solid fa-handshake'
+        - 'fa-solid fa-flag-checkered'
+        - 'fa-solid fa-location-dot'
+        - 'fa-solid fa-dollar-sign'
+        - 'fa-solid fa-star'
+        - 'fa-solid fa-check'
+        - 'fa-solid fa-circle-check'
+        - 'fa-solid fa-arrow-right'
+      'meta:enum':
+        'none': 'None (show the step number)'
+        'fa-solid fa-calendar-days': Calendar
+        'fa-solid fa-clipboard-check': Clipboard
+        'fa-solid fa-file-lines': Document
+        'fa-solid fa-envelope': Envelope
+        'fa-solid fa-user-plus': 'Add person'
+        'fa-solid fa-users': People
+        'fa-solid fa-graduation-cap': Graduation
+        'fa-solid fa-magnifying-glass': Search
+        'fa-solid fa-comments': Conversation
+        'fa-solid fa-handshake': Handshake
+        'fa-solid fa-flag-checkered': Finish
+        'fa-solid fa-location-dot': Location
+        'fa-solid fa-dollar-sign': Money
+        'fa-solid fa-star': Star
+        'fa-solid fa-check': Check
+        'fa-solid fa-circle-check': 'Check in a circle'
+        'fa-solid fa-arrow-right': Arrow
+      default: 'none'
+      examples:
+        - 'fa-solid fa-calendar-days'
+    step1_label: &label
+      title: 'Step 1 name'
+      type: string
+      examples:
+        - 'October to December'
+    step1_content: &content
+      title: 'Step 1 content'
+      type: string
+      contentMediaType: text/html
+      'x-formatting-context': block
+      examples:
+        - '<p>Information sessions run monthly.</p>'
+    step2_icon:
+      <<: *icon
+      title: 'Step 2 icon'
+    step2_label:
+      <<: *label
+      title: 'Step 2 name'
+    step2_content:
+      <<: *content
+      title: 'Step 2 content'
+    step3_icon:
+      <<: *icon
+      title: 'Step 3 icon'
+    step3_label:
+      <<: *label
+      title: 'Step 3 name'
+    step3_content:
+      <<: *content
+      title: 'Step 3 content'
+    step4_icon:
+      <<: *icon
+      title: 'Step 4 icon'
+    step4_label:
+      <<: *label
+      title: 'Step 4 name'
+    step4_content:
+      <<: *content
+      title: 'Step 4 content'
+    step5_icon:
+      <<: *icon
+      title: 'Step 5 icon'
+    step5_label:
+      <<: *label
+      title: 'Step 5 name'
+    step5_content:
+      <<: *content
+      title: 'Step 5 content'
+    step6_icon:
+      <<: *icon
+      title: 'Step 6 icon'
+    step6_label:
+      <<: *label
+      title: 'Step 6 name'
+    step6_content:
+      <<: *content
+      title: 'Step 6 content'
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: 'Padding size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      'meta:enum':
+        none: None
+        all: 'All sides'
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: 'Margin size'
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (10px)'
+        medium: 'Medium (20px)'
+        large: 'Large (30px)'
+      default: medium
+    vertical_padding:
+      title: 'Vertical padding (30px)'
+      type: boolean
+      default: true
