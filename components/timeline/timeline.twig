@@ -92,6 +92,21 @@
           </details>
         {% endfor %}
       </div>
+    {% else %}
+      {# Plain markup, not <details open> with the toggle suppressed — a
+         focusable summary that does nothing is worse than no summary.
+         <ol> because step order carries meaning. #}
+      <ol class="jarvis-timeline__rail">
+        {% for step in steps %}
+          <li class="jarvis-timeline__step">
+            <span class="jarvis-timeline__marker">{{ tl.marker(step.icon, loop.index) }}</span>
+            <div class="jarvis-timeline__body">
+              {% if step.label %}<{{ h }} class="jarvis-timeline__label">{{ step.label }}</{{ h }}>{% endif %}
+              <div class="jarvis-timeline__content">{{ step.content|raw }}</div>
+            </div>
+          </li>
+        {% endfor %}
+      </ol>
     {% endif %}
   </div>
 {% endif %}
