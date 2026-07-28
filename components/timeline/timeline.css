@@ -182,3 +182,58 @@
     padding-block-end: 1.5rem;
   }
 }
+
+/* --- Coloured sections ---
+   On a jarvis-bg--* parent the fixed accent can fail contrast (primary text on
+   a primary fill vanishes). Fall back to the section's ADA-safe foreground,
+   which jarvis_preprocess_html has already computed into --bs-body-color. */
+:is(
+  .jarvis-bg--primary,
+  .jarvis-bg--secondary,
+  .jarvis-bg--bg1,
+  .jarvis-bg--bg2,
+  .jarvis-bg--dark,
+  .jarvis-bg--light,
+  .jarvis-bg--image
+) .jarvis-timeline {
+  --jarvis-timeline-accent: var(--bs-body-color);
+}
+
+/* Rules and the rail connector need to read on the coloured fill too. */
+:is(
+  .jarvis-bg--primary,
+  .jarvis-bg--secondary,
+  .jarvis-bg--bg1,
+  .jarvis-bg--bg2,
+  .jarvis-bg--dark,
+  .jarvis-bg--image
+) .jarvis-timeline__item {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+:is(
+  .jarvis-bg--primary,
+  .jarvis-bg--secondary,
+  .jarvis-bg--bg1,
+  .jarvis-bg--bg2,
+  .jarvis-bg--dark,
+  .jarvis-bg--image
+) .jarvis-timeline__marker::after {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Bootstrap's tab chrome is light-theme by default: a white active tab on a
+   dark section reads as a hole. Retarget its custom properties. */
+:is(
+  .jarvis-bg--primary,
+  .jarvis-bg--secondary,
+  .jarvis-bg--bg1,
+  .jarvis-bg--bg2,
+  .jarvis-bg--dark,
+  .jarvis-bg--image
+) .jarvis-timeline__nav {
+  --bs-nav-tabs-border-color: rgba(255, 255, 255, 0.25);
+  --bs-nav-tabs-link-active-color: var(--bs-body-color);
+  --bs-nav-tabs-link-active-bg: transparent;
+  --bs-nav-tabs-link-active-border-color: currentColor;
+  --bs-nav-tabs-link-hover-border-color: rgba(255, 255, 255, 0.4);
+}
