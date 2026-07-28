@@ -140,3 +140,45 @@
 .jarvis-timeline__rail .jarvis-timeline__label {
   margin-block: 0 0.5rem;
 }
+
+/* --- Mobile ---
+   Bootstrap's .nav-tabs wraps by default. Six tabs at 375px then become a
+   three-line block that pushes the panel below the fold, so pin the strip to
+   one line and let it scroll. */
+.jarvis-timeline__nav {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 1rem;
+  -webkit-overflow-scrolling: touch;
+  /* Keep the platform's own affordance rather than hiding it and rebuilding an
+     edge fade. iOS hides it until scroll anyway. */
+  scrollbar-width: thin;
+}
+.jarvis-timeline__nav .nav-link {
+  scroll-snap-align: start;
+}
+/* `safe` matters: a centred flex container that overflows puts its leading
+   items out of reach of scrolling. */
+.jarvis-timeline--align-center .jarvis-timeline__nav {
+  justify-content: safe center;
+}
+
+/* A wide table or pre scrolls inside its own box instead of taking the
+   document with it. */
+.jarvis-timeline__content {
+  overflow-x: auto;
+}
+
+@media (max-width: 767.98px) {
+  /* A 48px icon above a label is a ~90px tall tab on a phone. */
+  .jarvis-timeline--icon-size-large { --jarvis-timeline-icon: 2rem; }
+  .jarvis-timeline--icon-size-medium { --jarvis-timeline-icon: 1.5rem; }
+
+  .jarvis-timeline__step {
+    gap: 0 0.75rem;
+  }
+  .jarvis-timeline__body {
+    padding-block-end: 1.5rem;
+  }
+}
