@@ -1,0 +1,142 @@
+/* Jarvis Timeline — one component, three renderings. Everything keys off the
+   wrapper modifier so the three DOM shapes share the icon, label and content
+   rules. */
+
+.jarvis-timeline {
+  --jarvis-timeline-icon: 2rem; /* medium; size modifiers override */
+  --jarvis-timeline-accent: var(--bs-primary, #2d6cdf);
+}
+.jarvis-timeline--icon-size-small { --jarvis-timeline-icon: 1.5rem; }
+.jarvis-timeline--icon-size-medium { --jarvis-timeline-icon: 2rem; }
+.jarvis-timeline--icon-size-large { --jarvis-timeline-icon: 3rem; }
+
+.jarvis-timeline__icon {
+  font-size: var(--jarvis-timeline-icon);
+  line-height: 1;
+  color: var(--jarvis-timeline-accent);
+  flex: 0 0 auto;
+}
+/* icon = none: the step number in a circle the same size the glyph would be,
+   so a partly-iconned set keeps one rhythm. */
+.jarvis-timeline__icon--number {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--jarvis-timeline-icon);
+  block-size: var(--jarvis-timeline-icon);
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  font-size: calc(var(--jarvis-timeline-icon) * 0.5);
+  font-weight: 700;
+}
+
+.jarvis-timeline__label {
+  font-weight: 600;
+}
+
+/* Editors paste tables and oversized images into the rich-text props. Contain
+   them or they force the whole document to scroll sideways. */
+.jarvis-timeline__content :is(img, table, iframe, pre, video) {
+  max-width: 100%;
+}
+.jarvis-timeline__content img {
+  height: auto;
+}
+
+/* --- Tabs --- */
+.jarvis-timeline__nav .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px; /* WCAG 2.2 target size; Jarvis holds 44, not the 24 minimum */
+  white-space: nowrap;
+  color: var(--bs-body-color);
+}
+.jarvis-timeline--icon-above .jarvis-timeline__nav .nav-link {
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.jarvis-timeline__panels {
+  padding-block-start: 1.5rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .jarvis-timeline .tab-pane.fade {
+    transition: none;
+  }
+}
+
+/* --- Accordion --- */
+.jarvis-timeline__item {
+  border-block-end: 1px solid var(--bs-border-color, #dee2e6);
+}
+.jarvis-timeline__item:first-child {
+  border-block-start: 1px solid var(--bs-border-color, #dee2e6);
+}
+.jarvis-timeline__summary {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+  padding-block: 0.75rem;
+  cursor: pointer;
+  list-style: none;
+}
+.jarvis-timeline__summary::-webkit-details-marker {
+  display: none;
+}
+/* Chevron, rotated when open. */
+.jarvis-timeline__summary::after {
+  content: "";
+  margin-inline-start: auto;
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  border-inline-end: 2px solid currentColor;
+  border-block-end: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+}
+.jarvis-timeline__item[open] .jarvis-timeline__summary::after {
+  transform: rotate(-135deg);
+}
+.jarvis-timeline__item .jarvis-timeline__content {
+  padding-block-end: 1rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .jarvis-timeline__summary::after {
+    transition: none;
+  }
+}
+
+/* --- Vertical rail --- */
+.jarvis-timeline__rail {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.jarvis-timeline__step {
+  display: grid;
+  /* minmax(0, 1fr) so a long unbroken string wraps instead of widening the grid */
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0 1rem;
+}
+/* Two rows: the marker, then the connector filling whatever height is left.
+   Grid rather than absolute positioning, so no fixed height is assumed. */
+.jarvis-timeline__marker {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  justify-items: center;
+  align-self: stretch;
+}
+.jarvis-timeline__step:not(:last-child) .jarvis-timeline__marker::after {
+  content: "";
+  grid-row: 2;
+  inline-size: 2px;
+  block-size: 100%;
+  margin-block: 0.5rem;
+  background: var(--bs-border-color, #dee2e6);
+}
+.jarvis-timeline__body {
+  padding-block-end: 2rem;
+}
+.jarvis-timeline__rail .jarvis-timeline__label {
+  margin-block: 0 0.5rem;
+}
