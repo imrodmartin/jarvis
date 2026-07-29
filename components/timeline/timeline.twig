@@ -24,7 +24,7 @@
   {%- endif -%}
 {% endmacro %}
 
-{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : true)) %}
+{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : false)) %}
 {% set mode = display|default('tabs') %}
 {% set h = heading_level|default('h3') ?: 'h3' %}
 {# Unique per render so two timelines on one page never share element ids or a

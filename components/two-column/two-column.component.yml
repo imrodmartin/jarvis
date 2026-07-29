@@ -6,6 +6,7 @@ category: 'Jarvis Layout'
 libraryOverrides:
   dependencies:
     - jarvis/contrast
+    - jarvis/reveal
 props:
   type: object
   properties:
@@ -124,7 +125,19 @@ props:
     vertical_padding:
       title: 'Vertical padding (30px)'
       type: boolean
-      default: true
+      default: false
+    animation:
+      title: 'Scroll animation'
+      description: 'Fades the section in as it scrolls into view. Honours the reduced-motion browser setting.'
+      type: string
+      enum: [none, right, left]
+      'meta:enum':
+        none: None
+        right: 'Fade from right'
+        left: 'Fade from left'
+      default: none
+      examples:
+        - none
 slots:
   first:
     title: 'Column 1'

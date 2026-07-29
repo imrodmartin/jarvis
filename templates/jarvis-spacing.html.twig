@@ -9,6 +9,13 @@
  * pass |default()-guarded props so undefined props are safe under
  * strict_variables. One source of truth: change spacing behaviour here.
  *
+ * vertical_padding fallbacks are FALSE everywhere, and the component.yml
+ * defaults match. Canvas omits the prop from a freshly inserted component
+ * rather than seeding it from the schema default, so a `true` fallback padded
+ * sections whose toggle read off until the editor flipped it on and back off
+ * — the toggle and the rendered spacing disagreed. Keep the two in step: a
+ * component.yml default of false with a `: true` fallback reintroduces the bug.
+ *
  * no_padding is the last argument and Section is the only component that
  * declares that prop, so every other caller omits it and it arrives null
  * (falsy). Passing `no_padding|default(false)` from components that never

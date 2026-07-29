@@ -4,6 +4,28 @@
 .jarvis-card__img {
   object-fit: cover;
 }
+/* Hover effect (the `hover` prop): 2px lift, a soft shadow and a slight
+   darkening.
+   brightness() rather than a background-colour change or a black wash on
+   ::after: those only reach the solid-background variants, or dim the text
+   along with the surface. brightness scales the surface and the text by the
+   same factor, so the WCAG contrast the card was built with survives the
+   hover — and it darkens the photo on the background variant too, which a
+   background-colour hover cannot.
+   (hover: hover) keeps it off touch screens, where a tap would otherwise leave
+   the card stuck in its hovered state. :focus-within gives keyboard users the
+   same feedback when they tab onto the card's link. */
+@media (hover: hover) {
+  .jarvis-card--hover {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, filter 0.2s ease-out;
+  }
+  .jarvis-card--hover:hover,
+  .jarvis-card--hover:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.12);
+    filter: brightness(0.96);
+  }
+}
 /* ponytail: fixed aspect keeps image-top cards even when source images differ in size */
 .jarvis-card--image-top .jarvis-card__img {
   aspect-ratio: 16 / 9;

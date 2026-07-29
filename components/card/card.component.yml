@@ -124,4 +124,9 @@ props:
     vertical_padding:
       title: 'Vertical padding (30px)'
       type: boolean
-      default: true
+      default: false
+    hover:
+      title: 'Hover effect'
+      description: 'Lifts the card slightly and darkens it while the pointer is over it.'
+      type: boolean
+      default: false

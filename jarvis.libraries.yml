@@ -32,6 +32,20 @@ wcag:
   js:
     js/wcag.js: {}
 
+# Scroll reveal for the column sections' `animation` prop (fade from left or
+# right). Attached per component via libraryOverrides in their component.yml
+# files, so pages without an animated section never load it.
+reveal:
+  version: 1.x
+  css:
+    theme:
+      css/reveal.css: {}
+  js:
+    js/reveal.js: {}
+  dependencies:
+    - core/once
+    - core/drupal
+
 # Shared WCAG overlay auto-contrast for hero, card + column layouts
 # (see js/contrast.js). Attached per component via libraryOverrides in their
 # component.yml files.
