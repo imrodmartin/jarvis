@@ -2,7 +2,7 @@ name: Jarvis
 type: theme
 base theme: false
 core_version_requirement: ^11 || ^12
-version: '1.1'
+version: '2.1'
 description: 'DXPR-style SDC theme with Bootstrap 5, built for Drupal Canvas and Layout Builder.'
 package: Jarvis
 screenshot: screenshot.jpg
