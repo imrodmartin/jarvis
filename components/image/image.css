@@ -1,7 +1,7 @@
 /* Rounded corners are opt-in via the `rounded` prop (default off). Full-width
    images bleed square unless rounded is also on. */
 .jarvis-image--rounded .jarvis-image__img {
-  border-radius: var(--bs-border-radius-lg, 1rem);
+  border-radius: 0.5rem;
 }
 .jarvis-image--full:not(.jarvis-image--rounded) .jarvis-image__img {
   border-radius: 0;
