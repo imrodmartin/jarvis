@@ -11,6 +11,8 @@
   even: ['col-12 col-md-6', 'col-12 col-md-6'],
   'wide-left': ['col-12 col-md-8', 'col-12 col-md-4'],
   'wide-right': ['col-12 col-md-4', 'col-12 col-md-8'],
+  'wide-left-75': ['col-12 col-md-9', 'col-12 col-md-3'],
+  'wide-right-75': ['col-12 col-md-3', 'col-12 col-md-9'],
 }[ratio|default('even')] %}
 {% embed '@jarvis/jarvis-columns-shell.html.twig' with { count: 2 } %}
   {% block columns %}

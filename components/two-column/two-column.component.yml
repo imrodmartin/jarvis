@@ -72,11 +72,13 @@ props:
     ratio:
       title: 'Column ratio'
       type: string
-      enum: [even, wide-left, wide-right]
+      enum: [even, wide-left, wide-right, wide-left-75, wide-right-75]
       'meta:enum':
         even: 'Even (1:1)'
-        wide-left: 'Wide left (2:1)'
-        wide-right: 'Wide right (1:2)'
+        wide-left: 'Wide left (66% / 33%)'
+        wide-right: 'Wide right (33% / 66%)'
+        wide-left-75: 'Wide left (75% / 25%)'
+        wide-right-75: 'Wide right (25% / 75%)'
       default: even
       examples:
         - even
