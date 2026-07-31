@@ -13,7 +13,7 @@
 {% set img_src = styled ?: image.src %}
 {% set wrapper = full_width ? 'jarvis-image jarvis-image--full' : 'jarvis-image container' %}
 {# ponytail: rounded is its own toggle now, decoupled from full_width/padding. #}
-{% set round_class = rounded|default(true) ? 'jarvis-image--rounded' : '' %}
+{% set round_class = rounded|default(false) ? 'jarvis-image--rounded' : '' %}
 {% set mh_class = match_height|default(false) ? 'jarvis-image--match-height' : '' %}
 <figure class="{{ wrapper }} {{ round_class }} {{ mh_class }} mb-0 {{ space }}">
   {% if has_image %}

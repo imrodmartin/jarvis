@@ -48,7 +48,7 @@ props:
     rounded:
       title: 'Rounded corners'
       type: boolean
-      default: true
+      default: false
     priority:
       title: 'Load eagerly (above the fold)'
       description: 'Disable lazy-loading for images visible without scrolling — better LCP.'
