@@ -1,3 +1,5 @@
+![Jarvis — a Drupal theme](images/jarvis-logo.png)
+
 # Jarvis
 
 Jarvis is a Drupal theme for Canvas and Layout Builder. It ships a set of Single
