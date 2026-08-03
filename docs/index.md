@@ -1,3 +1,5 @@
+![Jarvis — a Drupal theme](images/jarvis-logo.png)
+
 # Jarvis
 
 Jarvis is a Drupal theme for Canvas and Layout Builder. It ships a set of Single
@@ -11,8 +13,8 @@ Jarvis targets Drupal `^11 || ^12` and PHP `>= 8.3`.
 
 ## Key features
 
-- Twenty SDC components (hero, card, section, columns, stat, person, video, map,
-  and more) that Canvas discovers on cache rebuild.
+- Twenty-one SDC components (hero, card, section, columns, stat, person, video,
+  timeline, map, and more) that Canvas discovers on cache rebuild.
 - Bootstrap 5.3 as the base CSS layer, bundled with the theme.
 - Colour controls with hex fields paired to native colour pickers, applied as CSS
   custom properties.
