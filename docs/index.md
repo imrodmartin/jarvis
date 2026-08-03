@@ -44,7 +44,6 @@ what you are looking for.
 
 ## Reference pages
 
-- [Single Directory Compoennts](components.html): Start here.
 - [Installation](installation.md): require the theme with Composer, enable it, and
   apply the recipe.
 - [Configuration](configuration.md): set colours, fonts, and font sizes.
