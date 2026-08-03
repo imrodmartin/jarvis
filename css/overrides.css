@@ -128,14 +128,17 @@ img, video {
 .jarvis-columns .container-fluid > .row { margin-left: 0; margin-right: 0; }
 .jarvis-columns .container-fluid > .row > [class*="col"] { padding-left: 0; padding-right: 0; }
 
-/* Bootstrap's vertical gutter puts margin-top:-var(--bs-gutter-y) on .row and a
-   matching padding-top on the cols. That negative margin escapes .jarvis-columns'
-   padding box — pulling the grid up so the wrapper's vertical padding AND bottom
-   margin read as ignored (sections have no .row, so they were fine). Swap the
-   margin/padding hack for row-gap: same between-row spacing when columns wrap on
-   mobile, without the negative margin. */
+/* Bootstrap's vertical gutter puts margin-top:calc(-1 * var(--bs-gutter-y)) on
+   .row and a matching POSITIVE margin-top on every col. 5.3 uses margin there,
+   not padding — zeroing padding-top was a no-op, so every g-4 row kept 1.5rem
+   of dead space above it and rows never touched no matter what the padding and
+   margin props said. The negative margin also escapes .jarvis-columns' padding
+   box, pulling the grid up so the wrapper's vertical padding AND bottom margin
+   read as ignored (sections have no .row, so they were fine). Zero both sides
+   and let row-gap carry the spacing: same gap when columns wrap on mobile, no
+   negative margin, and gap: None (g-0) collapses to a true zero. */
 .jarvis-columns .row { margin-top: 0; row-gap: var(--bs-gutter-y); }
-.jarvis-columns .row > * { padding-top: 0; }
+.jarvis-columns .row > * { margin-top: 0; }
 
 /* Primary menu. templates/menu--main.html.twig emits Bootstrap navbar markup,
    so the dropdown panel and its open/close, keyboard navigation, Escape and
