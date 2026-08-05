@@ -84,10 +84,28 @@
 
 .jarvis-video-bg__title {
   margin: 0;
-  font-size: 2.5rem;
   font-weight: 700;
   line-height: 1.1;
   color: var(--bs-heading-color, inherit);
+}
+/* Size keyed off the TAG, so the title_level prop actually resizes. This class
+   previously carried a flat font-size: 2.5rem, so h1/h2/h3/h4 changed the
+   element and nothing else. Same theme scale and 1.12 factor as hero/cta;
+   levels here are h1-h4 (h2 default). The mobile step-down that used to live
+   in the max-width:767.98px block below is gone — jarvis.theme redefines
+   --jarvis-fs-* inside that same breakpoint, so these calc()s already follow
+   the site's mobile settings. */
+h1.jarvis-video-bg__title {
+  font-size: calc(var(--jarvis-fs-h1, 2.5rem) * 1.12);
+}
+h2.jarvis-video-bg__title {
+  font-size: calc(var(--jarvis-fs-h2, 2rem) * 1.12);
+}
+h3.jarvis-video-bg__title {
+  font-size: calc(var(--jarvis-fs-h3, 1.75rem) * 1.12);
+}
+h4.jarvis-video-bg__title {
+  font-size: calc(var(--jarvis-fs-h4, 1.5rem) * 1.12);
 }
 .jarvis-video-bg__body {
   margin: 0;
@@ -156,8 +174,5 @@
   .jarvis-video-bg .jarvis-video-bg__card {
     max-width: none;
     padding: 24px 20px;
-  }
-  .jarvis-video-bg__title {
-    font-size: 1.9rem;
   }
 }

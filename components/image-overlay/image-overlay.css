@@ -63,10 +63,25 @@
   /* Now a real heading element (WCAG 1.3.1). The caption is a flex column with
      its own gap, so the reboot margin has to go or spacing doubles. */
   margin: 0;
-  font-size: 1.5rem;
   font-weight: 700;
   line-height: 1.15;
   color: var(--bs-heading-color, inherit);
+}
+/* Size keyed off the TAG, so the heading_level prop actually resizes — this
+   class used to carry a flat font-size: 1.5rem. Plain theme scale, no hero
+   multiplier: this is a content heading, and at the h3 default it lands at
+   1.75rem, near the 1.5rem it replaced. */
+h2.jarvis-image-overlay__heading {
+  font-size: var(--jarvis-fs-h2, 2rem);
+}
+h3.jarvis-image-overlay__heading {
+  font-size: var(--jarvis-fs-h3, 1.75rem);
+}
+h4.jarvis-image-overlay__heading {
+  font-size: var(--jarvis-fs-h4, 1.5rem);
+}
+h5.jarvis-image-overlay__heading {
+  font-size: var(--jarvis-fs-h5, 1.25rem);
 }
 .jarvis-image-overlay__text {
   font-size: 1.05rem;

@@ -17,7 +17,10 @@
 {% set btn_variant = bg != 'none' ? 'light' : 'primary' %}
 <div class="jarvis-cta text-center {{ bg_class }} {{ space }}">
   {% if subtitle %}<p class="jarvis-cta__subtitle text-uppercase fw-bold mb-2">{{ subtitle }}</p>{% endif %}
-  {% if heading %}<{{ h }} class="jarvis-cta__heading display-4 fw-bold mb-3">{{ heading }}</{{ h }}>{% endif %}
+  {# No display-* class: it pinned one size regardless of {{ h }}, so the
+     heading_level prop changed the tag but never the size. Sizing lives in
+     cta.css, keyed off the tag. Same fix as hero. #}
+  {% if heading %}<{{ h }} class="jarvis-cta__heading fw-bold mb-3">{{ heading }}</{{ h }}>{% endif %}
   {% if text %}<p class="jarvis-cta__text lead mb-4">{{ text }}</p>{% endif %}
   {% if button_text and button_href %}
     <div class="jarvis-cta__buttons d-flex flex-wrap justify-content-center gap-2">

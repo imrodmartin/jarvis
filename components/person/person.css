@@ -50,9 +50,24 @@
   /* Now a real heading element (WCAG 1.3.1). Reset the reboot margin so the
      rendered spacing is identical to the <div> this replaced. */
   margin: 0;
-  font-size: 1.8rem;
   font-weight: 700;
   line-height: 1.2;
+}
+/* Size keyed off the TAG, so the heading_level prop actually resizes — this
+   class used to carry a flat font-size: 1.8rem. Plain theme scale, no hero
+   multiplier: at the h3 default it lands at 1.75rem, essentially the 1.8rem it
+   replaced. */
+h2.jarvis-person__name {
+  font-size: var(--jarvis-fs-h2, 2rem);
+}
+h3.jarvis-person__name {
+  font-size: var(--jarvis-fs-h3, 1.75rem);
+}
+h4.jarvis-person__name {
+  font-size: var(--jarvis-fs-h4, 1.5rem);
+}
+h5.jarvis-person__name {
+  font-size: var(--jarvis-fs-h5, 1.25rem);
 }
 .jarvis-person__position {
   font-size: 1rem;
