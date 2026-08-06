@@ -50,3 +50,27 @@
 .jarvis-hero--text-light:not([style*="background-image"]) {
   background: #000;
 }
+/* Heading size keyed off the TAG, so the heading_level prop actually resizes.
+   Previously .display-3 was hardcoded in the twig: h1/h2/h3 changed the element
+   but every level rendered at calc(1.525rem + 3.3vw).
+
+   Sizes derive from the theme's configurable scale (--jarvis-fs-*, set per site
+   under theme settings, with separate mobile values) instead of Bootstrap's
+   display-* ladder, so hero headings now follow site typography — and drop the
+   vw unit, which the Canvas preview iframe handles badly.
+
+   1.12 keeps a hero above body copy while landing 30% under the old ceiling:
+   .display-3 capped at 4rem, and 2.5rem x 1.12 = 2.8rem. Defaults render
+   h1 2.8rem / h2 2.24rem / h3 1.96rem. */
+.jarvis-hero__heading {
+  line-height: 1.2;
+}
+h1.jarvis-hero__heading {
+  font-size: calc(var(--jarvis-fs-h1, 2.5rem) * 1.12);
+}
+h2.jarvis-hero__heading {
+  font-size: calc(var(--jarvis-fs-h2, 2rem) * 1.12);
+}
+h3.jarvis-hero__heading {
+  font-size: calc(var(--jarvis-fs-h3, 1.75rem) * 1.12);
+}

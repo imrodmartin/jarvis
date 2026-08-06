@@ -6,9 +6,11 @@
  * classes for background colour + ADA-safe text vars.
  */
 #}
-{# ADA (WCAG 1.3.1): the overlay heading is 1.5rem/700, so it must be a real
-   heading element. person.css/image-overlay.css style the class, not the tag,
-   so the visual result is unchanged. #}
+{# ADA (WCAG 1.3.1): the overlay heading is bold and well above body size, so it
+   must be a real heading element. image-overlay.css sizes it per TAG off the
+   theme scale, so heading_level changes the rendered size — it used to be
+   pinned to the class at a flat 1.5rem, which made the prop a no-op
+   visually. #}
 {% set hl = heading_level|default('h3') %}
 {% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
 {% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : false)) %}

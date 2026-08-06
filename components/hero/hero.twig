@@ -22,7 +22,10 @@
     <div class="row {{ justify_class }}">
       <div class="jarvis-hero__content">
         {% set h = heading_level|default('h1') %}
-        {% if heading %}<{{ h }} class="jarvis-hero__heading display-3 fw-bold mb-3">{{ heading }}</{{ h }}>{% endif %}
+        {# No display-* class: it pins one size regardless of {{ h }}, so the
+           heading_level prop changed the tag but never the size. Sizing lives
+           in hero.css, keyed off the tag. #}
+        {% if heading %}<{{ h }} class="jarvis-hero__heading fw-bold mb-3">{{ heading }}</{{ h }}>{% endif %}
         {% if subheading %}<p class="jarvis-hero__subheading lead mb-4">{{ subheading }}</p>{% endif %}
         {% if cta_text and cta_href %}<a href="{{ cta_href }}" class="btn btn-primary btn-lg">{{ cta_text }}</a>{% endif %}
       </div>

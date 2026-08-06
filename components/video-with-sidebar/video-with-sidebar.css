@@ -18,9 +18,21 @@
   letter-spacing: 0.1em;
   font-size: 0.85rem;
 }
+/* Size keyed off the TAG, so the heading_level prop actually resizes — this
+   class used to carry a flat font-size: 1.9rem. Plain theme scale, no hero
+   multiplier: at the h2 default it lands at 2rem, near the 1.9rem it
+   replaced. */
 .jarvis-video-sidebar__title {
-  font-size: 1.9rem;
   line-height: 1.15;
+}
+h2.jarvis-video-sidebar__title {
+  font-size: var(--jarvis-fs-h2, 2rem);
+}
+h3.jarvis-video-sidebar__title {
+  font-size: var(--jarvis-fs-h3, 1.75rem);
+}
+h4.jarvis-video-sidebar__title {
+  font-size: var(--jarvis-fs-h4, 1.5rem);
 }
 .jarvis-video-sidebar__desc {
   color: var(--bs-secondary-color, #6c757d);
