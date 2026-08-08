@@ -18,14 +18,14 @@ props:
       title: 'Image style'
       # ponytail: hardcoded enum of site image styles; regenerate if styles change.
       type: string
-      enum: [original, thumbnail, medium, large, wide, hero_banner]
+      enum: [original, thumbnail, medium, large, wide, jarvis_hero_banner]
       'meta:enum':
         original: 'Original (responsive)'
         thumbnail: Thumbnail
         medium: Medium
         large: Large
         wide: Wide
-        hero_banner: 'Hero banner'
+        jarvis_hero_banner: 'Jarvis hero banner'
       default: original
     image_uri:
       title: 'Image source URI (internal)'

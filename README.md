@@ -72,7 +72,7 @@ ddev drush cache:rebuild   # also organises the Canvas component folders
   regions (via config actions on the auto-created theme blocks)
 - Sets the site front page to `/test-page` (the demo Canvas page) — change it
   under **Configuration → Basic site settings** after install if unwanted
-- Imports base config: custom image styles (`hero_banner`, `wide`, `portrait`), the
+- Imports base config: custom image styles (`jarvis_hero_banner`, `wide`, `portrait`), the
   `focal_point` crop type, `media` types + fields, and theme settings
 - Creates the **Jarvis Sample** content type (fields, form/view displays, and
   a Canvas content template for its full view)

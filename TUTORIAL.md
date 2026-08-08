@@ -804,9 +804,9 @@ duplicating the code).
 
 For the `Image` component, note the `image_uri` prop and the **named image style** trick.
 Canvas gives you `image.src`, but to render a specific Drupal **image style** (say
-`hero_banner`) you also pass the raw file URI and let Twig build the derivative with
+`jarvis_hero_banner`) you also pass the raw file URI and let Twig build the derivative with
 `twig_tweak`'s `|image_style` filter. That's why the recipe installs `twig_tweak`, and why
-image styles like `hero_banner` and `wide` are shipped as config (Step 11). In a content
+image styles like `jarvis_hero_banner` and `wide` are shipped as config (Step 11). In a content
 template, use `|image_style` in the SDC — **don't** try to use a Canvas "adapter" for it
 (adapters are not allowed inside content templates).
 
@@ -1132,7 +1132,7 @@ component_tree:
       image:
         sourceType: entity-field
         expression: 'ℹ︎␜entity:node:jarvis_sample␝field_hero_banner␞…'   # ← binds a field
-      image_style: hero_banner
+      image_style: jarvis_hero_banner
       full_width: true
   '1:…':
     component_id: sdc.jarvis.section
@@ -1156,7 +1156,7 @@ The concepts a beginner needs:
 
 - **`component_id: sdc.jarvis.image`** — references your SDC by machine path
   (`sdc.<theme>.<component>`).
-- **`inputs`** are the component's props. A static value (`image_style: hero_banner`) is
+- **`inputs`** are the component's props. A static value (`image_style: jarvis_hero_banner`) is
   hard-coded; a **`sourceType: entity-field`** input with an `expression` *binds a node
   field* to the prop. That funky `ℹ︎␜entity:node…␝field_body␞` string is Canvas's field-path
   syntax — you don't type it by hand, Canvas writes it when you click "link to field" (the
@@ -1235,7 +1235,7 @@ The three sections:
 3. **Config & content files** (in `recipe/config/` and `recipe/content/`) — everything else
    is imported wholesale:
    - `recipe/config/` holds the field storage/instances, the `jarvis_sample` node type,
-     image styles (`hero_banner`, `wide`), the focal-point crop type, media types, the
+     image styles (`jarvis_hero_banner`, `wide`), the focal-point crop type, media types, the
      Canvas page regions (Step 9), the content template (Step 10), and `jarvis.settings.yml`
      (the default colours/fonts).
    - `recipe/content/` holds demo content as YAML (a Test Blog node, a Test Page Canvas
@@ -1364,7 +1364,7 @@ required, or drop `required` from the prop.
 `rem`/`px`/`%`.
 
 **"I need a named image style in a component."**
-→ Pass the raw file URI as a prop and use `twig_tweak`'s `|image_style('hero_banner')` in
+→ Pass the raw file URI as a prop and use `twig_tweak`'s `|image_style('jarvis_hero_banner')` in
 the SDC. Don't use a Canvas adapter inside a content template.
 
 **"How do I regenerate the recipe after changing things in the UI?"**

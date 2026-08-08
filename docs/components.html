@@ -2781,7 +2781,7 @@ props:
             <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
             <tbody>
               <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The image file.</td></tr>
-              <tr><td class="prop"><span class="pname">image_style</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">original</span></td><td class="desc-cell">Named crop to apply.<span class="enum-list"><span class="enum enum--def">original</span><span class="enum">thumbnail</span><span class="enum">medium</span><span class="enum">large</span><span class="enum">wide</span><span class="enum">hero_banner</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">image_style</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">original</span></td><td class="desc-cell">Named crop to apply.<span class="enum-list"><span class="enum enum--def">original</span><span class="enum">thumbnail</span><span class="enum">medium</span><span class="enum">large</span><span class="enum">wide</span><span class="enum">jarvis_hero_banner</span></span></td></tr>
               <tr><td class="prop"><span class="pname">image_uri</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Internal — the original file address, used to build a styled crop. Set automatically.</td></tr>
               <tr><td class="prop"><span class="pname">caption</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Caption shown beneath the image.</td></tr>
               <tr><td class="prop"><span class="pname">full_width</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Break out to full width instead of the contained measure.</td></tr>
@@ -2812,14 +2812,14 @@ props:
       title: &#x27;Image style&#x27;
       # ponytail: hardcoded enum of site image styles; regenerate if styles change.
       type: string
-      enum: [original, thumbnail, medium, large, wide, hero_banner]
+      enum: [original, thumbnail, medium, large, wide, jarvis_hero_banner]
       &#x27;meta:enum&#x27;:
         original: &#x27;Original (responsive)&#x27;
         thumbnail: Thumbnail
         medium: Medium
         large: Large
         wide: Wide
-        hero_banner: &#x27;Hero banner&#x27;
+        jarvis_hero_banner: &#x27;Jarvis hero banner&#x27;
       default: original
     image_uri:
       title: &#x27;Image source URI (internal)&#x27;

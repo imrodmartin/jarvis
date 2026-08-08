@@ -70,7 +70,7 @@ ddev drush cache:rebuild   # also organises the Canvas component folders
 - Sets Jarvis as the default theme and places its blocks in the correct regions.
 - Sets the front page to `/test-page`, the demo Canvas page. Change it under
   **Configuration > Basic site settings** if you do not want it.
-- Imports base config: the `hero_banner`, `wide`, and `portrait` image styles, the
+- Imports base config: the `jarvis_hero_banner`, `wide`, and `portrait` image styles, the
   `focal_point` crop type, media types and fields, and theme settings.
 - Creates the **Jarvis Sample** content type with fields, form and view displays,
   and a Canvas content template for its full view.
