@@ -74,7 +74,7 @@ props:
       title: Title
       type: string
       examples:
-        - 'Find your place at Governors State'
+        - 'Testing the Video Background'
     title_level:
       title: 'Title level'
       description: 'Use H1 only once per page.'
@@ -92,13 +92,13 @@ props:
       title: Body
       type: string
       examples:
-        - 'A diverse and supportive community helps you gain the knowledge, skills and confidence to achieve your goals and succeed.'
+        - 'A wonderful component that adds flair to your website'
     heading:
       title: 'Heading (smaller text)'
       description: 'A short bold line under the body copy.'
       type: string
       examples:
-        - 'We Are GovState!'
+        - 'Try it today!'
     button_text:
       title: 'Button text'
       type: string
