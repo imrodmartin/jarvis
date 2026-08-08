@@ -3839,7 +3839,8 @@ props:
           <div class="table-scroll"><table>
             <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
             <tbody>
-              <tr><td class="prop"><span class="pname">video_url</span><span class="req" title="required">✳</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">YouTube/Vimeo URL, or a direct video file URL. Required.</td></tr>
+              <tr><td class="prop"><span class="pname">video_media</span></td><td><span class="ptype">media</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Pick a <b>Remote video</b> (YouTube/Vimeo) from the media library, or add a new one there. Takes precedence over <code>video_url</code>. Deliberately <em>not</em> the local Video media type — this component embeds hosted players.</td></tr>
+              <tr><td class="prop"><span class="pname">video_url</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Fallback when no media item is picked: a YouTube/Vimeo URL or a direct video file URL. Also how a View passes its field value. No longer required.</td></tr>
               <tr><td class="prop"><span class="pname">title</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Accessible title — describes the video for screen-reader users.</td></tr>
               <tr><td class="prop"><span class="pname">aspect</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">16x9</span></td><td class="desc-cell">Aspect ratio.<span class="enum-list"><span class="enum enum--def">16x9</span><span class="enum">4x3</span><span class="enum">21x9</span></span></td></tr>
               <tr><td class="prop"><span class="pname">full_width</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Break out to full width.</td></tr>
@@ -3859,9 +3860,21 @@ description: &#x27;Responsive video — an embed URL (YouTube/Vimeo) or a direct
 category: Jarvis
 props:
   type: object
-  required:
-    - video_url
+  # video_url used to be required, back when it was the only way to give this
+  # component a video. Now that a Remote video media pick can supply the source,
+  # requiring the URL too would make the media-only case fail validation — and a
+  # required prop can only bind to a required field anyway. Neither is required;
+  # the template renders nothing when both are empty.
   properties:
+    video_media:
+      title: &#x27;Remote video&#x27;
+      description: &#x27;Pick a Remote video (YouTube/Vimeo) from the media library, or add a new one there. Takes precedence over the URL below. Deliberately NOT the local Video media type — this component embeds hosted players.&#x27;
+      type: string
+      format: uri-reference
+      # Marker read by JarvisCanvasHooks::canvasStorablePropShapeAlter(), which
+      # swaps the autocomplete Canvas would otherwise give us for the media
+      # library and narrows the bundles to the site&#x27;s oEmbed video types.
+      x-jarvis-remote-video: true
     video_url:
       title: &#x27;Video URL&#x27;
       description: &#x27;YouTube/Vimeo embed URL, or a direct .mp4/.webm file URL.&#x27;
@@ -4022,7 +4035,7 @@ props:
           <div class="table-scroll"><table>
             <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
             <tbody>
-              <tr><td class="prop"><span class="pname">video</span></td><td><span class="ptype">media</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Pick a video with the media manager. Leave empty to fall back to <code>video_url</code> below.</td></tr>
+              <tr><td class="prop"><span class="pname">video_media</span></td><td><span class="ptype">media</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Pick a <b>Remote video</b> (YouTube/Vimeo) from the media library, or add a new one there. Leave empty to fall back to <code>video_url</code> below. Replaces the old <code>video</code> prop, which took the local Video media type.</td></tr>
               <tr><td class="prop"><span class="pname">video_url</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">A YouTube/Vimeo watch URL, or a direct <code>.mp4</code>/<code>.webm</code>. Used when no media video is chosen — this is how a View passes its field value through.</td></tr>
               <tr><td class="prop"><span class="pname">video_right</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Put the video on the right and the text on the left.</td></tr>
               <tr><td class="prop"><span class="pname">aspect</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">16x9</span></td><td class="desc-cell">Video aspect ratio.<span class="enum-list"><span class="enum enum--def">16x9</span><span class="enum">4x3</span><span class="enum">21x9</span></span></td></tr>
@@ -4048,10 +4061,15 @@ category: Jarvis
 props:
   type: object
   properties:
-    video:
-      title: Video
-      description: &#x27;Pick a video with the media manager. Leave empty to use the Video URL below (e.g. from a View).&#x27;
-      $ref: json-schema-definitions://canvas.module/video
+    video_media:
+      title: &#x27;Remote video&#x27;
+      description: &#x27;Pick a Remote video (YouTube/Vimeo) from the media library, or add a new one there. Leave empty to use the Video URL below (e.g. from a View). Deliberately NOT the local Video media type — this component embeds hosted players.&#x27;
+      type: string
+      format: uri-reference
+      # Marker read by JarvisCanvasHooks::canvasStorablePropShapeAlter(), which
+      # swaps the autocomplete Canvas would otherwise give us for the media
+      # library and narrows the bundles to the site&#x27;s oEmbed video types.
+      x-jarvis-remote-video: true
     video_url:
       title: &#x27;Video URL (fallback)&#x27;
       description: &#x27;YouTube/Vimeo/watch URL or a direct .mp4/.webm. Used when no media video is chosen — how a View passes its field value.&#x27;
