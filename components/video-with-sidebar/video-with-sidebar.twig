@@ -12,7 +12,12 @@
 {% set h = heading_level|default('h2') ?: 'h2' %}
 {% set aspect = aspect|default('16x9') %}
 {% set ratio_class = { '16x9': 'ratio-16x9', '4x3': 'ratio-4x3', '21x9': 'ratio-21x9' }[aspect] %}
-{% set src = (video.src is defined and video.src) ? video.src : (video_url|default('')) %}
+{# A Remote video media pick wins; video_url is the fallback — how a Views row
+   passes its field value. video_media arrives as the media item's oEmbed URL
+   STRING, not an entity — JarvisCanvasHooks::canvasStorablePropShapeAlter()
+   builds the expression that reads it off field_media_oembed_video. #}
+{% set media_url = video_media|default('') %}
+{% set src = media_url ?: (video_url|default('')) %}
 {# Shared with the video component — see @jarvis/jarvis-video.html.twig. #}
 {% import '@jarvis/jarvis-video.html.twig' as video_url_helper %}
 {% set is_file = video_url_helper.is_file(src) is not empty %}
@@ -23,7 +28,9 @@
       {% if src %}
         <div class="ratio {{ ratio_class }}">
           {% if is_file %}
-            <video controls preload="metadata"{% if video.poster is defined and video.poster %} poster="{{ video.poster }}"{% endif %}>
+            {# Reachable only when the fallback URL points at a file. Remote
+               video carries its own thumbnail, so there is no poster prop. #}
+            <video controls preload="metadata">
               <source src="{{ src }}">
               {# ADA (WCAG 1.2.2): captions track for the native player, same as
                  the video component. Hosted embeds carry their own captions. #}

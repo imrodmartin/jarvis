@@ -6,10 +6,15 @@ category: Jarvis
 props:
   type: object
   properties:
-    video:
-      title: Video
-      description: 'Pick a video with the media manager. Leave empty to use the Video URL below (e.g. from a View).'
-      $ref: json-schema-definitions://canvas.module/video
+    video_media:
+      title: 'Remote video'
+      description: 'Pick a Remote video (YouTube/Vimeo) from the media library, or add a new one there. Leave empty to use the Video URL below (e.g. from a View). Deliberately NOT the local Video media type — this component embeds hosted players.'
+      type: string
+      format: uri-reference
+      # Marker read by JarvisCanvasHooks::canvasStorablePropShapeAlter(), which
+      # swaps the autocomplete Canvas would otherwise give us for the media
+      # library and narrows the bundles to the site's oEmbed video types.
+      x-jarvis-remote-video: true
     video_url:
       title: 'Video URL (fallback)'
       description: 'YouTube/Vimeo/watch URL or a direct .mp4/.webm. Used when no media video is chosen — how a View passes its field value.'

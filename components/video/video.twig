@@ -12,6 +12,12 @@
 {# Watch/share URLs are normalised to embed URLs so any paste works. Shared with
    video-with-sidebar — see @jarvis/jarvis-video.html.twig. #}
 {% import '@jarvis/jarvis-video.html.twig' as video %}
+{# A Remote video media pick wins; video_url is the fallback (and how a View
+   passes its field value). video_media arrives as the media item's oEmbed URL
+   STRING, not an entity — JarvisCanvasHooks::canvasStorablePropShapeAlter()
+   builds the expression that reads it off field_media_oembed_video. #}
+{% set media_url = video_media|default('') %}
+{% set video_url = media_url ?: (video_url|default('')) %}
 {% set is_file = video.is_file(video_url) is not empty %}
 {% set embed_url = video.embed_url(video_url) %}
 <div class="{{ container }} {{ space }}">

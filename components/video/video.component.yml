@@ -5,9 +5,21 @@ description: 'Responsive video — an embed URL (YouTube/Vimeo) or a direct vide
 category: Jarvis
 props:
   type: object
-  required:
-    - video_url
+  # video_url used to be required, back when it was the only way to give this
+  # component a video. Now that a Remote video media pick can supply the source,
+  # requiring the URL too would make the media-only case fail validation — and a
+  # required prop can only bind to a required field anyway. Neither is required;
+  # the template renders nothing when both are empty.
   properties:
+    video_media:
+      title: 'Remote video'
+      description: 'Pick a Remote video (YouTube/Vimeo) from the media library, or add a new one there. Takes precedence over the URL below. Deliberately NOT the local Video media type — this component embeds hosted players.'
+      type: string
+      format: uri-reference
+      # Marker read by JarvisCanvasHooks::canvasStorablePropShapeAlter(), which
+      # swaps the autocomplete Canvas would otherwise give us for the media
+      # library and narrows the bundles to the site's oEmbed video types.
+      x-jarvis-remote-video: true
     video_url:
       title: 'Video URL'
       description: 'YouTube/Vimeo embed URL, or a direct .mp4/.webm file URL.'
