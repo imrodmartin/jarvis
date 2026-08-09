@@ -33,6 +33,26 @@ img, video {
   height: auto;
 }
 
+/* Blockquotes. Bootstrap's reboot only strips the default margin and leaves the
+   rest to an opt-in .blockquote class, so a blockquote typed in CKEditor came
+   out as plain unindented text on the rendered page — while css/ckeditor5.css
+   HAS styled it inside the editor since day one. WYSIWYG that only holds while
+   you are editing is worse than no styling, so these values deliberately mirror
+   that rule; change the two together.
+   Bare element selector (0,0,1) so Bootstrap's .blockquote class, and any
+   component that styles its own quotes, still win. */
+blockquote {
+  margin: 1.5rem 0;
+  padding: 0.5rem 0 0.5rem 1.25rem;
+  border-inline-start: 4px solid var(--bs-primary, #2d6cdf);
+  font-style: italic;
+}
+/* The padding already sets the bottom gap, so drop the trailing paragraph
+   margin that would otherwise leave the rule overhanging the text. */
+blockquote > :last-child {
+  margin-bottom: 0;
+}
+
 /* Page title bold by default — scoped to beat Bootstrap's heading weight. */
 .jarvis-page-title h1,
 .jarvis-page-title .page-title {
