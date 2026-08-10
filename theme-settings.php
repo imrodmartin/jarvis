@@ -5,6 +5,7 @@
  * Jarvis theme settings — color controls.
  */
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -28,7 +29,7 @@ function jarvis_form_system_theme_settings_alter(array &$form, FormStateInterfac
 
   foreach (_jarvis_colors() as $key => $info) {
     [$label, , , $default] = $info;
-    $val = theme_get_setting($key);
+    $val = \Drupal::service(ThemeSettingsProvider::class)->getSetting($key);
     $val = (is_string($val) && $val !== '') ? $val : $default;
     $swatch = ($val !== '') ? $val : '#ffffff';
 
@@ -86,9 +87,9 @@ function jarvis_form_system_theme_settings_alter(array &$form, FormStateInterfac
   $preview_rows = '';
   foreach (_jarvis_fonts() as $key => $info) {
     [$label, $default_selector] = $info;
-    $saved_family = (string) (theme_get_setting("jarvis_font_{$key}_family") ?: '');
-    $saved_weight = (string) (theme_get_setting("jarvis_font_{$key}_weight") ?: '400');
-    $saved_selector = theme_get_setting("jarvis_font_{$key}_selector");
+    $saved_family = (string) (\Drupal::service(ThemeSettingsProvider::class)->getSetting("jarvis_font_{$key}_family") ?: '');
+    $saved_weight = (string) (\Drupal::service(ThemeSettingsProvider::class)->getSetting("jarvis_font_{$key}_weight") ?: '400');
+    $saved_selector = \Drupal::service(ThemeSettingsProvider::class)->getSetting("jarvis_font_{$key}_selector");
     $saved_selector = ($saved_selector === NULL || $saved_selector === '') ? $default_selector : $saved_selector;
 
     // Weight options for the initially-saved family (JS repopulates on change).
@@ -163,7 +164,7 @@ function jarvis_form_system_theme_settings_alter(array &$form, FormStateInterfac
     foreach (_jarvis_font_sizes() as $key => $info) {
       [$label, $d_default, $m_default, $unit] = $info;
       $default = $prefix === '' ? $d_default : $m_default;
-      $val = theme_get_setting("jarvis_fs_{$prefix}{$key}");
+      $val = \Drupal::service(ThemeSettingsProvider::class)->getSetting("jarvis_fs_{$prefix}{$key}");
       $form['jarvis_font_sizes'][$group]["jarvis_fs_{$prefix}{$key}"] = [
         '#type' => 'number',
         '#title' => $label,
