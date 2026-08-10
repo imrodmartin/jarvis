@@ -476,7 +476,7 @@ props:
 
 <h4>A macro, for computing values</h4>
 
-<p>Every component accepts padding and margin props. Rather than repeat the class building logic twenty-one times, one macro owns it.</p>
+<p>All but two components (Button and Card Full Image) accept padding and margin props. Rather than repeat the class building logic nineteen times, one macro owns it.</p>
 
 <div class="codewrap">
   <span class="label">templates/jarvis-spacing.html.twig</span>
@@ -1674,11 +1674,11 @@ component_tree: {  }</code></pre></div>
 <p>---</p>
 <p>&lt;a name=&quot;step-10-content-templates&quot;&gt;&lt;/a&gt;</p>
 <h3 id="step-10-content-templates-fielded-nodes-components">Step 10, Content templates (fielded nodes → components)</h3>
-<p>A <strong>content template</strong> answers: &quot;when Drupal renders a <em>Jarvis Sample</em> node, how should its fields map onto components?&quot; It&#x27;s a Canvas layout bound to a content type + view mode.</p>
-<p>Jarvis ships <code>canvas.content_template.node.jarvis_sample.full.yml</code>. The important parts:</p>
-<div class="codewrap"><span class="label">yaml</span><pre><code>id: node.jarvis_sample.full
+<p>A <strong>content template</strong> answers: &quot;when Drupal renders a <em>Blog</em> node, how should its fields map onto components?&quot; It&#x27;s a Canvas layout bound to a content type + view mode.</p>
+<p>Jarvis ships <code>canvas.content_template.node.blog.full.yml</code>. The important parts:</p>
+<div class="codewrap"><span class="label">yaml</span><pre><code>id: node.blog.full
 content_entity_type_id: node
-content_entity_type_bundle: jarvis_sample
+content_entity_type_bundle: blog
 content_entity_type_view_mode: full
 component_tree:
   &#x27;0:…&#x27;:
@@ -1686,7 +1686,7 @@ component_tree:
     inputs:
       image:
         sourceType: entity-field
-        expression: &#x27;ℹ︎␜entity:node:jarvis_sample␝field_hero_banner␞…&#x27;   # ← binds a field
+        expression: &#x27;ℹ︎␜entity:node:blog␝field_hero_banner␞…&#x27;   # ← binds a field
       image_style: jarvis_hero_banner
       full_width: true
   &#x27;1:…&#x27;:
@@ -1704,7 +1704,7 @@ component_tree:
     inputs:
       body:
         sourceType: entity-field
-        expression: &#x27;ℹ︎␜entity:node:jarvis_sample␝field_body␞␟processed&#x27;  # body field → Text</code></pre></div>
+        expression: &#x27;ℹ︎␜entity:node:blog␝field_body␞␟processed&#x27;  # body field → Text</code></pre></div>
 <p>The concepts a beginner needs:</p>
 <ul><li><strong><code>component_id: sdc.jarvis.image</code></strong>, references your SDC by machine path (<code>sdc.&lt;theme&gt;.&lt;component&gt;</code>).</li><li><strong><code>inputs</code></strong> are the component&#x27;s props. A static value (<code>image_style: jarvis_hero_banner</code>) is hard-coded; a <strong><code>sourceType: entity-field</code></strong> input with an <code>expression</code> <em>binds a node field</em> to the prop. That funky <code>ℹ︎␜entity:node…␝field_body␞</code> string is Canvas&#x27;s field-path syntax, you don&#x27;t type it by hand, Canvas writes it when you click &quot;link to field&quot; (the 🔗 icon) in the UI.</li><li><strong>Nesting</strong> (<code>parent_uuid</code> + <code>slot</code>) is how a component lands <em>inside another component&#x27;s slot</em>, here, a field display sits inside the Section&#x27;s <code>content</code> slot.</li><li><strong>Remember the binding rule:</strong> a required prop only exposes the 🔗 link icon when the field it binds to is also required. And for image styles inside a template, use the SDC&#x27;s own <code>|image_style</code> (via <code>twig_tweak</code>), content templates can&#x27;t use Canvas adapters.</li></ul>
 <p>To <em>style a whole content type&#x27;s fields</em>, you edit its content template (a ContentTemplate config entity), you don&#x27;t add a &quot;styling field&quot; to the node.</p>
@@ -1779,7 +1779,7 @@ config:
           use_site_name: false
     # …more block placements (footer menu, breadcrumbs, messages, page title, …)</code></pre></div>
 <p>The three sections:</p>
-<ol><li><strong><code>install:</code></strong>, every module (and the theme itself) to turn on, in dependency order. This is why applying the recipe on a clean site &quot;just works.&quot;</li><li><strong><code>config.actions:</code></strong>, surgical config changes. <code>simpleConfigUpdate</code> sets values (e.g. make <code>jarvis</code> the default theme) and <strong>places blocks into regions</strong>, this is what populates your <code>primary_menu</code>, <code>footer</code>, etc. Note the block IDs like <code>jarvis_site_branding</code> and <code>jarvis_main_menu</code>, <em>these are the exact IDs the page template renders by name</em> in Step 3.</li><li><strong>Config &amp; content files</strong> (in <code>recipe/config/</code> and <code>recipe/content/</code>), everything else is imported wholesale:<ul><li><code>recipe/config/</code> holds the field storage/instances, the <code>jarvis_sample</code> node type, image styles (<code>jarvis_hero_banner</code>, <code>wide</code>), the focal-point crop type, media types, the Canvas page regions (Step 9), the content template (Step 10), and <code>jarvis.settings.yml</code> (the default colours/fonts).</li><li><code>recipe/content/</code> holds demo content as YAML (a Test Blog node, a Test Page Canvas page, media, files, menu links) via <strong>default_content</strong>. UUID-named files are entities; the raw <code>.png</code>/<code>.jpg</code> are the referenced image files.</li></ul></li></ol>
+<ol><li><strong><code>install:</code></strong>, every module (and the theme itself) to turn on, in dependency order. This is why applying the recipe on a clean site &quot;just works.&quot;</li><li><strong><code>config.actions:</code></strong>, surgical config changes. <code>simpleConfigUpdate</code> sets values (e.g. make <code>jarvis</code> the default theme) and <strong>places blocks into regions</strong>, this is what populates your <code>primary_menu</code>, <code>footer</code>, etc. Note the block IDs like <code>jarvis_site_branding</code> and <code>jarvis_main_menu</code>, <em>these are the exact IDs the page template renders by name</em> in Step 3.</li><li><strong>Config &amp; content files</strong> (in <code>recipe/config/</code> and <code>recipe/content/</code>), everything else is imported wholesale:<ul><li><code>recipe/config/</code> holds the field storage/instances, the Blog and Basic node types, image styles (<code>jarvis_hero_banner</code>, <code>wide</code>), the focal-point crop type, media types, the Canvas page regions (Step 9), the content template (Step 10), and <code>jarvis.settings.yml</code> (the default colours/fonts).</li><li><code>recipe/content/</code> holds demo content as YAML (7 nodes, 2 Canvas pages, block content, media, files, menu links) via <strong>default_content</strong>. UUID-named files are entities; the raw <code>.png</code>/<code>.jpg</code> are the referenced image files.</li></ul></li></ol>
 <p>To build these config files, you <em>don&#x27;t</em> write them by hand. You configure everything on a working site (create the content type, add fields, set up Canvas, pick colours), then export:</p>
 <div class="codewrap"><span class="label">bash</span><pre><code>ddev drush config:export
 # copy the relevant jarvis.*, canvas.*, field.*, node.type.*, image.style.* files
@@ -1809,7 +1809,7 @@ ddev drush cr
 ddev drush uli</code></pre></div>
 <div class="note box"><p><strong>Do not pre-install Canvas or the theme.</strong> Running <code>theme:enable jarvis</code> plus <code>en canvas</code> plus <code>cr</code> before the recipe breaks it. That rebuild makes Canvas create its component entities and makes Drupal place the theme&#x27;s blocks, and a recipe refuses to import config that already exists and differs. You get <code>The configuration &#x27;...&#x27; exists already and does not match the recipe&#x27;s configuration</code>. The recipe lists both modules and the theme in its own <code>install:</code> list.</p></div>
 <p>Then verify, in order:</p>
-<ol><li><strong>Front end loads</strong> with Bootstrap styling and your logo in the nav. → theme + libraries OK.</li><li><strong><code>/admin/appearance/settings/jarvis</code></strong> shows the Colours and Fonts sections. Change a colour, save, reload → the site re-skins. → Steps 7-8 OK.</li><li><strong>Save the Fonts form</strong> → check <code>sites/default/files/jarvis-fonts/jarvis-fonts.css</code> exists and the site uses the new fonts. → self-hosting OK.</li><li><strong>Edit the Test Page in Canvas</strong> → your <code>Jarvis</code> and <code>Jarvis Layout</code> components appear in the sidebar; drag a Hero in, set its image, save, view the page. → Steps 4-6, 9 OK.</li><li><strong>View the Test Blog node</strong> → its hero field renders as the Hero component, body as Text, per the content template. → Step 10 OK.</li></ol>
+<ol><li><strong>Front end loads</strong> with Bootstrap styling and your logo in the nav. → theme + libraries OK.</li><li><strong><code>/admin/appearance/settings/jarvis</code></strong> shows the Colours and Fonts sections. Change a colour, save, reload → the site re-skins. → Steps 7-8 OK.</li><li><strong>Save the Fonts form</strong> → check <code>sites/default/files/jarvis-fonts/jarvis-fonts.css</code> exists and the site uses the new fonts. → self-hosting OK.</li><li><strong>Edit the Test Page in Canvas</strong> → your <code>Jarvis</code> and <code>Jarvis Layout</code> components appear in the sidebar; drag a Hero in, set its image, save, view the page. → Steps 4-6, 9 OK.</li><li><strong>View a blog post</strong> → its hero field renders as the Hero component, body as Text, per the content template. → Step 10 OK.</li></ol>
 <p>If something&#x27;s missing, it&#x27;s almost always caching or order, see below.</p>
 <p>---</p>
 <p>&lt;a name=&quot;accessibility-editors&quot;&gt;&lt;/a&gt;</p>

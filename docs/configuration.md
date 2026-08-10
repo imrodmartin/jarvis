@@ -19,6 +19,7 @@ there is one stored value per colour.
 | Header background / text / link | The site header region |
 | Title background / text | The page title band |
 | Footer background / text | The footer region |
+| Background 1 / Background 2 | Two free-pick background colours offered by component background props; text on them is switched to black or white automatically |
 
 Only valid `#rrggbb` values are emitted into the page. An invalid value is dropped
 rather than printed, which closes CSS injection through the setting.

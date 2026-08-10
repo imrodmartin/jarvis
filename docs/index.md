@@ -35,7 +35,7 @@ Jarvis targets Drupal `^11 || ^12` and PHP `>= 8.3`.
 
 The handbook is the main documentation for this theme. It covers the whole
 system in one document: what each part is and why it exists, the build steps
-for that part, and a closing reference to all nineteen components with their
+for that part, and a closing reference to all twenty-one components with their
 props, slots, and a worked example of placing each one. If you read one thing,
 read that.
 

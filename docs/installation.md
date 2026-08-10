@@ -26,7 +26,7 @@ Register the theme's repository as a Composer VCS source, then require it:
 
 ```bash
 ddev composer config repositories.jarvis '{"type":"vcs","url":"https://github.com/imrodmartin/jarvis","no-api":true}'
-ddev composer require imrodmartin/jarvis
+ddev composer require drupal/jarvis
 ```
 
 `no-api` makes Composer clone over git instead of the GitHub API. It avoids the
@@ -64,19 +64,23 @@ ddev drush cache:rebuild   # also organises the Canvas component folders
 
 ## What the recipe sets up
 
-- Enables the remaining modules: `twig_tweak`, `focal_point` (with `crop`),
-  `media`, `media_library`, `image`, `menu_ui`, `menu_link_content`, `datetime`,
-  `options`, and `path`.
-- Sets Jarvis as the default theme and places its blocks in the correct regions.
-- Sets the front page to `/test-page`, the demo Canvas page. Change it under
-  **Configuration > Basic site settings** if you do not want it.
-- Imports base config: the `jarvis_hero_banner`, `wide`, and `portrait` image styles, the
-  `focal_point` crop type, media types and fields, and theme settings.
-- Creates the **Jarvis Sample** content type with fields, form and view displays,
-  and a Canvas content template for its full view.
-- Imports demo content: the Test Blog node, the Test Page Canvas page
-  (`/test-page`) with its main-menu link, and five media items.
+The authoritative list is the recipe's own
+[README](https://github.com/imrodmartin/jarvis-bootstrap-recipe/blob/main/recipes/jarvis/README.md)
+in the jarvis-bootstrap-recipe repository. In short, it:
 
-Canvas auto-discovers the theme's components on cache rebuild. They are not shipped
-as config, so the content template and the Canvas page pin the component versions
-of this theme release.
+- Installs Canvas, this theme, and the `jarvis_canvas` + `jarvis_blocks` glue
+  modules, plus the supporting contrib and site-feature modules.
+- Ships exported Canvas component config for all 21 SDCs, content templates for
+  the **Blog** and **Basic** content types, page regions, and 5 reusable
+  patterns.
+- Imports base config: the `jarvis_hero_banner`, `wide`, and `portrait` image
+  styles, the `focal_point` crop type, media types and fields, the
+  `jarvis_html`/`jarvis_full_html` text formats, and theme settings.
+- Imports demo content: 7 nodes, 2 Canvas pages (a component showcase and a
+  Test Page), block content, media, and menu links — and sets the front page to
+  the showcase (`/page/2`). Change it under **Configuration > Basic site
+  settings** if you do not want it.
+
+Because the component config is exported from this theme release, the content
+templates and Canvas pages pin matching component versions. After bumping the
+theme, re-export that config into the recipe.

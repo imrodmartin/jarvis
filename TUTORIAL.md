@@ -1115,15 +1115,15 @@ one writes its config into that region's `component_tree`.
 <a name="step-10-content-templates"></a>
 ## Step 10 — Content templates (fielded nodes → components)
 
-A **content template** answers: "when Drupal renders a *Jarvis Sample* node, how should its
+A **content template** answers: "when Drupal renders a *Blog* node, how should its
 fields map onto components?" It's a Canvas layout bound to a content type + view mode.
 
-Jarvis ships `canvas.content_template.node.jarvis_sample.full.yml`. The important parts:
+Jarvis ships `canvas.content_template.node.blog.full.yml`. The important parts:
 
 ```yaml
-id: node.jarvis_sample.full
+id: node.blog.full
 content_entity_type_id: node
-content_entity_type_bundle: jarvis_sample
+content_entity_type_bundle: blog
 content_entity_type_view_mode: full
 component_tree:
   '0:…':
@@ -1131,7 +1131,7 @@ component_tree:
     inputs:
       image:
         sourceType: entity-field
-        expression: 'ℹ︎␜entity:node:jarvis_sample␝field_hero_banner␞…'   # ← binds a field
+        expression: 'ℹ︎␜entity:node:blog␝field_hero_banner␞…'   # ← binds a field
       image_style: jarvis_hero_banner
       full_width: true
   '1:…':
@@ -1149,7 +1149,7 @@ component_tree:
     inputs:
       body:
         sourceType: entity-field
-        expression: 'ℹ︎␜entity:node:jarvis_sample␝field_body␞␟processed'  # body field → Text
+        expression: 'ℹ︎␜entity:node:blog␝field_body␞␟processed'  # body field → Text
 ```
 
 The concepts a beginner needs:
@@ -1234,13 +1234,13 @@ The three sections:
    template renders by name* in Step 3.
 3. **Config & content files** (in `recipe/config/` and `recipe/content/`) — everything else
    is imported wholesale:
-   - `recipe/config/` holds the field storage/instances, the `jarvis_sample` node type,
+   - `recipe/config/` holds the field storage/instances, the Blog and Basic node types,
      image styles (`jarvis_hero_banner`, `wide`), the focal-point crop type, media types, the
      Canvas page regions (Step 9), the content template (Step 10), and `jarvis.settings.yml`
      (the default colours/fonts).
-   - `recipe/content/` holds demo content as YAML (a Test Blog node, a Test Page Canvas
-     page, media, files, menu links) via **default_content**. UUID-named files are entities;
-     the raw `.png`/`.jpg` are the referenced image files.
+   - `recipe/content/` holds demo content as YAML (7 nodes, 2 Canvas pages, block
+     content, media, files, menu links) via **default_content**. UUID-named files are
+     entities; the raw `.png`/`.jpg` are the referenced image files.
 
 To build these config files, you *don't* write them by hand. You configure everything on a
 working site (create the content type, add fields, set up Canvas, pick colours), then
@@ -1305,7 +1305,7 @@ Then verify, in order:
    exists and the site uses the new fonts. → self-hosting OK.
 4. **Edit the Test Page in Canvas** → your `Jarvis` and `Jarvis Layout` components appear in
    the sidebar; drag a Hero in, set its image, save, view the page. → Steps 4–6, 9 OK.
-5. **View the Test Blog node** → its hero field renders as the Hero component, body as Text,
+5. **View a blog post** → its hero field renders as the Hero component, body as Text,
    per the content template. → Step 10 OK.
 
 If something's missing, it's almost always caching or order — see below.

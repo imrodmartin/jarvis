@@ -12,7 +12,7 @@ just the theme, included there as a git submodule.
 
 **📘 [The Jarvis Handbook](docs/jarvis-guide.html) is the main documentation.**
 It covers the whole theme in one document: what each part does, the steps to
-build that part yourself, and a reference to all nineteen components with their
+build that part yourself, and a reference to all twenty-one components with their
 props, slots, and a worked example. Open it in a browser after cloning, or read
 it on the [published docs site](https://project.pages.drupalcode.org/jarvis).
 
@@ -60,28 +60,31 @@ ddev drush cache:rebuild   # also organises the Canvas component folders
 >
 > The recipe lists both modules and the theme in its own `install:` list, so it
 > creates all of that itself in the right order. Verified end to end against an
-> empty database: 19/19 components enabled, blocks in their intended regions,
-> 8 nodes and 2 Canvas pages rendering.
+> empty database: 21/21 components enabled, blocks in their intended regions,
+> 7 nodes and 2 Canvas pages rendering.
 
 ## What the recipe sets up
 
-- Enables the remaining modules: `twig_tweak`, `focal_point` (→ `crop`),
-  `media`, `media_library`, `image`, `menu_ui`, `menu_link_content`,
-  `datetime`, `options`, `path`
-- Sets Jarvis as the default theme and places its blocks in the correct
-  regions (via config actions on the auto-created theme blocks)
-- Sets the site front page to `/test-page` (the demo Canvas page) — change it
-  under **Configuration → Basic site settings** after install if unwanted
-- Imports base config: custom image styles (`jarvis_hero_banner`, `wide`, `portrait`), the
-  `focal_point` crop type, `media` types + fields, and theme settings
-- Creates the **Jarvis Sample** content type (fields, form/view displays, and
-  a Canvas content template for its full view)
-- Imports demo content: the **Test Blog** node, the **Test Page** Canvas page
-  (`/test-page`) + its main-menu link, and all five media items
+The authoritative list is the recipe's own
+[README](https://github.com/imrodmartin/jarvis-bootstrap-recipe/blob/main/recipes/jarvis/README.md)
+in the jarvis-bootstrap-recipe repo. In short, it:
 
-Canvas auto-discovers the theme's SDC components (card, hero, image, section,
-etc.) on cache rebuild — they are not shipped as config, so the content
-template and Canvas page pin the component versions of *this* theme release.
+- Installs Canvas, this theme, and the `jarvis_canvas` + `jarvis_blocks` glue
+  modules, plus the supporting contrib and site-feature modules
+- Ships exported Canvas component config for all 21 SDCs, content templates
+  for the **Blog** and **Basic** content types, page regions, and 5 reusable
+  patterns
+- Imports base config: image styles (`jarvis_hero_banner`, `wide`,
+  `portrait`), the `focal_point` crop type, media types + fields, the
+  `jarvis_html`/`jarvis_full_html` text formats, and theme settings
+- Imports demo content: 7 nodes, 2 Canvas pages (a component showcase and a
+  Test Page), block content, media, and menu links — and sets the front page
+  to the showcase (`/page/2`); change it under **Configuration → Basic site
+  settings** if unwanted
+
+Because the component config is exported from *this* theme release, the
+content templates and Canvas pages pin matching component versions — after
+bumping the theme, re-export that config into the recipe.
 
 ## License
 
