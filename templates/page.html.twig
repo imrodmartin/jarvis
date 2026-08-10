@@ -41,7 +41,9 @@
      arrives as one opaque blob rather than block children a preprocess hook
      could address (verified — the branding block renders under a UUID id, not
      its block id). #}
-  {% if page.primary_menu %}
+  {# primary_menu_markup / _empty from jarvis_preprocess_page() — an enabled but
+     empty Canvas PageRegion must not paint the menu bar and hamburger. #}
+  {% if not primary_menu_empty %}
     <div class="container jarvis-region jarvis-primary-menu d-flex align-items-center">
       <div class="jarvis-branding-wrap"></div>
       <button class="jarvis-menu-toggle d-lg-none ms-auto" type="button"
@@ -59,10 +61,12 @@
           {# Everything still in the region: the main menu and any other block
              placed here. Branding was already lifted out in preprocess, so this
              needs no id-based filtering and nothing can silently vanish. #}
-          {{ page.primary_menu }}
+          {{ primary_menu_markup|raw }}
         </div>
       </div>
     </div>
+  {% else %}
+    {{ primary_menu_markup|raw }}
   {% endif %}
 
   {# Boxed #}
@@ -76,8 +80,11 @@
 
   {# Full-width #}
   {# Front page hides its title regardless of which node/Canvas page it is. #}
-  {% if page.page_title and not is_front %}
-    <div class="jarvis-region jarvis-region--full jarvis-page-title">{{ page.page_title }}</div>
+  {% if not page_title_empty and not is_front %}
+    <div class="jarvis-region jarvis-region--full jarvis-page-title">{{ page_title_markup|raw }}</div>
+  {% elseif page_title_empty %}
+    {# Keep the editor's region markers without painting the title band. #}
+    {{ page_title_markup|raw }}
   {% endif %}
 
   {# hero_markup / hero_empty come from jarvis_preprocess_page(): emptiness is
@@ -148,10 +155,13 @@
   </main>
 
   {# Full-width #}
-  {% if page.footer %}
+  {% if not footer_empty %}
     <footer role="contentinfo" class="jarvis-region jarvis-region--full jarvis-footer">
-      {{ page.footer }}
+      {{ footer_markup|raw }}
     </footer>
+  {% else %}
+    {# Keep the editor's region markers without painting the footer band. #}
+    {{ footer_markup|raw }}
   {% endif %}
 
 </div>{# /.layout-container #}
