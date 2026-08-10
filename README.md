@@ -69,8 +69,8 @@ The authoritative list is the recipe's own
 [README](https://github.com/imrodmartin/jarvis-bootstrap-recipe/blob/main/recipes/jarvis/README.md)
 in the jarvis-bootstrap-recipe repo. In short, it:
 
-- Installs Canvas, this theme, and the `jarvis_canvas` + `jarvis_blocks` glue
-  modules, plus the supporting contrib and site-feature modules
+- Installs Canvas, this theme, and the `jarvis_canvas` glue module, plus the
+  supporting contrib and site-feature modules
 - Ships exported Canvas component config for all 21 SDCs, content templates
   for the **Blog** and **Basic** content types, page regions, and 5 reusable
   patterns

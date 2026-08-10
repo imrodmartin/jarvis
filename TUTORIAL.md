@@ -802,10 +802,12 @@ duplicating the code).
 
 ### Image styles inside components
 
-For the `Image` component, note the `image_uri` prop and the **named image style** trick.
-Canvas gives you `image.src`, but to render a specific Drupal **image style** (say
-`jarvis_hero_banner`) you also pass the raw file URI and let Twig build the derivative with
-`twig_tweak`'s `|image_style` filter. That's why the recipe installs `twig_tweak`, and why
+For the `Image` component, note the **named image style** trick. Canvas gives you
+`image.src` — a finished public URL, not the `public://` URI a Drupal **image style** (say
+`jarvis_hero_banner`) needs — so the `jarvis_image_style` Twig filter looks the file back
+up from that URL and builds the derivative anyway. Where a raw file URI *is* on hand
+(Person's portrait crop, content templates) you use `twig_tweak`'s `|image_style` filter
+directly. That's why the recipe installs `twig_tweak`, and why
 image styles like `jarvis_hero_banner` and `wide` are shipped as config (Step 11). In a content
 template, use `|image_style` in the SDC — **don't** try to use a Canvas "adapter" for it
 (adapters are not allowed inside content templates).

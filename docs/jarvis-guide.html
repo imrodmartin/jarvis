@@ -107,7 +107,7 @@ working theme.</p>
     <li><a href="#css">CSS and the theming contract</a></li>
     <li><a href="#js">JavaScript and Drupal behaviors</a></li>
     <li><a href="#templates">Template overrides and preprocess</a></li>
-    <li><a href="#modules">The custom modules</a></li>
+    <li><a href="#modules">The custom module</a></li>
     <li><a href="#build">Build order: making one yourself</a></li>
     <li><a href="#gotchas">Hard won lessons</a></li>
     <li><a href="#components">Every component, one at a time</a></li>
@@ -140,7 +140,7 @@ working theme.</p>
     <td>Components, CSS, JavaScript, template overrides, theme settings</td>
   </tr>
   <tr>
-    <td><strong>Two custom modules</strong><br><code>jarvis_blocks</code>, <code>jarvis_canvas</code></td>
+    <td><strong>One custom module</strong><br><code>jarvis_canvas</code></td>
     <td>The recipe repo, under <code>web/modules/custom</code></td>
     <td>Behaviour a theme is not allowed to do</td>
   </tr>
@@ -152,8 +152,8 @@ working theme.</p>
 </table>
 
 <div class="note box">
-  <span class="t">Why modules at all?</span>
-  <p>A theme's hooks only run while that theme is active. Node edit forms usually render in the admin theme, so a theme hook cannot reach them. Anything that must work regardless of the active theme has to live in a module. That one rule explains most of what these two modules do.</p>
+  <span class="t">Why a module at all?</span>
+  <p>A theme's hooks only run while that theme is active. Node edit forms usually render in the admin theme, so a theme hook cannot reach them. Anything that must work regardless of the active theme has to live in a module. That one rule explains most of what this module does.</p>
 </div>
 
 <h3>How a page actually renders</h3>
@@ -787,7 +787,7 @@ props:
 &lt;/section&gt;</code></pre></div>
 <p>Optional polish: a small script can measure the background and <em>raise</em> the overlay opacity when white text would fail WCAG AA contrast, the builder sets a floor, the JS enforces legibility. In Jarvis that engine is shared by the hero and card components: it lives in <code>js/contrast.js</code>, registered as the <code>jarvis/contrast</code> library and attached to each component through <code>libraryOverrides: dependencies:</code> in its <code>*.component.yml</code> (the alternative, SDC auto-loading a same-named JS file per component, would mean duplicating the code).</p>
 <h4 id="image-styles-inside-components">Image styles inside components</h4>
-<p>For the <code>Image</code> component, note the <code>image_uri</code> prop and the <strong>named image style</strong> trick. Canvas gives you <code>image.src</code>, but to render a specific Drupal <strong>image style</strong> (say <code>jarvis_hero_banner</code>) you also pass the raw file URI and let Twig build the derivative with <code>twig_tweak</code>&#x27;s <code>|image_style</code> filter. That&#x27;s why the recipe installs <code>twig_tweak</code>, and why image styles like <code>jarvis_hero_banner</code> and <code>wide</code> are shipped as config (Step 11). In a content template, use <code>|image_style</code> in the SDC, <strong>don&#x27;t</strong> try to use a Canvas &quot;adapter&quot; for it (adapters are not allowed inside content templates).</p>
+<p>For the <code>Image</code> component, note the <strong>named image style</strong> trick. Canvas gives you <code>image.src</code> — a finished public URL, not the <code>public://</code> URI a Drupal <strong>image style</strong> (say <code>jarvis_hero_banner</code>) needs — so the <code>jarvis_image_style</code> Twig filter looks the file back up from that URL and builds the derivative anyway. Where a raw file URI <em>is</em> on hand (Person&#x27;s portrait crop, content templates) you use <code>twig_tweak</code>&#x27;s <code>|image_style</code> filter directly. That&#x27;s why the recipe installs <code>twig_tweak</code>, and why image styles like <code>jarvis_hero_banner</code> and <code>wide</code> are shipped as config (Step 11). In a content template, use <code>|image_style</code> in the SDC, <strong>don&#x27;t</strong> try to use a Canvas &quot;adapter&quot; for it (adapters are not allowed inside content templates).</p>
 <p>---</p>
 <p>&lt;a name=&quot;step-7-colours&quot;&gt;&lt;/a&gt;</p>
 <hr>
@@ -1553,64 +1553,8 @@ if ($real &amp;&amp; file_exists($real)) {
 <p>---</p>
 <p>&lt;a name=&quot;step-4-first-sdc&quot;&gt;&lt;/a&gt;</p>
 <hr>
-<h2 id="modules">6. The custom modules</h2>
+<h2 id="modules">6. The custom module</h2>
 
-
-<h3>jarvis_blocks: rendering content blocks through components</h3>
-
-<p>Drupal's custom block types render as a stack of fields. Jarvis already has good looking components, so this module intercepts the render and swaps the field output for the matching component.</p>
-
-<div class="codewrap">
-  <span class="label">web/modules/custom/jarvis_blocks/src/Hook/JarvisBlocksHooks.php</span>
-  <pre><code>&lt;?php
-
-declare(strict_types=1);
-
-namespace Drupal\jarvis_blocks\Hook;
-
-use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\block_content\BlockContentInterface;
-
-final class JarvisBlocksHooks {
-
-  private const MAP = [
-    'hero' =&gt; 'jarvis:hero',
-    'card' =&gt; 'jarvis:card',
-    'text' =&gt; 'jarvis:text',
-  ];
-
-  #[Hook('preprocess_block')]
-  public function preprocessBlock(array &amp;$variables): void {
-    $content = $variables['content'] ?? [];
-    $bc = $content['#block_content'] ?? NULL;
-    if (!$bc instanceof BlockContentInterface) {
-      return;
-    }
-    $bundle = $bc-&gt;bundle();
-    if (empty(self::MAP[$bundle])) {
-      return;
-    }
-
-    $cacheability = CacheableMetadata::createFromRenderArray($content);
-    $props = $this-&gt;buildProps($bundle, $bc, $cacheability);
-
-    $component = [
-      '#type' =&gt; 'component',
-      '#component' =&gt; self::MAP[$bundle],
-      '#props' =&gt; $props,
-    ];
-    // Copy cacheability ONLY, never $content['#cache'] wholesale.
-    $cacheability-&gt;applyTo($component);
-    $variables['content'] = $component;
-  }
-}</code></pre>
-</div>
-
-<div class="warn box">
-  <span class="t">Never copy #cache wholesale</span>
-  <p>That array carries <code>keys</code> and <code>bin</code>, which name the block's own render cache entry. Reusing them writes your component markup into that entry, so any other render path for the same entity serves it back, or clobbers it. Copy cacheability only, with <code>CacheableMetadata</code>.</p>
-</div>
 
 <h3>jarvis_canvas: the Canvas glue</h3>
 
@@ -2074,7 +2018,7 @@ ddev drush uli</code></pre></div>
 <p>Image renders a picture with optional caption, rounded corners, and a choice of image style. Full width takes it edge to edge, otherwise it stays inside the container.</p><p>Priority is worth understanding. Tick it for an image visible without scrolling and the browser loads it eagerly at high priority. Leave it unticked for everything else so the image loads lazily.</p>
 <div class="good box"><span class="t">A captioned figure</span><ol><li>Add Image.</li><li>Pick a media item.</li><li>Type a Caption.</li><li>Choose an Image style, for example Wide, so the file served matches the space it fills.</li></ol></div>
 <h5>Props</h5>
-<table><thead><tr><th>Prop</th><th>Label</th><th>Type</th><th>Required</th><th>Choices and default</th></tr></thead><tbody><tr><td><code>image</code></td><td>Image</td><td><code>image</code></td><td>No</td><td>Pick a media item</td></tr><tr><td><code>image_style</code></td><td>Image style</td><td><code>string</code></td><td>No</td><td><code>original</code>, <code>thumbnail</code>, <code>medium</code>, <code>large</code>, <code>wide</code>, <code>jarvis_hero_banner</code><br>Default <code>original</code></td></tr><tr><td><code>image_uri</code></td><td>Image source URI (internal)</td><td><code>string</code></td><td>No</td><td>Free text</td></tr><tr><td><code>caption</code></td><td>Caption</td><td><code>string</code></td><td>No</td><td>Free text</td></tr><tr><td><code>full_width</code></td><td>Full width</td><td><code>boolean</code></td><td>No</td><td>Default <code>False</code></td></tr><tr><td><code>match_height</code></td><td>Match column height</td><td><code>boolean</code></td><td>No</td><td>Default <code>False</code></td></tr><tr><td><code>rounded</code></td><td>Rounded corners</td><td><code>boolean</code></td><td>No</td><td>Default <code>False</code></td></tr><tr><td><code>priority</code></td><td>Load eagerly (above the fold)</td><td><code>boolean</code></td><td>No</td><td>Default <code>False</code></td></tr><tr><td><code>padding</code></td><td>Padding</td><td><code>string</code></td><td>No</td><td><code>none</code>, <code>all</code>, <code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code><br>Default <code>none</code></td></tr><tr><td><code>padding_size</code></td><td>Padding size</td><td><code>string</code></td><td>No</td><td><code>small</code>, <code>medium</code>, <code>large</code><br>Default <code>medium</code></td></tr><tr><td><code>margin</code></td><td>Margin</td><td><code>string</code></td><td>No</td><td><code>none</code>, <code>all</code>, <code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code><br>Default <code>none</code></td></tr><tr><td><code>margin_size</code></td><td>Margin size</td><td><code>string</code></td><td>No</td><td><code>small</code>, <code>medium</code>, <code>large</code><br>Default <code>medium</code></td></tr><tr><td><code>vertical_padding</code></td><td>Vertical padding (30px)</td><td><code>boolean</code></td><td>No</td><td>Default <code>False</code></td></tr></tbody></table>
+<table><thead><tr><th>Prop</th><th>Label</th><th>Type</th><th>Required</th><th>Choices and default</th></tr></thead><tbody><tr><td><code>image</code></td><td>Image</td><td><code>image</code></td><td>No</td><td>Pick a media item</td></tr><tr><td><code>image_style</code></td><td>Image style</td><td><code>string</code></td><td>No</td><td><code>original</code>, <code>thumbnail</code>, <code>medium</code>, <code>large</code>, <code>wide</code>, <code>jarvis_hero_banner</code><br>Default <code>original</code></td></tr><tr><td><code>caption</code></td><td>Caption</td><td><code>string</code></td><td>No</td><td>Free text</td></tr><tr><td><code>full_width</code></td><td>Full width</td><td><code>boolean</code></td><td>No</td><td>Default <code>False</code></td></tr><tr><td><code>match_height</code></td><td>Match column height</td><td><code>boolean</code></td><td>No</td><td>Default <code>False</code></td></tr><tr><td><code>rounded</code></td><td>Rounded corners</td><td><code>boolean</code></td><td>No</td><td>Default <code>False</code></td></tr><tr><td><code>priority</code></td><td>Load eagerly (above the fold)</td><td><code>boolean</code></td><td>No</td><td>Default <code>False</code></td></tr><tr><td><code>padding</code></td><td>Padding</td><td><code>string</code></td><td>No</td><td><code>none</code>, <code>all</code>, <code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code><br>Default <code>none</code></td></tr><tr><td><code>padding_size</code></td><td>Padding size</td><td><code>string</code></td><td>No</td><td><code>small</code>, <code>medium</code>, <code>large</code><br>Default <code>medium</code></td></tr><tr><td><code>margin</code></td><td>Margin</td><td><code>string</code></td><td>No</td><td><code>none</code>, <code>all</code>, <code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code><br>Default <code>none</code></td></tr><tr><td><code>margin_size</code></td><td>Margin size</td><td><code>string</code></td><td>No</td><td><code>small</code>, <code>medium</code>, <code>large</code><br>Default <code>medium</code></td></tr><tr><td><code>vertical_padding</code></td><td>Vertical padding (30px)</td><td><code>boolean</code></td><td>No</td><td>Default <code>False</code></td></tr></tbody></table>
 <p>No slots. Everything this component shows comes from its props.</p>
 <div class="codewrap"><span class="label">Calling it from a Twig template</span><pre><code>{{ include(&#x27;jarvis:image&#x27;, {
   image: media_image,

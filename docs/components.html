@@ -336,8 +336,7 @@
         <a href="#stat">Stat card</a>
       </div>
       <div class="nav-group">
-        <p class="nav-group__title">Modules</p>
-        <a href="#jarvis-blocks">Jarvis Blocks</a>
+        <p class="nav-group__title">Module</p>
         <a href="#jarvis-canvas">Jarvis Canvas</a>
       </div>
     </nav>
@@ -502,7 +501,7 @@
           <p class="subhead">Slots</p>
           <div class="slots"><div class="slot"><span class="slot__name">content</span><span class="slot__desc">Components placed inside this section.</span></div></div>
 <details class="src">
-<summary>&lt;/&gt; Source · 3 files</summary>
+<summary>&lt;/&gt; Source · 2 files</summary>
 <div class="srcfile"><div class="srcfile__name">section.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
 name: Section
 status: stable
@@ -624,10 +623,6 @@ slots:
     {{ content }}
   &lt;/div&gt;
 &lt;/section&gt;</code></pre></div>
-<div class="srcfile"><div class="srcfile__name">section.css</div><pre class="code"><code>.jarvis-py-6 {
-  padding-top: 6rem;
-  padding-bottom: 6rem;
-}</code></pre></div>
 </details>
         </article>
 
@@ -2782,7 +2777,6 @@ props:
             <tbody>
               <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The image file.</td></tr>
               <tr><td class="prop"><span class="pname">image_style</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">original</span></td><td class="desc-cell">Named crop to apply.<span class="enum-list"><span class="enum enum--def">original</span><span class="enum">thumbnail</span><span class="enum">medium</span><span class="enum">large</span><span class="enum">wide</span><span class="enum">jarvis_hero_banner</span></span></td></tr>
-              <tr><td class="prop"><span class="pname">image_uri</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Internal — the original file address, used to build a styled crop. Set automatically.</td></tr>
               <tr><td class="prop"><span class="pname">caption</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Caption shown beneath the image.</td></tr>
               <tr><td class="prop"><span class="pname">full_width</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Break out to full width instead of the contained measure.</td></tr>
               <tr><td class="prop"><span class="pname">match_height</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">In a 2- or 3-column layout, stretch the image to the height of the tallest column (crops to fill).</td></tr>
@@ -2821,10 +2815,6 @@ props:
         wide: Wide
         jarvis_hero_banner: &#x27;Jarvis hero banner&#x27;
       default: original
-    image_uri:
-      title: &#x27;Image source URI (internal)&#x27;
-      # Original stream-wrapper URI; required for image_style to build a derivative.
-      type: string
     caption:
       title: Caption
       type: string
@@ -5462,202 +5452,7 @@ props:
 
       <!-- ===== MODULES ===== -->
       <section class="prose">
-        <h2 id="jarvis-blocks"><span class="section-tag">Custom modules</span>Jarvis Blocks</h2>
-        <p><code>jarvis_blocks</code> is a small module that lets the Jarvis components work as reusable <strong>content blocks</strong> — the kind you create once and place through Layout Builder or the Block layout, not just inside Canvas.</p>
-        <p>It ships five ready-made block types — <strong>Hero, Card, Video, Image,</strong> and <strong>Text</strong> — each with the right fields already set up (heading, media, call-to-action link, and so on). When one of these blocks renders anywhere on the site, the module quietly swaps the plain field output for the matching Jarvis SDC, so a content block and a Canvas component look identical on the page.</p>
-        <p class="subhead" style="max-width:var(--measure)">The mapping it manages</p>
-        <div class="table-scroll" style="max-width:var(--measure)"><table style="min-width:340px">
-          <thead><tr><th>Block type</th><th>Renders as</th></tr></thead>
-          <tbody>
-            <tr><td class="prop"><span class="pname">hero</span></td><td><span class="ptype">jarvis:hero</span></td></tr>
-            <tr><td class="prop"><span class="pname">card</span></td><td><span class="ptype">jarvis:card</span></td></tr>
-            <tr><td class="prop"><span class="pname">video</span></td><td><span class="ptype">jarvis:video</span></td></tr>
-            <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">jarvis:image</span></td></tr>
-            <tr><td class="prop"><span class="pname">text</span></td><td><span class="ptype">jarvis:text</span></td></tr>
-          </tbody>
-        </table></div>
-        <p><strong>How it does it, in one breath:</strong> a single <code>hook_preprocess_block()</code> catches any of these block types as they render, reads their fields, maps each field to the SDC's props, and replaces the block's body with the component. It's careful about two things — it preserves the block's cache metadata so caching still works, and it runs rich-text fields through <code>check_markup()</code> by hand (Canvas strips the usual processed-text shortcut, so the module does that step itself).</p>
-        <div class="note"><span class="note__icon">i</span><div><b>Dependencies:</b> core's <code>block_content</code>, <code>link</code>, <code>image</code>, <code>options</code>, and <code>text</code> modules — all standard. Nothing exotic.</div></div>
-
-        <details class="src">
-<summary>&lt;/&gt; Source · 2 files</summary>
-<div class="srcfile"><div class="srcfile__name">jarvis_blocks.info.yml</div><pre class="code"><code>name: 'Jarvis Blocks'
-type: module
-description: 'Content block types that render Jarvis SDCs — usable in Layout Builder and the Block layout.'
-package: Custom
-core_version_requirement: ^11 || ^12
-dependencies:
-  - drupal:block_content
-  - drupal:link
-  - drupal:image
-  - drupal:options
-  - drupal:text
-</code></pre></div>
-<div class="srcfile"><div class="srcfile__name">jarvis_blocks.module</div><pre class="code"><code>&lt;?php
-
-/**
- * @file
- * Renders Jarvis content block types through their matching SDCs.
- *
- * A single preprocess hook covers both Layout Builder inline blocks and
- * Block-layout placed content blocks: both return the block_content entity
- * view build, so #block_content is present on $variables['content'].
- */
-
-declare(strict_types=1);
-
-use Drupal\block_content\BlockContentInterface;
-
-/**
- * Maps block_content bundle =&gt; SDC component id.
- */
-function _jarvis_blocks_map(): array {
-  return [
-    'hero' =&gt; 'jarvis:hero',
-    'card' =&gt; 'jarvis:card',
-    'video' =&gt; 'jarvis:video',
-    'image' =&gt; 'jarvis:image',
-    'text' =&gt; 'jarvis:text',
-  ];
-}
-
-/**
- * Implements hook_preprocess_HOOK() for block.
- */
-function jarvis_blocks_preprocess_block(array &amp;$variables): void {
-  $content = $variables['content'] ?? [];
-  $bc = $content['#block_content'] ?? NULL;
-  if (!$bc instanceof BlockContentInterface) {
-    return;
-  }
-  $map = _jarvis_blocks_map();
-  $bundle = $bc-&gt;bundle();
-  if (empty($map[$bundle])) {
-    return;
-  }
-
-  $props = _jarvis_blocks_props($bundle, $bc);
-
-  // Replace the field-rendered body with the SDC render element. Keep the
-  // original cache metadata so block/entity cache tags still bubble up.
-  $component = [
-    '#type' =&gt; 'component',
-    '#component' =&gt; $map[$bundle],
-    '#props' =&gt; $props,
-  ];
-  if (!empty($content['#cache'])) {
-    $component['#cache'] = $content['#cache'];
-  }
-  $variables['content'] = $component;
-}
-
-/**
- * Builds SDC props from a block_content entity's fields.
- */
-function _jarvis_blocks_props(string $bundle, BlockContentInterface $bc): array {
-  $has = static fn (string $f): bool =&gt; $bc-&gt;hasField($f) &amp;&amp; !$bc-&gt;get($f)-&gt;isEmpty();
-  $str = static fn (string $f): ?string =&gt; $has($f) ? (string) $bc-&gt;get($f)-&gt;value : NULL;
-  $bool = static fn (string $f): bool =&gt; $has($f) ? (bool) $bc-&gt;get($f)-&gt;value : FALSE;
-  $int = static fn (string $f): ?int =&gt; $has($f) ? (int) $bc-&gt;get($f)-&gt;value : NULL;
-
-  $html = static function (string $f) use ($has, $bc): ?string {
-    if (!$has($f)) {
-      return NULL;
-    }
-    // Canvas's TextLongItemOverride drops the `processed` computed property,
-    // so run the text through check_markup() directly.
-    $item = $bc-&gt;get($f)-&gt;first();
-    return (string) check_markup($item-&gt;value, $item-&gt;format ?: NULL);
-  };
-
-  $image = static function (string $f) use ($has, $bc): ?array {
-    if (!$has($f)) {
-      return NULL;
-    }
-    $item = $bc-&gt;get($f)-&gt;first();
-    $file = $item-&gt;entity;
-    if (!$file) {
-      return NULL;
-    }
-    $url = \Drupal::service('file_url_generator')-&gt;generateAbsoluteString($file-&gt;getFileUri());
-    $out = ['src' =&gt; $url, 'alt' =&gt; (string) ($item-&gt;alt ?? '')];
-    if (!empty($item-&gt;width)) {
-      $out['width'] = (int) $item-&gt;width;
-    }
-    if (!empty($item-&gt;height)) {
-      $out['height'] = (int) $item-&gt;height;
-    }
-    return $out;
-  };
-
-  $link = static function (string $f) use ($has, $bc): array {
-    if (!$has($f)) {
-      return [NULL, NULL];
-    }
-    $item = $bc-&gt;get($f)-&gt;first();
-    try {
-      $url = $item-&gt;getUrl()-&gt;toString();
-    }
-    catch (\Throwable $e) {
-      $url = $item-&gt;uri;
-    }
-    return [$url, $item-&gt;title ?: NULL];
-  };
-
-  switch ($bundle) {
-    case 'hero':
-      [$cta_href, $cta_text] = $link('field_cta');
-      return array_filter([
-        'heading' =&gt; $str('field_heading'),
-        'subheading' =&gt; $str('field_subheading'),
-        'cta_text' =&gt; $cta_text,
-        'cta_href' =&gt; $cta_href,
-        'image' =&gt; $image('field_media_image'),
-        'overlay' =&gt; $int('field_overlay') ?? 40,
-        'align' =&gt; $str('field_align') ?? 'center',
-      ], static fn ($v) =&gt; $v !== NULL);
-
-    case 'card':
-      [$link_href, $link_text] = $link('field_cta');
-      return array_filter([
-        'variant' =&gt; $str('field_variant') ?? 'image-top',
-        'image' =&gt; $image('field_media_image'),
-        'title' =&gt; $str('field_title'),
-        'body' =&gt; $html('field_body'),
-        'link_text' =&gt; $link_text,
-        'link_href' =&gt; $link_href,
-      ], static fn ($v) =&gt; $v !== NULL);
-
-    case 'video':
-      [$video_url] = $link('field_video_url');
-      return array_filter([
-        'video_url' =&gt; $video_url,
-        'aspect' =&gt; $str('field_aspect') ?? '16x9',
-        'full_width' =&gt; $bool('field_full_width'),
-        'autoplay' =&gt; $bool('field_autoplay'),
-        'muted' =&gt; $bool('field_muted'),
-      ], static fn ($v) =&gt; $v !== NULL);
-
-    case 'image':
-      return array_filter([
-        'image' =&gt; $image('field_media_image'),
-        'caption' =&gt; $str('field_caption'),
-        'full_width' =&gt; $bool('field_full_width'),
-      ], static fn ($v) =&gt; $v !== NULL);
-
-    case 'text':
-      return array_filter([
-        'body' =&gt; $html('field_body'),
-        'width' =&gt; $str('field_width') ?? 'normal',
-        'align' =&gt; $str('field_align') ?? 'start',
-      ], static fn ($v) =&gt; $v !== NULL);
-  }
-
-  return [];
-}
-</code></pre></div>
-</details>
-<h2 id="jarvis-canvas"><span class="section-tag">Custom modules</span>Jarvis Canvas</h2>
+<h2 id="jarvis-canvas"><span class="section-tag">Custom module</span>Jarvis Canvas</h2>
         <p><code>jarvis_canvas</code> is the glue between the Jarvis components and <strong>Drupal Canvas</strong>. It patches over a few rough edges in Canvas so the theme behaves the way editors expect. It does four things.</p>
 
         <h3 style="max-width:var(--measure)">1 · Unlocks a real rich-text editor for the WYSIWYG component</h3>
