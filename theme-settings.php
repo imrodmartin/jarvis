@@ -201,6 +201,26 @@ function jarvis_font_settings_submit(array &$form, FormStateInterface $form_stat
   /** @var \Drupal\Core\File\FileSystemInterface $fs */
   $fs = \Drupal::service('file_system');
   $dir = 'public://jarvis-fonts';
+
+  // This handler runs on EVERY settings save, including color-only ones.
+  // Rebuild (and hit Google) only when a font setting actually changed or the
+  // stylesheet is missing; #default_value still holds the previously saved
+  // value at this point.
+  $changed = !file_exists((string) ($fs->realpath("$dir/jarvis-fonts.css") ?: ''));
+  foreach (array_keys(_jarvis_fonts()) as $key) {
+    foreach (['family', 'weight', 'selector'] as $part) {
+      $name = "jarvis_font_{$key}_{$part}";
+      $default = (string) ($form['jarvis_fonts'][$key][$name]['#default_value'] ?? '');
+      if ((string) $form_state->getValue($name) !== $default) {
+        $changed = TRUE;
+        break 2;
+      }
+    }
+  }
+  if (!$changed) {
+    return;
+  }
+
   $fs->prepareDirectory($dir, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
 
   $client = \Drupal::httpClient();
@@ -240,11 +260,14 @@ function jarvis_font_settings_submit(array &$form, FormStateInterface $form_stat
       ])->getBody();
     }
     catch (\Throwable $e) {
-      \Drupal::messenger()->addWarning(t('Could not fetch %f from Google Fonts: @m', [
+      // Abort without touching jarvis-fonts.css. A partial rewrite would keep
+      // this slot's font-family rule while dropping its @font-face payload —
+      // and one flaky save used to wipe the previously good stylesheet.
+      \Drupal::messenger()->addWarning(t('Could not fetch %f from Google Fonts: @m. Kept the previously generated fonts — save again to retry.', [
         '%f' => $family,
         '@m' => $e->getMessage(),
       ]));
-      continue;
+      return;
     }
 
     // Download each woff2 and point the url() at the local copy.
