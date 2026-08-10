@@ -31,7 +31,7 @@
          no reason to introduce — the theme lays the bar out itself
          (css/overrides.css, .jarvis-primary-menu nav > ul). Adding the class
          stacked the menu vertically on desktop. #}
-      <ul{{ attributes.addClass('jarvis-menu') }}>
+      <ul{{ attributes }}>
     {% else %}
       <ul class="dropdown-menu">
     {% endif %}
@@ -63,16 +63,32 @@
             <a href="{{ item.url }}"
                class="{{ depth == 0 ? 'nav-link' : 'dropdown-item' }}{{ item.in_active_trail ? ' active' : '' }}">{{ item.title }}</a>
           {% endif %}
-          {# Depth >= 2: Bootstrap has no nested panel, so render descendants as
-             further indented rows in the panel we are already inside. #}
+          {# Depth >= 2: Bootstrap has no nested panel, so render ALL remaining
+             descendants as further indented rows in the panel we are already
+             inside — recursing so depth 4+ doesn't silently disappear. #}
           {% if has_children %}
-            {% for child in item.below %}
-              <a href="{{ child.url }}" class="dropdown-item ps-4">{{ child.title }}</a>
-            {% endfor %}
+            {{ menus.flatten(item.below, 4) }}
           {% endif %}
         {% endif %}
       </li>
     {% endfor %}
     </ul>
   {% endif %}
+{% endmacro %}
+
+{# Flattened descendants: every level below the panel renders as an indented
+   row (Bootstrap's ps-* caps at 5). A <nolink> item labels its group instead
+   of rendering an empty-href anchor, which would be a broken tab stop. #}
+{% macro flatten(items, indent) %}
+  {% import _self as menus %}
+  {% for item in items %}
+    {% if item.url.isRouted and item.url.routeName == '<nolink>' %}
+      <span class="dropdown-item ps-{{ indent }}">{{ item.title }}</span>
+    {% else %}
+      <a href="{{ item.url }}" class="dropdown-item ps-{{ indent }}">{{ item.title }}</a>
+    {% endif %}
+    {% if item.below is not empty %}
+      {{ menus.flatten(item.below, min(indent + 1, 5)) }}
+    {% endif %}
+  {% endfor %}
 {% endmacro %}
