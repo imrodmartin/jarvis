@@ -23,8 +23,10 @@
   var NEED = 4.5;
   // Relative luminance of #fff text.
   var TEXT = 1;
-  // Relative luminance of #212529 body text.
-  var DARK_TEXT = 0.011;
+  // Relative luminance of #212529 body text. Computed, not hand-copied: a
+  // hardcoded 0.011 (that's #1a1a1a) shipped here once, and every light
+  // overlay stopped raising ~0.5 contrast points short of AA.
+  var DARK_TEXT = lumHex('#212529');
 
   /**
    * sRGB channel (0-255) -> linear.
@@ -173,6 +175,10 @@
     var assert = require('assert');
 
     // Primitives.
+    // Pin DARK_TEXT to the true WCAG luminance of #212529 — the earlier
+    // hardcoded 0.011 passed this suite because everything asserted against
+    // the same wrong constant.
+    assert.ok(Math.abs(DARK_TEXT - 0.01807) < 1e-4);
     assert.strictEqual(Math.round(contrast(TEXT, lum(0, 0, 0))), 21);  // white on black
     assert.strictEqual(contrast(TEXT, lum(255, 255, 255)), 1);         // white on white
     assert.deepStrictEqual(rgbFromHex('#2d6cdf'), [45, 108, 223]);
