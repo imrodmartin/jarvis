@@ -42,6 +42,10 @@
     wrap.insertBefore(el, ref || null);
   };
 
+  // Pass/fail chip shared by the pair badges and the auto-text badges.
+  const chip = (label, need, r) =>
+    `<span class="jarvis-contrast-chip ${r >= need ? 'pass' : 'fail'}">${label} (${need}:1) ${r >= need ? '✓' : '✗'}</span>`;
+
   Drupal.behaviors.jarvisColorSettings = {
     attach(context) {
       once('jarvis-color', '.jarvis-color-hex', context).forEach((hex) => {
@@ -77,9 +81,6 @@
         // doesn't cover it.
         const wrap = anchor.closest('.form-item') || anchor.parentNode;
         insertAbove(wrap, badge, wrap.querySelector('.jarvis-color-pick') || anchor);
-
-        const chip = (label, need, r) =>
-          `<span class="jarvis-contrast-chip ${r >= need ? 'pass' : 'fail'}">${label} (${need}:1) ${r >= need ? '✓' : '✗'}</span>`;
 
         const fgVal = () => (fg ? fg.value : pair.fg);
         const bgVal = () => (bg ? bg.value : pair.bg);
@@ -131,9 +132,6 @@
         badge.className = 'jarvis-contrast';
         const wrap = input.closest('.form-item') || input.parentNode;
         insertAbove(wrap, badge, wrap.querySelector('.jarvis-color-pick') || input);
-
-        const chip = (label, need, r) =>
-          `<span class="jarvis-contrast-chip ${r >= need ? 'pass' : 'fail'}">${label} (${need}:1) ${r >= need ? '✓' : '✗'}</span>`;
 
         const update = () => {
           if (!HEX.test(input.value)) {

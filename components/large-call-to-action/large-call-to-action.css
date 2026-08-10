@@ -9,10 +9,13 @@
   max-width: 46rem;
 }
 /* Size follows the chosen tag so the Heading level selector visibly changes it
-   (Bootstrap's display-* would pin one size regardless of h2/h3/h4). */
-h2.jarvis-large-cta__heading { font-size: 2.75rem; line-height: 1.1; }
-h3.jarvis-large-cta__heading { font-size: 2rem; line-height: 1.15; }
-h4.jarvis-large-cta__heading { font-size: 1.5rem; line-height: 1.2; }
+   (Bootstrap's display-* would pin one size regardless of h2/h3/h4). Anchored
+   to the theme's font-size settings like every other component's ladder — the
+   factors reproduce the reference sizes (2.75/2/1.5rem) at default settings.
+   Hardcoded sizes here ignored the site-wide typography controls. */
+h2.jarvis-large-cta__heading { font-size: calc(var(--jarvis-fs-h2, 2rem) * 1.375); line-height: 1.1; }
+h3.jarvis-large-cta__heading { font-size: calc(var(--jarvis-fs-h3, 1.75rem) * 1.143); line-height: 1.15; }
+h4.jarvis-large-cta__heading { font-size: var(--jarvis-fs-h4, 1.5rem); line-height: 1.2; }
 
 /* Rows: a rule above each one, echoing the reference. margin-top separates the
    first row from the lead text. */
@@ -63,9 +66,11 @@ h4.jarvis-large-cta__heading { font-size: 1.5rem; line-height: 1.2; }
 ) {
   color: var(--bs-body-color);
 }
-/* Row rules also need to read on the coloured bg. */
-:is(.jarvis-bg--primary, .jarvis-bg--secondary, .jarvis-bg--bg1, .jarvis-bg--bg2, .jarvis-bg--dark, .jarvis-bg--image) .jarvis-large-cta__row {
-  border-color: rgba(255, 255, 255, 0.25);
+/* Row rules also need to read on the coloured bg. Follows the section's
+   ADA-safe foreground rather than fixed white (same move as timeline.css), so
+   it also works on --light where the foreground is black. */
+:is(.jarvis-bg--primary, .jarvis-bg--secondary, .jarvis-bg--bg1, .jarvis-bg--bg2, .jarvis-bg--dark, .jarvis-bg--light, .jarvis-bg--image) .jarvis-large-cta__row {
+  border-color: rgba(var(--bs-body-color-rgb), 0.25);
 }
 /* A primary (gold) button on a primary/dark section blends in. Swap it to a
    white button with dark text — the same move the Jarvis CTA makes when its own

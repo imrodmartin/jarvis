@@ -111,8 +111,6 @@ blockquote > :last-child {
    vertically. !important because it must beat jp-vpad above. */
 .jp-nopad { padding-top: 0 !important; padding-bottom: 0 !important; }
 
-/* Site logo: cap at 400px, pin left. Branding block img has no class,
-   so scope to the branding block in the header region. */
 /* Site logo: cap at 400px, pin left. Same rule whether branding sits in the
    header region or the primary-menu (nav) region. */
 .jarvis-header [id*="branding"],
