@@ -18,6 +18,7 @@ props:
       title: 'Link URL'
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - '/node/1'
     variant:

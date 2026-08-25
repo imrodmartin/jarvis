@@ -1,0 +1,42 @@
+{#
+/**
+ * @file
+ * Shared URL guard for components that render an editor-supplied href or src.
+ *
+ * The `x-allowed-schemes: [http, https]` on those props is enforced in two
+ * places, and neither covers a rendered production page:
+ *
+ * - Canvas's link field refuses anything but http/https when an editor types
+ *   into the prop form, so the static path was never exploitable.
+ * - Core's SDC prop validation is wrapped in assert(), so it only runs where
+ *   zend.assertions is on — development, never production.
+ *
+ * That leaves the paths that skip the field: a Views row template feeding
+ * video_url as a plain string, or a prop bound to a free-text node field. This
+ * macro is the runtime backstop for those.
+ *
+ *   {% import '@jarvis/jarvis-url.html.twig' as safe %}
+ *   {% set href = safe.url(href|default('')) %}
+ *
+ * Sanitise on the way in rather than at the output point, so the `{% if href %}`
+ * guards around link markup see the rejected value as empty and drop the whole
+ * link instead of emitting href="".
+ */
+#}
+
+{#
+/**
+ * The URL, or '' when it carries a scheme other than http/https.
+ */
+#}
+{% macro url(value) -%}
+  {%- set v = (value|default(''))|trim -%}
+  {#- Everything before the first /, ? or # is the scheme when it holds a colon.
+      Only http and https are safe to hand a browser: javascript:, data: and
+      vbscript: all execute, an iframe src doing so in this site's own origin.
+      Nothing usable is lost — the link field already refuses mailto: and tel:.
+      Scheme-less values (/node/1, ?page=2, #main, //cdn.example/x) have no colon
+      in that first segment and pass through untouched. -#}
+  {%- set head = v|split('/')|first|split('?')|first|split('#')|first|lower -%}
+  {{- (':' not in head or head starts with 'http:' or head starts with 'https:') ? v : '' -}}
+{%- endmacro %}

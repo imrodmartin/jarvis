@@ -5,6 +5,8 @@
  */
 #}
 {% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% import '@jarvis/jarvis-url.html.twig' as safe %}
+{% set link_href = safe.url(link_href|default('')) %}
 {% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : false)) %}
 {% set variant = variant|default('image-top') %}
 {# ADA (WCAG 1.3.1): heading level is a prop so cards can slot into the page's
@@ -12,15 +14,20 @@
 {% set h = heading_level|default('h3') %}
 {% set has_image = image.src is defined and image.src %}
 {% set text_color = text_color|default('light') %}
-{# Black text sits on the bare image — no darkening overlay. #}
-{% set overlay = text_color == 'black' ? 0 : overlay|default(40) %}
+{# Light text gets a black overlay, black text a white one — the same split the
+   column components use. Black text used to force the overlay to 0 and sit on
+   the bare photo, which is unreadable over a dark image. #}
+{% set overlay = overlay|default(40) %}
+{% set overlay_light = text_color == 'black' %}
 {# One class for all four variants — the lift and the darkening are pure CSS
    (see card.css), so nothing else in here needs to know about it. #}
 {% set hover_class = hover|default(false) ? ' jarvis-card--hover' : '' %}
 {% set base = 'jarvis-card card h-100 jarvis-card--' ~ variant ~ hover_class ~ ' ' ~ space %}
 {% if variant == 'background' %}
   <div class="{{ base }} jarvis-card--text-{{ text_color }} position-relative overflow-hidden border-0"{% if has_image %} style="background-image: url('{{ image.src }}');"{% endif %}>
-    {% if has_image %}<div class="jarvis-card__overlay" style="opacity: {{ overlay / 100 }};" aria-hidden="true"></div>{% endif %}
+    {# The author's value is a floor; jarvis_overlay_alpha samples the image
+       server-side and raises it to whatever WCAG AA needs. #}
+    {% if has_image %}<div class="jarvis-card__overlay{{ overlay_light ? ' jarvis-bg__overlay--light' : '' }}" style="opacity: {{ image.src|jarvis_overlay_alpha(overlay_light, overlay / 100) }};" aria-hidden="true"></div>{% endif %}
     <div class="card-img-overlay d-flex flex-column justify-content-end position-relative">
       {% if title %}<{{ h }} class="card-title h4">{{ title }}</{{ h }}>{% endif %}
       {% if body %}<div class="card-text">{{ body|raw }}</div>{% endif %}

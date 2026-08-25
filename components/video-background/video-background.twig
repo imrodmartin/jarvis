@@ -8,6 +8,8 @@
  */
 #}
 {% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
+{% import '@jarvis/jarvis-url.html.twig' as safe %}
+{% set button_href = safe.url(button_href|default('')) %}
 {% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : false)) %}
 {% set align = align|default('left') %}
 {% set justify_class = { left: 'justify-content-start', center: 'justify-content-center', right: 'justify-content-end' }[align] %}

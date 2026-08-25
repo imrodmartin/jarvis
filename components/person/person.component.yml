@@ -68,32 +68,39 @@ props:
       title: 'Link URL'
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - '/node/1'
     linkedin:
       title: 'LinkedIn URL'
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
     x:
       title: 'X (Twitter) URL'
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
     facebook:
       title: 'Facebook URL'
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
     instagram:
       title: 'Instagram URL'
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
     youtube:
       title: 'YouTube URL'
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
     github:
       title: 'GitHub URL'
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
     padding:
       title: Padding
       type: string

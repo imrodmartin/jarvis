@@ -22,10 +22,14 @@ The rest of this page installs the theme by itself.
 
 ## Require the theme
 
-Register the theme's repository as a Composer VCS source, then require it:
+Register **both** repositories as Composer VCS sources, then require the theme.
+The theme requires `imrodmartin/jarvis-modules` (the `jarvis_canvas` module):
+several templates call Twig filters it provides, so the theme will neither
+resolve nor install without it.
 
 ```bash
 ddev composer config repositories.jarvis '{"type":"vcs","url":"https://github.com/imrodmartin/jarvis","no-api":true}'
+ddev composer config repositories.jarvis-modules '{"type":"vcs","url":"https://github.com/imrodmartin/jarvis-modules","no-api":true}'
 ddev composer require drupal/jarvis
 ```
 

@@ -2,10 +2,18 @@ name: Jarvis
 type: theme
 base theme: false
 core_version_requirement: '>=11.3'
-version: '2.1.1'
+version: '2.3.0'
 description: 'DXPR-style SDC theme with Bootstrap 5, built for Drupal Canvas and Layout Builder.'
 package: Jarvis
 screenshot: screenshot.jpg
+# Not optional. Four templates call Twig filters this module provides —
+# jarvis_overlay_alpha in hero/card/the column shell, jarvis_image_style in
+# image — and Twig raises "Unknown filter" at compile time when they are
+# missing, so the theme white-screens rather than degrading. Declaring it here
+# makes core refuse to install the theme without it, with a message that names
+# the problem, and stops the module being uninstalled while the theme is on.
+dependencies:
+  - jarvis_canvas
 libraries:
   - jarvis/global
 # Styles the CKEditor 5 editing area so authors see the theme's typography

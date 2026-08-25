@@ -648,7 +648,6 @@ description: &#x27;Single-column row. Content spans the full width.&#x27;
 category: &#x27;Jarvis Layout&#x27;
 libraryOverrides:
   dependencies:
-    - jarvis/contrast
     - jarvis/reveal
 props:
   type: object
@@ -824,7 +823,6 @@ description: &#x27;Two columns side by side on desktop, stacked full-width on mo
 category: &#x27;Jarvis Layout&#x27;
 libraryOverrides:
   dependencies:
-    - jarvis/contrast
     - jarvis/reveal
 props:
   type: object
@@ -1027,7 +1025,6 @@ description: &#x27;Three columns on desktop, two on tablet, stacked full-width o
 category: &#x27;Jarvis Layout&#x27;
 libraryOverrides:
   dependencies:
-    - jarvis/contrast
     - jarvis/reveal
 props:
   type: object
@@ -1393,7 +1390,7 @@ slots:
               <tr><td class="prop"><span class="pname">text_color</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">light</span></td><td class="desc-cell"><code>light</code> (white) or <code>dark</code> (brand blue).</td></tr>
             </tbody>
           </table></div>
-          <div class="note note--tip"><span class="note__icon">✓</span><div><b>Automatic contrast:</b> your <code>overlay</code> value is a minimum. If white text would fail the accessibility contrast test against the image, Jarvis's <code>contrast.js</code> raises the overlay until it passes — so text stays readable on any photo.</div></div>
+          <div class="note note--tip"><span class="note__icon">✓</span><div><b>Automatic contrast:</b> your <code>overlay</code> value is a minimum. If the text would fail the accessibility contrast test against the image, Jarvis samples the image on the server and raises the overlay until it passes — so text stays readable on any photo, from the very first paint and with JavaScript switched off.</div></div>
 <details class="src">
 <summary>&lt;/&gt; Source · 3 files</summary>
 <div class="srcfile"><div class="srcfile__name">hero.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
@@ -1401,9 +1398,6 @@ name: Hero
 status: stable
 description: &#x27;Full-width hero banner with heading, subtext, CTA and background image.&#x27;
 category: Jarvis
-libraryOverrides:
-  dependencies:
-    - jarvis/contrast
 props:
   type: object
   required:
@@ -1438,6 +1432,7 @@ props:
       title: &#x27;CTA link&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - &#x27;/node/1&#x27;
         - &#x27;https://example.com&#x27;
@@ -1534,12 +1529,17 @@ props:
 {% set justify_class = { start: &#x27;justify-content-start&#x27;, center: &#x27;justify-content-center&#x27;, end: &#x27;justify-content-end&#x27; }[align] %}
 {% set has_image = image.src is defined and image.src %}
 {% set text_color = text_color|default(&#x27;light&#x27;) %}
-{# Dark (#000) text sits on the bare image — no darkening overlay (matches card). #}
-{% set overlay = text_color == &#x27;dark&#x27; ? 0 : overlay|default(40) %}
+{# Light text gets a black overlay, dark text a white one — the same split the
+   column components use. Dark text used to force the overlay to 0 and sit on
+   the bare photo, which is unreadable over a dark image. #}
+{% set overlay = overlay|default(40) %}
+{% set overlay_light = text_color == &#x27;dark&#x27; %}
 &lt;section class=&quot;jarvis-hero jarvis-hero--text-{{ text_color }} position-relative d-flex align-items-center {{ align_class }} {{ space }}&quot;{% if has_image %} style=&quot;background-image: url(&#x27;{{ image.src }}&#x27;);&quot;{% endif %}&gt;
   {% if has_image %}
-    {# opacity is the user floor; js/contrast.js raises it when white text fails WCAG AA contrast #}
-    &lt;div class=&quot;jarvis-hero__overlay&quot; style=&quot;opacity: {{ overlay / 100 }};&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+    {# opacity is the author&#x27;s floor; jarvis_overlay_alpha samples the image
+       server-side and raises it until the text clears WCAG AA, so the value is
+       already right on first paint. #}
+    &lt;div class=&quot;jarvis-hero__overlay{{ overlay_light ? &#x27; jarvis-bg__overlay--light&#x27; : &#x27;&#x27; }}&quot; style=&quot;opacity: {{ image.src|jarvis_overlay_alpha(overlay_light, overlay / 100) }};&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
   {% endif %}
   &lt;div class=&quot;container position-relative jarvis-hero__inner py-5&quot;&gt;
     &lt;div class=&quot;row {{ justify_class }}&quot;&gt;
@@ -1569,6 +1569,11 @@ props:
   background: #000;
   z-index: 0;
 }
+/* Dark text -&gt; white overlay, so raising it lightens the photo instead of
+   darkening it. Two classes deep, to beat the #000 rule above. */
+.jarvis-hero__overlay.jarvis-bg__overlay--light {
+  background: #fff;
+}
 .jarvis-hero__inner {
   z-index: 1;
 }
@@ -1595,9 +1600,11 @@ props:
   color: #000;
 }
 /* Light text -&gt; whole region black for guaranteed contrast. Comes after the
-   gradient rule above so it wins the specificity tie. A background image, when
-   present, still paints over this and is handled by the overlay tuned in
-   js/contrast.js (jarvis/contrast). */
+   gradient rule above so it wins the specificity tie. This only covers the
+   no-image hero: a background image paints straight over it, so with an image
+   the ONLY thing protecting contrast is the overlay opacity, which
+   jarvis_overlay_alpha computes server-side — for dark text as much as for
+   light. */
 .jarvis-hero--text-light {
   background-color: #000;
 }
@@ -1675,6 +1682,7 @@ props:
       title: &#x27;Button link&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - &#x27;/node/1&#x27;
         - &#x27;https://example.com&#x27;
@@ -1905,6 +1913,7 @@ props:
       title: &#x27;Button link&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - &#x27;/node/1&#x27;
     link_text:
@@ -1917,6 +1926,7 @@ props:
       title: &#x27;Link URL&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - &#x27;/node/2&#x27;
     padding:
@@ -2434,6 +2444,7 @@ props:
       title: &#x27;Link URL&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - &#x27;/node/1&#x27;
     variant:
@@ -2515,9 +2526,6 @@ name: Card
 status: stable
 description: &#x27;Flexible card with image at top, left, right, or as background.&#x27;
 category: Jarvis
-libraryOverrides:
-  dependencies:
-    - jarvis/contrast
 props:
   type: object
   required:
@@ -2589,6 +2597,7 @@ props:
       title: &#x27;Link URL&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - &#x27;/node/1&#x27;
     padding:
@@ -2656,15 +2665,20 @@ props:
 {% set h = heading_level|default(&#x27;h3&#x27;) %}
 {% set has_image = image.src is defined and image.src %}
 {% set text_color = text_color|default(&#x27;light&#x27;) %}
-{# Black text sits on the bare image — no darkening overlay. #}
-{% set overlay = text_color == &#x27;black&#x27; ? 0 : overlay|default(40) %}
+{# Light text gets a black overlay, black text a white one — the same split the
+   column components use. Black text used to force the overlay to 0 and sit on
+   the bare photo, which is unreadable over a dark image. #}
+{% set overlay = overlay|default(40) %}
+{% set overlay_light = text_color == &#x27;black&#x27; %}
 {# One class for all four variants — the lift and the darkening are pure CSS
    (see card.css), so nothing else in here needs to know about it. #}
 {% set hover_class = hover|default(false) ? &#x27; jarvis-card--hover&#x27; : &#x27;&#x27; %}
 {% set base = &#x27;jarvis-card card h-100 jarvis-card--&#x27; ~ variant ~ hover_class ~ &#x27; &#x27; ~ space %}
 {% if variant == &#x27;background&#x27; %}
   &lt;div class=&quot;{{ base }} jarvis-card--text-{{ text_color }} position-relative overflow-hidden border-0&quot;{% if has_image %} style=&quot;background-image: url(&#x27;{{ image.src }}&#x27;);&quot;{% endif %}&gt;
-    {% if has_image %}&lt;div class=&quot;jarvis-card__overlay&quot; style=&quot;opacity: {{ overlay / 100 }};&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;{% endif %}
+    {# The author&#x27;s value is a floor; jarvis_overlay_alpha samples the image
+       server-side and raises it to whatever WCAG AA needs. #}
+    {% if has_image %}&lt;div class=&quot;jarvis-card__overlay{{ overlay_light ? &#x27; jarvis-bg__overlay--light&#x27; : &#x27;&#x27; }}&quot; style=&quot;opacity: {{ image.src|jarvis_overlay_alpha(overlay_light, overlay / 100) }};&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;{% endif %}
     &lt;div class=&quot;card-img-overlay d-flex flex-column justify-content-end position-relative&quot;&gt;
       {% if title %}&lt;{{ h }} class=&quot;card-title h4&quot;&gt;{{ title }}&lt;/{{ h }}&gt;{% endif %}
       {% if body %}&lt;div class=&quot;card-text&quot;&gt;{{ body|raw }}&lt;/div&gt;{% endif %}
@@ -2744,6 +2758,11 @@ props:
   inset: 0;
   background: #000;
 }
+/* Black text -&gt; white overlay, so raising it lightens the photo instead of
+   darkening it. One class deeper, to beat the #000 rule above. */
+.jarvis-card--background .jarvis-card__overlay.jarvis-bg__overlay--light {
+  background: #fff;
+}
 /* Text color (background variant): the text_color enum is light | black. */
 .jarvis-card--text-light,
 .jarvis-card--text-light :is(.card-title, .card-text) {
@@ -2753,9 +2772,11 @@ props:
 .jarvis-card--text-black :is(.card-title, .card-text) {
   color: #000;
 }
-/* Light text -&gt; black region behind the card for guaranteed contrast. A
-   background image, when present, paints over this; js/contrast.js
-   (jarvis/contrast) tunes the overlay opacity to keep light text at WCAG AA. */
+/* Light text -&gt; black region behind the card for guaranteed contrast. This only
+   covers the no-image card: a background image paints straight over it, so with
+   an image the ONLY thing protecting contrast is the overlay opacity, which
+   jarvis_overlay_alpha computes server-side — for black text as much as for
+   light. */
 .jarvis-card--background.jarvis-card--text-light {
   background-color: #000;
 }</code></pre></div>
@@ -3866,12 +3887,12 @@ props:
       # library and narrows the bundles to the site&#x27;s oEmbed video types.
       x-jarvis-remote-video: true
     video_url:
-      title: &#x27;Video URL&#x27;
-      description: &#x27;YouTube/Vimeo embed URL, or a direct .mp4/.webm file URL.&#x27;
+      title: &#x27;Video file URL&#x27;
+      description: &#x27;A direct .mp4/.webm/.ogv file URL — self-hosted footage, or how a View passes its field value. Hosted players (YouTube/Vimeo) must come from the Remote video field above: that keeps the embed restricted to providers core recognises. A player URL pasted here renders nothing.&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
-        - &#x27;https://www.youtube.com/embed/aqz-KE-bpKQ&#x27;
         - &#x27;/sites/default/files/demo.mp4&#x27;
     title:
       title: &#x27;Accessible title&#x27;
@@ -3884,6 +3905,7 @@ props:
       description: &#x27;WebVTT (.vtt) captions track for direct video files — required for WCAG when the video has speech. YouTube/Vimeo embeds use their own captions.&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - &#x27;/sites/default/files/demo.vtt&#x27;
     captions_lang:
@@ -4061,17 +4083,19 @@ props:
       # library and narrows the bundles to the site&#x27;s oEmbed video types.
       x-jarvis-remote-video: true
     video_url:
-      title: &#x27;Video URL (fallback)&#x27;
-      description: &#x27;YouTube/Vimeo/watch URL or a direct .mp4/.webm. Used when no media video is chosen — how a View passes its field value.&#x27;
+      title: &#x27;Video file URL&#x27;
+      description: &#x27;A direct .mp4/.webm/.ogv file URL — self-hosted footage, or how a View passes its field value. Hosted players (YouTube/Vimeo) must come from the Remote video field above: that keeps the embed restricted to providers core recognises. A player URL pasted here renders nothing.&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
-        - &#x27;https://www.youtube.com/watch?v=aqz-KE-bpKQ&#x27;
+        - &#x27;/sites/default/files/demo.mp4&#x27;
     captions_url:
       title: &#x27;Captions file URL (files only)&#x27;
       description: &#x27;WebVTT (.vtt) captions track for direct video files — required for WCAG when the video has speech. YouTube/Vimeo embeds use their own captions.&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - &#x27;/sites/default/files/demo.vtt&#x27;
     captions_lang:
@@ -4127,6 +4151,7 @@ props:
       title: &#x27;Primary button link&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - &#x27;/node/1&#x27;
     button2_text:
@@ -4138,6 +4163,7 @@ props:
       title: &#x27;Secondary button link&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - &#x27;/node/2&#x27;
     padding:
@@ -4423,6 +4449,7 @@ props:
       title: &#x27;Button link&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - &#x27;/node/1&#x27;
     padding:
@@ -4994,32 +5021,39 @@ props:
       title: &#x27;Link URL&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - &#x27;/node/1&#x27;
     linkedin:
       title: &#x27;LinkedIn URL&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
     x:
       title: &#x27;X (Twitter) URL&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
     facebook:
       title: &#x27;Facebook URL&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
     instagram:
       title: &#x27;Instagram URL&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
     youtube:
       title: &#x27;YouTube URL&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
     github:
       title: &#x27;GitHub URL&#x27;
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
     padding:
       title: Padding
       type: string

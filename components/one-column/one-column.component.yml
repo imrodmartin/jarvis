@@ -5,7 +5,6 @@ description: 'Single-column row. Content spans the full width.'
 category: 'Jarvis Layout'
 libraryOverrides:
   dependencies:
-    - jarvis/contrast
     - jarvis/reveal
 props:
   type: object

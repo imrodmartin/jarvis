@@ -42,6 +42,7 @@ props:
       title: 'Button link'
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - '/node/1'
         - 'https://example.com'

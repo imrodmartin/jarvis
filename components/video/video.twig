@@ -12,26 +12,37 @@
 {# Watch/share URLs are normalised to embed URLs so any paste works. Shared with
    video-with-sidebar — see @jarvis/jarvis-video.html.twig. #}
 {% import '@jarvis/jarvis-video.html.twig' as video %}
-{# A Remote video media pick wins; video_url is the fallback (and how a View
-   passes its field value). video_media arrives as the media item's oEmbed URL
-   STRING, not an entity — JarvisCanvasHooks::canvasStorablePropShapeAlter()
-   builds the expression that reads it off field_media_oembed_video. #}
-{% set media_url = video_media|default('') %}
-{% set video_url = media_url ?: (video_url|default('')) %}
-{% set is_file = video.is_file(video_url) is not empty %}
-{% set embed_url = video.embed_url(video_url) %}
+{% import '@jarvis/jarvis-url.html.twig' as safe %}
+{# A Remote video media pick becomes the iframe; video_url is files only.
+   Splitting them is what keeps an arbitrary origin out of the iframe: a hosted
+   player can only arrive through the media library, so the src is always a URL
+   core's oEmbed provider registry already accepted. A player URL pasted into
+   video_url is not a file, so it renders nothing.
+   video_media arrives as the media item's oEmbed URL STRING, not an entity —
+   JarvisCanvasHooks::canvasStorablePropShapeAlter() builds the expression that
+   reads it off field_media_oembed_video. #}
+{% set media_url = safe.url(video_media|default('')) %}
+{% set file_url = safe.url(video_url|default('')) %}
+{% set file_url = video.is_file(file_url) is not empty ? file_url : '' %}
+{% set embed_url = media_url ? video.embed_url(media_url) : '' %}
+{% set captions_url = safe.url(captions_url|default('')) %}
 <div class="{{ container }} {{ space }}">
-  {% if video_url %}
+  {% if embed_url or file_url %}
     <div class="ratio {{ ratio_class }}">
-      {% if is_file %}
+      {% if embed_url %}
+        {# The player needs scripts and its own origin's storage; nothing here
+           needs to navigate the top frame, open windows, submit forms or start
+           downloads, which is what an unsandboxed embed inherits. `autoplay` is
+           not in `allow` — the embed URL never carries autoplay=1, and the
+           autoplay prop drives the native <video> path only. #}
+        <iframe src="{{ embed_url }}" title="{{ title|default('Video'|t) }}" sandbox="allow-scripts allow-same-origin allow-presentation" allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      {% else %}
         {# Autoplay implies muted — browsers block unmuted autoplay. #}
         <video controls preload="metadata"{{ autoplay ? ' autoplay loop playsinline' : '' }}{{ (muted or autoplay) ? ' muted' : '' }}>
-          <source src="{{ video_url }}">
+          <source src="{{ file_url }}">
           {# ADA (WCAG 1.2.2): captions track for the native player. #}
           {% if captions_url %}<track kind="captions" src="{{ captions_url }}" srclang="{{ captions_lang|default('en') }}" label="{{ 'Captions'|t }}" default>{% endif %}
         </video>
-      {% else %}
-        <iframe src="{{ embed_url }}" title="{{ title|default('Video'|t) }}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>
       {% endif %}
     </div>
   {% endif %}

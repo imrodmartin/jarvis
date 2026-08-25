@@ -21,12 +21,12 @@ props:
       # library and narrows the bundles to the site's oEmbed video types.
       x-jarvis-remote-video: true
     video_url:
-      title: 'Video URL'
-      description: 'YouTube/Vimeo embed URL, or a direct .mp4/.webm file URL.'
+      title: 'Video file URL'
+      description: 'A direct .mp4/.webm/.ogv file URL — self-hosted footage, or how a View passes its field value. Hosted players (YouTube/Vimeo) must come from the Remote video field above: that keeps the embed restricted to providers core recognises. A player URL pasted here renders nothing.'
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
-        - 'https://www.youtube.com/embed/aqz-KE-bpKQ'
         - '/sites/default/files/demo.mp4'
     title:
       title: 'Accessible title'
@@ -39,6 +39,7 @@ props:
       description: 'WebVTT (.vtt) captions track for direct video files — required for WCAG when the video has speech. YouTube/Vimeo embeds use their own captions.'
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - '/sites/default/files/demo.vtt'
     captions_lang:

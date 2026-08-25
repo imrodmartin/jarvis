@@ -44,6 +44,11 @@
   inset: 0;
   background: #000;
 }
+/* Black text -> white overlay, so raising it lightens the photo instead of
+   darkening it. One class deeper, to beat the #000 rule above. */
+.jarvis-card--background .jarvis-card__overlay.jarvis-bg__overlay--light {
+  background: #fff;
+}
 /* Text color (background variant): the text_color enum is light | black. */
 .jarvis-card--text-light,
 .jarvis-card--text-light :is(.card-title, .card-text) {
@@ -53,9 +58,11 @@
 .jarvis-card--text-black :is(.card-title, .card-text) {
   color: #000;
 }
-/* Light text -> black region behind the card for guaranteed contrast. A
-   background image, when present, paints over this; js/contrast.js
-   (jarvis/contrast) tunes the overlay opacity to keep light text at WCAG AA. */
+/* Light text -> black region behind the card for guaranteed contrast. This only
+   covers the no-image card: a background image paints straight over it, so with
+   an image the ONLY thing protecting contrast is the overlay opacity, which
+   jarvis_overlay_alpha computes server-side — for black text as much as for
+   light. */
 .jarvis-card--background.jarvis-card--text-light {
   background-color: #000;
 }

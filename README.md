@@ -22,13 +22,22 @@ it on the [published docs site](https://project.pages.drupalcode.org/jarvis).
 - Drupal `^11 || ^12`
 - Docker + [ddev](https://ddev.com) — provides Composer + Drush in-container (the commands below assume it)
 - Contrib modules (pulled automatically by Composer): `canvas`, `canvas_field_component`, `focal_point` (→ `crop`), `twig_tweak`
+- The `jarvis_canvas` module, from `imrodmartin/jarvis-modules` — **required, not
+  optional.** `hero`, `card`, the column shell and `image` call Twig filters it
+  provides (`jarvis_overlay_alpha`, `jarvis_image_style`), and Twig fails to
+  compile them when it is missing. The theme declares it in `jarvis.info.yml`,
+  so Drupal refuses to install the theme without it rather than white-screening
+  later. It also supplies the Remote video media picker and the Basic/Full HTML
+  formats on rich-text props.
 
 ## Install
 
-Register this repo as a Composer VCS source, then require it:
+Register **both** repositories as Composer VCS sources — the theme cannot
+resolve without the modules package — then require the theme:
 
 ```bash
 ddev composer config repositories.jarvis '{"type":"vcs","url":"https://github.com/imrodmartin/jarvis","no-api":true}'
+ddev composer config repositories.jarvis-modules '{"type":"vcs","url":"https://github.com/imrodmartin/jarvis-modules","no-api":true}'
 ddev composer require drupal/jarvis
 ```
 

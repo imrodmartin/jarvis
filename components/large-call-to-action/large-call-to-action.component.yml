@@ -97,6 +97,7 @@ props:
       title: 'Button link'
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - '/node/1'
     link_text:
@@ -109,6 +110,7 @@ props:
       title: 'Link URL'
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - '/node/2'
     padding:

@@ -141,8 +141,8 @@ working theme.</p>
   </tr>
   <tr>
     <td><strong>One custom module</strong><br><code>jarvis_canvas</code></td>
-    <td>The recipe repo, under <code>web/modules/custom</code></td>
-    <td>Behaviour a theme is not allowed to do</td>
+    <td>The recipe repo, under <code>web/modules/custom</code>; shipped as <code>imrodmartin/jarvis-modules</code></td>
+    <td>Behaviour a theme is not allowed to do. Required &mdash; the theme declares it and will not install without it</td>
   </tr>
   <tr>
     <td><strong>The recipe</strong><br><code>recipes/jarvis</code></td>
@@ -177,8 +177,9 @@ working theme.</p>
    reading the CSS custom properties written in step 2
 
 6. Attached JavaScript runs as Drupal behaviors
-   contrast.js measures the background image and raises the overlay
-   until the text passes WCAG AA</div>
+   reveal.js fades sections in as they scroll into view. Image-overlay
+   contrast is NOT among them: it is solved in PHP in step 5, so the
+   text is readable before any script runs</div>
 
 <p>Steps 2 and 5 are the pair that matters. Theme settings do not write CSS files. They write <em>variables</em>, and the stylesheet reads them. That indirection is what lets a site builder change the whole palette without a developer touching a stylesheet.</p>
 
@@ -201,7 +202,6 @@ working theme.</p>
 │   └── canvas-overlay.css    Styles the editor tooling
 ├── js/
 │   ├── wcag.js               The shared contrast engine
-│   ├── contrast.js           Live site: auto raises image overlays
 │   ├── canvas-overlay.js     Editor: overlay slider and contrast badge
 │   └── color-settings.js     Settings form: live contrast badges
 ├── templates/
@@ -785,7 +785,8 @@ props:
     &lt;/div&gt;
   &lt;/div&gt;
 &lt;/section&gt;</code></pre></div>
-<p>Optional polish: a small script can measure the background and <em>raise</em> the overlay opacity when white text would fail WCAG AA contrast, the builder sets a floor, the JS enforces legibility. In Jarvis that engine is shared by the hero and card components: it lives in <code>js/contrast.js</code>, registered as the <code>jarvis/contrast</code> library and attached to each component through <code>libraryOverrides: dependencies:</code> in its <code>*.component.yml</code> (the alternative, SDC auto-loading a same-named JS file per component, would mean duplicating the code).</p>
+<p>The builder sets a floor with the <code>overlay</code> prop and the theme <em>raises</em> it when the text would fail WCAG AA against the photo. Jarvis solves that in PHP, through the <code>jarvis_overlay_alpha</code> Twig filter, so the correct opacity is in the markup on first paint.</p>
+<div class="note box"><span class="t">Why not do this in the browser</span><p>It was a script once, and the script could not be trusted. It downsampled every image to 16&times;16 and scored 4&times;4 blocks, so one block averaged a quarter of the image's width &mdash; far wider than a glyph. Two of this theme's own demo images came back needing <em>no</em> overlay when they really needed about 0.48. It also only ran after the image had loaded, so unreadable text was painted first and corrected afterwards, and a cross-origin image tainted the canvas so it could not sample at all. Reading the file on the server fixes all three at once, and an image that cannot be read falls back to an alpha solved against the worst image that could possibly exist.</p></div>
 <h4 id="image-styles-inside-components">Image styles inside components</h4>
 <p>For the <code>Image</code> component, note the <strong>named image style</strong> trick. Canvas gives you <code>image.src</code> — a finished public URL, not the <code>public://</code> URI a Drupal <strong>image style</strong> (say <code>jarvis_hero_banner</code>) needs — so the <code>jarvis_image_style</code> Twig filter looks the file back up from that URL and builds the derivative anyway. Where a raw file URI <em>is</em> on hand (Person&#x27;s portrait crop, content templates) you use <code>twig_tweak</code>&#x27;s <code>|image_style</code> filter directly. That&#x27;s why the recipe installs <code>twig_tweak</code>, and why image styles like <code>jarvis_hero_banner</code> and <code>wide</code> are shipped as config (Step 11). In a content template, use <code>|image_style</code> in the SDC, <strong>don&#x27;t</strong> try to use a Canvas &quot;adapter&quot; for it (adapters are not allowed inside content templates).</p>
 <p>---</p>
@@ -1212,24 +1213,23 @@ if ($real &amp;&amp; file_exists($real)) {
 
 <div class="codewrap">
   <span class="label">jarvis.libraries.yml</span>
-  <pre><code>contrast:
-  version: 1.0.5
+  <pre><code>reveal:
+  version: 1.x
   js:
-    js/contrast.js: {}
+    js/reveal.js: {}
   dependencies:
-    - jarvis/wcag
     - core/once
     - core/drupal</code></pre>
 </div>
 
 <div class="warn box">
   <span class="t">This is a real bug, not a theoretical one</span>
-  <p>The contrast script originally ran once on <code>DOMContentLoaded</code> with a manual flag. Any section arriving later, from a views pager or a Canvas refresh, kept the editor's raw overlay value with no contrast tuning at all. Which is exactly the case the safety net exists for.</p>
+  <p>Jarvis's overlay-contrast script originally ran once on <code>DOMContentLoaded</code> with a manual flag. Any section arriving later, from a views pager or a Canvas refresh, kept the editor's raw overlay value and was never tuned at all &mdash; exactly the case the safety net existed for. Moving it as a behavior fixed that; moving it to PHP retired the problem.</p>
 </div>
 
 <h3>One engine, several consumers</h3>
 
-<p>Three scripts need WCAG contrast maths: the live site, the Canvas editor badge, and the settings form. Two PHP functions need it too.</p>
+<p>Several places need WCAG contrast maths: the Canvas editor badge, the settings form, and &mdash; since the overlay solver moved server-side &mdash; PHP. <code>js/wcag.js</code> owns the browser copy and <code>OverlayAlpha</code> owns the PHP one; a drift check runs both over the same inputs and fails if they ever disagree.</p>
 
 <p>They started as five copies, and copies drift. One used <code>Math.pow</code> and another <code>**</code>. One took hex strings, another took channel numbers. The 4.5 threshold was written three different ways.</p>
 
@@ -1269,7 +1269,7 @@ if ($real &amp;&amp; file_exists($real)) {
 <p>Consumers take what they need.</p>
 
 <div class="codewrap">
-  <span class="label">js/contrast.js</span>
+  <span class="label">js/canvas-overlay.js</span>
   <pre><code>(function (Drupal, once, wcag) {
   'use strict';
 
@@ -1558,7 +1558,12 @@ if ($real &amp;&amp; file_exists($real)) {
 
 <h3>jarvis_canvas: the Canvas glue</h3>
 
-<p>Four hooks, each solving a specific problem.</p>
+<div class="warn box">
+  <span class="t">The theme does not work without this module</span>
+  <p>It is easy to read &ldquo;glue&rdquo; as optional. It is not. <code>hero</code>, <code>card</code>, the column shell and <code>image</code> all call Twig filters this module registers &mdash; <code>jarvis_overlay_alpha</code> and <code>jarvis_image_style</code> &mdash; and Twig throws <code>Unknown &quot;&hellip;&quot; filter</code> at compile time when they are absent, so the theme white-screens rather than losing a feature. A theme cannot register a Twig extension itself; only a module can. <code>jarvis.info.yml</code> therefore declares <code>dependencies: jarvis_canvas</code>, which makes Drupal refuse to install the theme without it and refuse to uninstall the module while it is on.</p>
+</div>
+
+<p>Four hooks and two Twig filters, each solving a specific problem.</p>
 
 <table>
   <tr><th>Hook</th><th>Job</th></tr>
@@ -1566,6 +1571,8 @@ if ($real &amp;&amp; file_exists($real)) {
   <tr><td><code>node_type_insert</code></td><td>Create a Canvas template for each new content type</td></tr>
   <tr><td><code>node_type_delete</code></td><td>Remove it again, since Drupal will not cascade the delete</td></tr>
   <tr><td><code>rebuild</code></td><td>Organise components into folders in the editor</td></tr>
+  <tr><td><code>jarvis_image_style</code> (filter)</td><td>Apply a named image style to a Canvas image prop, which hands over a finished URL rather than the <code>public://</code> URI a style needs</td></tr>
+  <tr><td><code>jarvis_overlay_alpha</code> (filter)</td><td>Sample a background image on the server and return the overlay opacity that keeps text at WCAG AA</td></tr>
 </table>
 
 <div class="warn box">
@@ -1906,7 +1913,7 @@ ddev drush uli</code></pre></div>
 <div class="codewrap"><span class="label">Calling it from a Twig template</span><pre><code>{{ include(&#x27;jarvis:hero&#x27;, {
   heading: &#x27;Heading&#x27;
 }) }}</code></pre></div>
-<div class="note box"><span class="t">Worth knowing</span><p>Text colour Dark tells the theme the text sits on the bare image, so it skips the overlay entirely. Use it only on genuinely light photos, because nothing auto corrects for you in that mode.</p></div>
+<div class="note box"><span class="t">Worth knowing</span><p>Text colour Dark now gets a <em>white</em> overlay instead of a black one, and the theme raises it until the dark text clears WCAG AA on your photo &mdash; the same auto-correction Light text has always had. The overlay slider is still your floor: the theme only ever raises it, never lowers it. Dark text used to skip the overlay entirely, which left it unreadable on a dark photo.</p></div>
 <h4 id="c-card">Card <code>jarvis:card</code></h4>
 <p class="lede">Flexible card with image at top, left, right, or as background.</p>
 <p><strong>Use it when:</strong> A self contained unit: image, title, short text, and a link.</p>

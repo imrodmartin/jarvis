@@ -64,7 +64,9 @@
 {% set anim = animation|default('none') %}
 {% set anim_class = anim != 'none' ? 'jarvis-reveal jarvis-reveal--' ~ anim : '' %}
 <div class="jarvis-columns jarvis-columns--{{ count }} {{ space }} {{ bg_class }} {{ text_color_class }} {{ anim_class }}"{% if bg_img %} style="background-image: url('{{ background_image.src }}');"{% endif %}>
-  {% if bg_img %}<div class="jarvis-bg__overlay{{ light_text ? '' : ' jarvis-bg__overlay--light' }}" style="opacity: {{ overlay / 100 }};" aria-hidden="true"></div>{% endif %}
+  {# The author's value is a floor; jarvis_overlay_alpha samples the image
+     server-side and raises it to whatever WCAG AA needs. #}
+  {% if bg_img %}<div class="jarvis-bg__overlay{{ light_text ? '' : ' jarvis-bg__overlay--light' }}" style="opacity: {{ background_image.src|jarvis_overlay_alpha(not light_text, overlay / 100) }};" aria-hidden="true"></div>{% endif %}
   <div class="{{ container }}">
     <div class="row {{ gap_class }}">
       {% block columns %}{% endblock %}

@@ -59,9 +59,6 @@
       doc.querySelectorAll(
         '.jarvis-hero[style*="background-image"], .jarvis-card--background[style*="background-image"], .jarvis-columns[style*="background-image"]'
       ).forEach((el) => {
-        // Dark/black text variants sit on the bare image (card forces overlay
-        // to 0 for black text) — scoring them against white text would lie.
-        if (/--text-(dark|black)\b/.test(el.className)) return;
         const m = (el.style.backgroundImage || '').match(/url\(["']?(.*?)["']?\)/);
         if (!m) return;
         const ov = el.querySelector('.jarvis-hero__overlay, .jarvis-card__overlay, .jarvis-bg__overlay');

@@ -5,7 +5,6 @@ description: 'Three columns on desktop, two on tablet, stacked full-width on mob
 category: 'Jarvis Layout'
 libraryOverrides:
   dependencies:
-    - jarvis/contrast
     - jarvis/reveal
 props:
   type: object

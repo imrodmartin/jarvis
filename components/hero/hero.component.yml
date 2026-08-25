@@ -3,9 +3,6 @@ name: Hero
 status: stable
 description: 'Full-width hero banner with heading, subtext, CTA and background image.'
 category: Jarvis
-libraryOverrides:
-  dependencies:
-    - jarvis/contrast
 props:
   type: object
   required:
@@ -40,6 +37,7 @@ props:
       title: 'CTA link'
       type: string
       format: uri-reference
+      x-allowed-schemes: [http, https]
       examples:
         - '/node/1'
         - 'https://example.com'

@@ -15,6 +15,11 @@
   background: #000;
   z-index: 0;
 }
+/* Dark text -> white overlay, so raising it lightens the photo instead of
+   darkening it. Two classes deep, to beat the #000 rule above. */
+.jarvis-hero__overlay.jarvis-bg__overlay--light {
+  background: #fff;
+}
 .jarvis-hero__inner {
   z-index: 1;
 }
@@ -41,9 +46,11 @@
   color: #000;
 }
 /* Light text -> whole region black for guaranteed contrast. Comes after the
-   gradient rule above so it wins the specificity tie. A background image, when
-   present, still paints over this and is handled by the overlay tuned in
-   js/contrast.js (jarvis/contrast). */
+   gradient rule above so it wins the specificity tie. This only covers the
+   no-image hero: a background image paints straight over it, so with an image
+   the ONLY thing protecting contrast is the overlay opacity, which
+   jarvis_overlay_alpha computes server-side — for dark text as much as for
+   light. */
 .jarvis-hero--text-light {
   background-color: #000;
 }
