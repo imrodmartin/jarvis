@@ -10,7 +10,7 @@
     },
     "require": {
         "php": ">=8.3",
-        "imrodmartin/jarvis-modules": "^2.0",
+        "imrodmartin/jarvis-modules": "^2.1",
         "drupal/canvas": "^1.8",
         "drupal/canvas_field_component": "^1.0",
         "drupal/focal_point": "^2.1",
