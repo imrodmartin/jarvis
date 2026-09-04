@@ -126,7 +126,12 @@ props:
     vertical_padding:
       title: 'Vertical padding (30px)'
       type: boolean
-      default: false
+      default: true
+      # Canvas seeds a placed component's stored value from examples[0], not
+      # from `default` — a prop with no examples arrives omitted. Sections are
+      # padded far more often than not, so the columns ship the example.
+      examples:
+        - true
     animation:
       title: 'Scroll animation'
       description: 'Fades the section in as it scrolls into view. Honours the reduced-motion browser setting.'
