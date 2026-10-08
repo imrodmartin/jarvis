@@ -202,7 +202,7 @@ working theme.</p>
 │   └── canvas-overlay.css    Styles the editor tooling
 ├── js/
 │   ├── wcag.js               The shared contrast engine
-│   ├── canvas-overlay.js     Editor: overlay slider and contrast badge
+│   ├── canvas-overlay.js     Editor: opacity sliders and contrast badge
 │   └── color-settings.js     Settings form: live contrast badges
 ├── templates/
 │   ├── page.html.twig                  Region layout
@@ -2073,7 +2073,7 @@ ddev drush uli</code></pre></div>
 <h4 id="c-video-background">Video Background <code>jarvis:video-background</code></h4>
 <p class="lede">Full width band with video playing behind a text card, with separate dimming for the footage and the card.</p>
 <p><strong>Use it when:</strong> A moving hero at the top of a landing page.</p>
-<p>Two opacity controls, because they solve different problems. <code>overlay</code> dims the footage so it stops competing with the words. <code>box_opacity</code> fades the coloured card behind the text, and the text on top of it stays fully opaque either way, so readability holds even at a low value.</p>
+<p>Two opacity controls, because they solve different problems. <code>overlay</code> dims the footage so it stops competing with the words. <code>box_opacity</code> fades the coloured card behind the text, and the text on top of it stays fully opaque either way, so readability holds even at a low value. Both are 0–100 sliders in the editor; only the dimming one carries the contrast badge.</p>
 <div class="warn box"><span class="t">Uploaded video only, and no sound</span><p>The <code>video</code> prop is bound to the Video media type, an uploaded file, not the remote or oEmbed one. Background footage has to be served from this site, so a YouTube URL will not work here. It plays muted and looped, so pick footage without speech. Anything with dialogue belongs in Video or Video with Sidebar, where it can carry captions.</p></div>
 <div class="good box"><span class="t">A landing page hero</span><ol><li>Add Video Background.</li><li>Upload a short, quiet clip with the media manager.</li><li>Leave Band height on Medium and Background dimming at 30.</li><li>Set Title, then Button text and link.</li></ol></div>
 <h5>Props</h5>
