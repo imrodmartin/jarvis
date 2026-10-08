@@ -1,7 +1,8 @@
 /**
  * Canvas editor: turn every "overlay opacity" number field (prop name
  * `overlay` — hero, card, one/two/three-column) into a 0-100 slider with a
- * live WCAG check. The badge samples the background image(s) rendered in the
+ * live WCAG check. Video Background's `box_opacity` (text card opacity) gets
+ * the same slider without the badge. The badge samples the background image(s) rendered in the
  * preview iframe, composites the overlay at the slider value, and shows
  * ✓ when text still clears WCAG AA (4.5:1) or ✗ when it doesn't.
  *
@@ -116,6 +117,41 @@
     input.type === 'number'
     && (input.name === 'overlay' || /\[overlay\]($|\[)/.test(input.name || ''));
 
+  // Plain 0-100 slider, no WCAG badge: the text sits on the card, not on it.
+  const isBoxOpacityField = (input) =>
+    input.type === 'number'
+    && (input.name === 'box_opacity' || /\[box_opacity\]($|\[)/.test(input.name || ''));
+
+  const plainSlider = (num, emptyDefault, label) => {
+    num.setAttribute('data-jarvis-overlay-hidden', '');
+    const wrap = document.createElement('div');
+    wrap.className = 'jarvis-overlay-slider';
+    const range = document.createElement('input');
+    range.type = 'range';
+    range.min = 0;
+    range.max = 100;
+    range.step = 1;
+    range.value = num.value === '' ? emptyDefault : num.value;
+    range.setAttribute('aria-label', label);
+    const readout = document.createElement('span');
+    readout.className = 'jarvis-overlay-readout';
+    readout.textContent = `${range.value}%`;
+    wrap.append(range, readout);
+    num.insertAdjacentElement('afterend', wrap);
+    range.addEventListener('input', () => {
+      readout.textContent = `${range.value}%`;
+      setValue.call(num, range.value);
+      num.dispatchEvent(new Event('input', { bubbles: true }));
+      num.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    num.addEventListener('input', () => {
+      if (num.value !== '' && num.value !== range.value) {
+        range.value = num.value;
+        readout.textContent = `${range.value}%`;
+      }
+    });
+  };
+
   const enhance = (num) => {
     num.setAttribute('data-jarvis-overlay-hidden', '');
 
@@ -208,6 +244,10 @@
   const scan = () => {
     document.querySelectorAll('input[type="number"]').forEach((input) => {
       if (isOverlayField(input) && once('jarvis-overlay', input).length) enhance(input);
+      // video-background.twig defaults an empty box_opacity to 85.
+      if (isBoxOpacityField(input) && once('jarvis-overlay', input).length) {
+        plainSlider(input, 85, Drupal.t('Text card opacity (%)'));
+      }
     });
     refreshers.forEach((refresh) => refresh());
   };

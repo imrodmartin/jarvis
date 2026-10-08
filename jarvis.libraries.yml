@@ -62,7 +62,7 @@ canvas-tray-autoexpand:
 # Loaded onto the Canvas editor via libraries-extend (see jarvis.info.yml).
 # Overlay-opacity slider + live WCAG ✓/✗ badge on component prop forms.
 canvas-overlay:
-  version: 1.0.8
+  version: 1.0.9
   css:
     theme:
       css/canvas-overlay.css: {}
