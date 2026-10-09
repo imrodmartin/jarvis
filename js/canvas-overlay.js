@@ -123,12 +123,14 @@
     && (input.name === 'box_opacity' || /\[box_opacity\]($|\[)/.test(input.name || ''));
 
   // 3 Columns (custom widths): width_first/second/third, empty = Twig default.
+  // Snaps to 5% steps: exact values like 33 are fiddly to hit, and the Twig
+  // scales the three to 100% anyway.
   const COLUMN_WIDTHS = { width_first: 25, width_second: 50, width_third: 25 };
   const columnWidthProp = (input) => input.type === 'number'
     && Object.keys(COLUMN_WIDTHS).find((p) =>
       input.name === p || new RegExp(`\\[${p}\\]($|\\[)`).test(input.name || ''));
 
-  const plainSlider = (num, emptyDefault, label) => {
+  const plainSlider = (num, emptyDefault, label, step = 1) => {
     num.setAttribute('data-jarvis-overlay-hidden', '');
     const wrap = document.createElement('div');
     wrap.className = 'jarvis-overlay-slider';
@@ -136,7 +138,7 @@
     range.type = 'range';
     range.min = 0;
     range.max = 100;
-    range.step = 1;
+    range.step = step;
     range.value = num.value === '' ? emptyDefault : num.value;
     range.setAttribute('aria-label', label);
     const readout = document.createElement('span');
@@ -258,7 +260,7 @@
       if (widthProp && once('jarvis-overlay', input).length) {
         plainSlider(input, COLUMN_WIDTHS[widthProp], Drupal.t('Column @n width (%)', {
           '@n': Object.keys(COLUMN_WIDTHS).indexOf(widthProp) + 1,
-        }));
+        }), 5);
       }
     });
     refreshers.forEach((refresh) => refresh());
