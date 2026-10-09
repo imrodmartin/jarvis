@@ -1208,7 +1208,7 @@ slots:
             <span class="comp__id">jarvis:custom-columns</span>
             <span class="chip chip--layout">Jarvis Layout</span>
           </div>
-          <p class="comp__desc">Block layout inside Canvas: three columns whose desktop widths are set as percentages with sliders. Widths are proportions, scaled to fill 100% if they don&#x27;t add up. A 0% column isn&#x27;t rendered and the others share its space, the way an empty sidebar region collapses. All three at 0 falls back to even thirds. Stacked full-width below 992px.</p>
+          <p class="comp__desc">Block layout inside Canvas: three columns whose desktop widths are set as percentages with sliders. Widths are proportions, scaled to fill 100% if they don&#x27;t add up. A 0% column isn&#x27;t rendered and the others share its space, the way an empty sidebar region collapses. A column with nothing in it collapses the same way on the live page; in the editor it stays visible so you can drop into it. All three at 0 falls back to even thirds. Stacked full-width below 992px.</p>
           <div class="badges"><a class="badge" href="#backgrounds">＋ background &amp; contrast system</a><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
           <p class="subhead">Unique props</p>
           <div class="table-scroll"><table>
@@ -1406,8 +1406,9 @@ slots:
  * Canvas can&#x27;t validate one prop against another, so the widths are treated as
  * proportions: each is divided by the total and scaled to 100%. 25/50/25 and
  * 1/2/1 render the same. A 0% column is not rendered at all and the others
- * share its space, the way an empty sidebar region collapses. All three at 0
- * falls back to even thirds. Below lg every visible column stacks full width.
+ * share its space, the way an empty sidebar region collapses. A column with
+ * nothing in it collapses the same way. All three at 0 (or all empty) falls
+ * back to even thirds. Below lg every visible column stacks full width.
  *
  * Wrapper, background, ADA text colour and overlay live in the shared shell —
  * see @jarvis/jarvis-columns-shell.html.twig.
@@ -1418,18 +1419,36 @@ slots:
   max(0, width_second is defined ? width_second : 50),
   max(0, width_third is defined ? width_third : 25),
 ] %}
+{# An empty slot counts as 0%. |render works on a copy (renderVar takes its
+   argument by value), so the slot is still printed below. In the Canvas
+   editor an empty slot renders the drop-zone placeholder, so it is never
+   empty there and stays visible to drop into; only the front end collapses. #}
+{% set filled = [first|render|trim is not empty, second|render|trim is not empty, third|render|trim is not empty] %}
+{% set widths = [filled[0] ? widths[0] : 0, filled[1] ? widths[1] : 0, filled[2] ? widths[2] : 0] %}
 {% set total = widths|reduce((sum, w) =&gt; sum + w, 0) %}
 {% if total == 0 %}{% set widths = [1, 1, 1] %}{% set total = 3 %}{% endif %}
-{% set slots = [first, second, third] %}
+{# Each slot is printed by name, not through a list: Canvas&#x27;s Twig node
+   visitor only wraps a direct {{ first }} print with the slot markers the
+   editor needs for its drop zones. Print it via a variable and the column
+   renders but nothing can be dragged into it. #}
+{% set pct = widths|map(w =&gt; (w / total * 100)|round(4)) %}
 {% embed &#x27;@jarvis/jarvis-columns-shell.html.twig&#x27; with { count: 3 } %}
   {% block columns %}
-    {% for i in 0..2 %}
-      {% if widths[i] &gt; 0 %}
-        &lt;div class=&quot;col-12 jarvis-col-pct&quot; style=&quot;--jarvis-col-w: {{ (widths[i] / total * 100)|round(4) }}%;&quot;&gt;
-          {{ slots[i] }}
-        &lt;/div&gt;
-      {% endif %}
-    {% endfor %}
+    {% if pct[0] &gt; 0 %}
+      &lt;div class=&quot;col-12 jarvis-col-pct&quot; style=&quot;--jarvis-col-w: {{ pct[0] }}%;&quot;&gt;
+        {{ first }}
+      &lt;/div&gt;
+    {% endif %}
+    {% if pct[1] &gt; 0 %}
+      &lt;div class=&quot;col-12 jarvis-col-pct&quot; style=&quot;--jarvis-col-w: {{ pct[1] }}%;&quot;&gt;
+        {{ second }}
+      &lt;/div&gt;
+    {% endif %}
+    {% if pct[2] &gt; 0 %}
+      &lt;div class=&quot;col-12 jarvis-col-pct&quot; style=&quot;--jarvis-col-w: {{ pct[2] }}%;&quot;&gt;
+        {{ third }}
+      &lt;/div&gt;
+    {% endif %}
   {% endblock %}
 {% endembed %}
 </code></pre></div>
