@@ -158,6 +158,13 @@ blockquote > :last-child {
 .jarvis-columns .row { margin-top: 0; row-gap: var(--bs-gutter-y); }
 .jarvis-columns .row > * { margin-top: 0; }
 
+/* 3 Columns (custom widths): each col carries its own share as --jarvis-col-w,
+   already normalised to sum to 100% in custom-columns.twig. Gutters are col
+   padding, so the percentages add up exactly. Stacked (col-12) below lg. */
+@media (min-width: 992px) {
+  .jarvis-col-pct { flex: 0 0 var(--jarvis-col-w); max-width: var(--jarvis-col-w); }
+}
+
 /* Primary menu. templates/menu--main.html.twig emits Bootstrap navbar markup,
    so the dropdown panel and its open/close, keyboard navigation, Escape and
    click-outside dismissal all come from the already-loaded bundle. What is left

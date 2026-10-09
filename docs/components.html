@@ -314,6 +314,7 @@
         <a href="#one-column">1 Column</a>
         <a href="#two-column">2 Columns</a>
         <a href="#three-column">3 Columns</a>
+        <a href="#custom-columns">3 Columns (custom widths)</a>
         <a href="#card-full-image">Card Full Image</a>
       </div>
       <div class="nav-group">
@@ -1197,6 +1198,241 @@ slots:
     &lt;/div&gt;
   {% endblock %}
 {% endembed %}</code></pre></div>
+</details>
+        </article>
+
+        <!-- CUSTOM COLUMNS -->
+        <article class="comp" id="custom-columns">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">3 Columns (custom widths)</h3>
+            <span class="comp__id">jarvis:custom-columns</span>
+            <span class="chip chip--layout">Jarvis Layout</span>
+          </div>
+          <p class="comp__desc">Block layout inside Canvas: three columns whose desktop widths are set as percentages with sliders. Widths are proportions, scaled to fill 100% if they don&#x27;t add up. A 0% column isn&#x27;t rendered and the others share its space, the way an empty sidebar region collapses. All three at 0 falls back to even thirds. Stacked full-width below 992px.</p>
+          <div class="badges"><a class="badge" href="#backgrounds">＋ background &amp; contrast system</a><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">Unique props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">width_first</span></td><td><span class="ptype">integer</span></td><td><span class="pdef">25</span></td><td class="desc-cell">Column 1 share of the row, 0–100. 0 hides the column.</td></tr>
+              <tr><td class="prop"><span class="pname">width_second</span></td><td><span class="ptype">integer</span></td><td><span class="pdef">50</span></td><td class="desc-cell">Column 2 share of the row, 0–100. 0 hides the column.</td></tr>
+              <tr><td class="prop"><span class="pname">width_third</span></td><td><span class="ptype">integer</span></td><td><span class="pdef">25</span></td><td class="desc-cell">Column 3 share of the row, 0–100. 0 hides the column.</td></tr>
+            </tbody>
+          </table></div>
+          <p class="comp__desc" style="margin-top:-6px">Plus the full <a href="#backgrounds">background &amp; contrast</a> set and standard spacing.</p>
+          <p class="subhead">Slots</p>
+          <div class="slots">
+            <div class="slot"><span class="slot__name">first</span><span class="slot__desc">Column 1.</span></div>
+            <div class="slot"><span class="slot__name">second</span><span class="slot__desc">Column 2.</span></div>
+            <div class="slot"><span class="slot__name">third</span><span class="slot__desc">Column 3.</span></div>
+          </div>
+<details class="src">
+<summary>&lt;/&gt; Source · 2 files</summary>
+<div class="srcfile"><div class="srcfile__name">custom-columns.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: &#x27;3 Columns (custom widths)&#x27;
+status: stable
+description: &#x27;Three columns with editor-set percentage widths on desktop, stacked on smaller screens. A 0% column collapses, like an empty Block layout sidebar.&#x27;
+category: &#x27;Jarvis Layout&#x27;
+libraryOverrides:
+  dependencies:
+    - jarvis/reveal
+props:
+  type: object
+  properties:
+    width:
+      title: &#x27;Section width&#x27;
+      type: string
+      enum: [boxed, full]
+      &#x27;meta:enum&#x27;:
+        boxed: &#x27;Boxed (centred)&#x27;
+        full: &#x27;Full width&#x27;
+      default: boxed
+    background:
+      title: &#x27;Background colour&#x27;
+      type: string
+      enum: [none, primary, secondary, bg1, bg2, dark, light, image]
+      &#x27;meta:enum&#x27;:
+        none: None
+        primary: Primary
+        secondary: Secondary
+        bg1: &#x27;Background 1&#x27;
+        bg2: &#x27;Background 2&#x27;
+        dark: &#x27;Dark (#1a1a1a)&#x27;
+        light: &#x27;Light (#f5f5f5)&#x27;
+        image: &#x27;Image (select below)&#x27;
+      default: none
+      examples:
+        - none
+    background_image:
+      title: &#x27;Background image&#x27;
+      $ref: json-schema-definitions://canvas.module/image
+    overlay:
+      title: &#x27;Image overlay opacity (%)&#x27;
+      type: integer
+      minimum: 0
+      maximum: 100
+      default: 45
+    text_color:
+      title: &#x27;Text colour (overrides child components)&#x27;
+      description: &#x27;Ignored on Background 1 and Background 2. Those are arbitrary theme-setting colours, so the text colour there is computed automatically to meet WCAG AA contrast and cannot be overridden.&#x27;
+      type: string
+      enum: [inherit, primary, secondary, black, white]
+      &#x27;meta:enum&#x27;:
+        inherit: Default
+        primary: Primary
+        secondary: Secondary
+        black: Black
+        white: White
+      default: inherit
+      examples:
+        - inherit
+    width_first:
+      title: &#x27;Column 1 width (%)&#x27;
+      description: &#x27;The three widths should add up to 100. If they do not, they are scaled to fit. 0 hides the column.&#x27;
+      type: integer
+      minimum: 0
+      maximum: 100
+      default: 25
+      examples:
+        - 25
+    width_second:
+      title: &#x27;Column 2 width (%)&#x27;
+      type: integer
+      minimum: 0
+      maximum: 100
+      default: 50
+      examples:
+        - 50
+    width_third:
+      title: &#x27;Column 3 width (%)&#x27;
+      type: integer
+      minimum: 0
+      maximum: 100
+      default: 25
+      examples:
+        - 25
+    gap:
+      title: &#x27;Column gap&#x27;
+      type: string
+      enum: [none, small, normal, large]
+      &#x27;meta:enum&#x27;:
+        none: None
+        small: Small
+        normal: Normal
+        large: Large
+      default: normal
+      examples:
+        - normal
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      &#x27;meta:enum&#x27;:
+        none: None
+        all: &#x27;All sides&#x27;
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: &#x27;Padding size&#x27;
+      type: string
+      enum: [small, medium, large]
+      &#x27;meta:enum&#x27;:
+        small: &#x27;Small (10px)&#x27;
+        medium: &#x27;Medium (20px)&#x27;
+        large: &#x27;Large (30px)&#x27;
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      &#x27;meta:enum&#x27;:
+        none: None
+        all: &#x27;All sides&#x27;
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: &#x27;Margin size&#x27;
+      type: string
+      enum: [small, medium, large]
+      &#x27;meta:enum&#x27;:
+        small: &#x27;Small (10px)&#x27;
+        medium: &#x27;Medium (20px)&#x27;
+        large: &#x27;Large (30px)&#x27;
+      default: medium
+    vertical_padding:
+      title: &#x27;Vertical padding (30px)&#x27;
+      type: boolean
+      default: true
+      # Canvas seeds a placed component&#x27;s stored value from examples[0], not
+      # from `default` — a prop with no examples arrives omitted. Sections are
+      # padded far more often than not, so the columns ship the example.
+      examples:
+        - true
+    animation:
+      title: &#x27;Scroll animation&#x27;
+      description: &#x27;Fades the section in as it scrolls into view. Honours the reduced-motion browser setting.&#x27;
+      type: string
+      enum: [none, right, left]
+      &#x27;meta:enum&#x27;:
+        none: None
+        right: &#x27;Fade from right&#x27;
+        left: &#x27;Fade from left&#x27;
+      default: none
+      examples:
+        - none
+slots:
+  first:
+    title: &#x27;Column 1&#x27;
+    description: &#x27;First column.&#x27;
+  second:
+    title: &#x27;Column 2&#x27;
+    description: &#x27;Second column.&#x27;
+  third:
+    title: &#x27;Column 3&#x27;
+    description: &#x27;Third column.&#x27;
+</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">custom-columns.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis 3-column layout with editor-set percentage widths — the Canvas
+ * stand-in for a Block layout page (sidebar / content / sidebar).
+ *
+ * Canvas can&#x27;t validate one prop against another, so the widths are treated as
+ * proportions: each is divided by the total and scaled to 100%. 25/50/25 and
+ * 1/2/1 render the same. A 0% column is not rendered at all and the others
+ * share its space, the way an empty sidebar region collapses. All three at 0
+ * falls back to even thirds. Below lg every visible column stacks full width.
+ *
+ * Wrapper, background, ADA text colour and overlay live in the shared shell —
+ * see @jarvis/jarvis-columns-shell.html.twig.
+ */
+#}
+{% set widths = [
+  max(0, width_first is defined ? width_first : 25),
+  max(0, width_second is defined ? width_second : 50),
+  max(0, width_third is defined ? width_third : 25),
+] %}
+{% set total = widths|reduce((sum, w) =&gt; sum + w, 0) %}
+{% if total == 0 %}{% set widths = [1, 1, 1] %}{% set total = 3 %}{% endif %}
+{% set slots = [first, second, third] %}
+{% embed &#x27;@jarvis/jarvis-columns-shell.html.twig&#x27; with { count: 3 } %}
+  {% block columns %}
+    {% for i in 0..2 %}
+      {% if widths[i] &gt; 0 %}
+        &lt;div class=&quot;col-12 jarvis-col-pct&quot; style=&quot;--jarvis-col-w: {{ (widths[i] / total * 100)|round(4) }}%;&quot;&gt;
+          {{ slots[i] }}
+        &lt;/div&gt;
+      {% endif %}
+    {% endfor %}
+  {% endblock %}
+{% endembed %}
+</code></pre></div>
 </details>
         </article>
 

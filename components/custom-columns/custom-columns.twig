@@ -1,0 +1,35 @@
+{#
+/**
+ * @file
+ * Jarvis 3-column layout with editor-set percentage widths — the Canvas
+ * stand-in for a Block layout page (sidebar / content / sidebar).
+ *
+ * Canvas can't validate one prop against another, so the widths are treated as
+ * proportions: each is divided by the total and scaled to 100%. 25/50/25 and
+ * 1/2/1 render the same. A 0% column is not rendered at all and the others
+ * share its space, the way an empty sidebar region collapses. All three at 0
+ * falls back to even thirds. Below lg every visible column stacks full width.
+ *
+ * Wrapper, background, ADA text colour and overlay live in the shared shell —
+ * see @jarvis/jarvis-columns-shell.html.twig.
+ */
+#}
+{% set widths = [
+  max(0, width_first is defined ? width_first : 25),
+  max(0, width_second is defined ? width_second : 50),
+  max(0, width_third is defined ? width_third : 25),
+] %}
+{% set total = widths|reduce((sum, w) => sum + w, 0) %}
+{% if total == 0 %}{% set widths = [1, 1, 1] %}{% set total = 3 %}{% endif %}
+{% set slots = [first, second, third] %}
+{% embed '@jarvis/jarvis-columns-shell.html.twig' with { count: 3 } %}
+  {% block columns %}
+    {% for i in 0..2 %}
+      {% if widths[i] > 0 %}
+        <div class="col-12 jarvis-col-pct" style="--jarvis-col-w: {{ (widths[i] / total * 100)|round(4) }}%;">
+          {{ slots[i] }}
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endblock %}
+{% endembed %}

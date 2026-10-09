@@ -2,7 +2,7 @@
  * Canvas editor: turn every "overlay opacity" number field (prop name
  * `overlay` — hero, card, one/two/three-column) into a 0-100 slider with a
  * live WCAG check. Video Background's `box_opacity` (text card opacity) gets
- * the same slider without the badge. The badge samples the background image(s) rendered in the
+ * the same slider without the badge, as do the custom-columns width_* props. The badge samples the background image(s) rendered in the
  * preview iframe, composites the overlay at the slider value, and shows
  * ✓ when text still clears WCAG AA (4.5:1) or ✗ when it doesn't.
  *
@@ -121,6 +121,12 @@
   const isBoxOpacityField = (input) =>
     input.type === 'number'
     && (input.name === 'box_opacity' || /\[box_opacity\]($|\[)/.test(input.name || ''));
+
+  // 3 Columns (custom widths): width_first/second/third, empty = Twig default.
+  const COLUMN_WIDTHS = { width_first: 25, width_second: 50, width_third: 25 };
+  const columnWidthProp = (input) => input.type === 'number'
+    && Object.keys(COLUMN_WIDTHS).find((p) =>
+      input.name === p || new RegExp(`\\[${p}\\]($|\\[)`).test(input.name || ''));
 
   const plainSlider = (num, emptyDefault, label) => {
     num.setAttribute('data-jarvis-overlay-hidden', '');
@@ -247,6 +253,12 @@
       // video-background.twig defaults an empty box_opacity to 85.
       if (isBoxOpacityField(input) && once('jarvis-overlay', input).length) {
         plainSlider(input, 85, Drupal.t('Text card opacity (%)'));
+      }
+      const widthProp = columnWidthProp(input);
+      if (widthProp && once('jarvis-overlay', input).length) {
+        plainSlider(input, COLUMN_WIDTHS[widthProp], Drupal.t('Column @n width (%)', {
+          '@n': Object.keys(COLUMN_WIDTHS).indexOf(widthProp) + 1,
+        }));
       }
     });
     refreshers.forEach((refresh) => refresh());
