@@ -6,6 +6,9 @@
  * image on top when stacked on mobile.
  */
 #}
+{# Alt text: Decorative wins (empty alt); else the per-placement override when
+   it has text; else the media item's alt. #}
+{% set img_alt = decorative|default(false) ? '' : (alt_override|default(false) and alt_text|default('')|trim ? alt_text|trim : image.alt|default('')) %}
 {% set bg = background|default('none') %}
 {# Reuse the section colour classes for background + ADA-safe text vars, but WITHOUT
    the .jarvis-bg padding wrapper so the image still bleeds to the edges. #}
@@ -19,7 +22,7 @@
       {# ponytail: reuses .jarvis-image__img so the existing fill/fade CSS applies unchanged.
          Prop wins when set; the slot stays for instances placed before the prop existed. #}
       {% if image.src is defined and image.src %}
-        <img class="jarvis-image__img" src="{{ image.src }}" alt="{{ image.alt|default('') }}"{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %} loading="lazy">
+        <img class="jarvis-image__img" src="{{ image.src }}" alt="{{ img_alt }}"{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %} loading="lazy">
       {% else %}
         {{ media }}
       {% endif %}

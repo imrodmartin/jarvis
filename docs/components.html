@@ -1469,6 +1469,9 @@ slots:
             <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
             <tbody>
               <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Pick the image here directly. Leave it empty if you'd rather drop an <a href="#image">Image</a> component into the <code>media</code> slot instead.</td></tr>
+              <tr><td class="prop"><span class="pname">decorative</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Decorative Image. Hides the image from screen readers by rendering an empty alt. Wins over the override below.</td></tr>
+              <tr><td class="prop"><span class="pname">alt_override</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Override alt text. Use the <code>alt_text</code> below for this placement instead of the alt saved on the media item.</td></tr>
+              <tr><td class="prop"><span class="pname">alt_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Alt text for this placement. Used only when <code>alt_override</code> is on; left empty, the media alt still applies.</td></tr>
               <tr><td class="prop"><span class="pname">image_right</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Put the image on the right at desktop width. On mobile the image always sits on top.</td></tr>
               <tr><td class="prop"><span class="pname">fade_edge</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Softly fade the image's inner edge into the text column.</td></tr>
               <tr><td class="prop"><span class="pname">background</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">none</span></td><td class="desc-cell">Band background colour (reuses the section colours, with ADA-safe text).<span class="enum-list"><span class="enum enum--def">none</span><span class="enum">primary</span><span class="enum">secondary</span><span class="enum">bg1</span><span class="enum">bg2</span><span class="enum">dark</span><span class="enum">light</span></span></td></tr>
@@ -1498,6 +1501,20 @@ props:
           alt: &#x27;Jarvis theme banner&#x27;
           width: 1774
           height: 887
+    decorative:
+      title: &#x27;Decorative Image&#x27;
+      description: &#x27;Hide this image from screen readers (empty alt text). Use for images that add no information.&#x27;
+      type: boolean
+      default: false
+    alt_override:
+      title: &#x27;Override alt text&#x27;
+      description: &#x27;Use the alt text below for this placement instead of the one saved on the media item.&#x27;
+      type: boolean
+      default: false
+    alt_text:
+      title: &#x27;Alt text&#x27;
+      description: &#x27;Used only when &quot;Override alt text&quot; is on. Leave empty to keep the media alt text.&#x27;
+      type: string
     image_right:
       title: &#x27;Image on right&#x27;
       type: boolean
@@ -1538,6 +1555,9 @@ slots:
  * image on top when stacked on mobile.
  */
 #}
+{# Alt text: Decorative wins (empty alt); else the per-placement override when
+   it has text; else the media item&#x27;s alt. #}
+{% set img_alt = decorative|default(false) ? &#x27;&#x27; : (alt_override|default(false) and alt_text|default(&#x27;&#x27;)|trim ? alt_text|trim : image.alt|default(&#x27;&#x27;)) %}
 {% set bg = background|default(&#x27;none&#x27;) %}
 {# Reuse the section colour classes for background + ADA-safe text vars, but WITHOUT
    the .jarvis-bg padding wrapper so the image still bleeds to the edges. #}
@@ -1551,7 +1571,7 @@ slots:
       {# ponytail: reuses .jarvis-image__img so the existing fill/fade CSS applies unchanged.
          Prop wins when set; the slot stays for instances placed before the prop existed. #}
       {% if image.src is defined and image.src %}
-        &lt;img class=&quot;jarvis-image__img&quot; src=&quot;{{ image.src }}&quot; alt=&quot;{{ image.alt|default(&#x27;&#x27;) }}&quot;{% if image.width %} width=&quot;{{ image.width }}&quot;{% endif %}{% if image.height %} height=&quot;{{ image.height }}&quot;{% endif %} loading=&quot;lazy&quot;&gt;
+        &lt;img class=&quot;jarvis-image__img&quot; src=&quot;{{ image.src }}&quot; alt=&quot;{{ img_alt }}&quot;{% if image.width %} width=&quot;{{ image.width }}&quot;{% endif %}{% if image.height %} height=&quot;{{ image.height }}&quot;{% endif %} loading=&quot;lazy&quot;&gt;
       {% else %}
         {{ media }}
       {% endif %}
@@ -2765,6 +2785,9 @@ props:
               <tr><td class="prop"><span class="pname">heading_level</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">h3</span></td><td class="desc-cell">The card title is styled as a heading, so it is one in the markup too. Match the page outline.<span class="enum-list"><span class="enum">h2</span><span class="enum enum--def">h3</span><span class="enum">h4</span></span></td></tr>
               <tr><td class="prop"><span class="pname">variant</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">image-top</span></td><td class="desc-cell">Where the image goes.<span class="enum-list"><span class="enum enum--def">image-top</span><span class="enum">image-left</span><span class="enum">image-right</span><span class="enum">background</span></span></td></tr>
               <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The card image.</td></tr>
+              <tr><td class="prop"><span class="pname">decorative</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Decorative Image. Hides the image from screen readers by rendering an empty alt. Wins over the override below.</td></tr>
+              <tr><td class="prop"><span class="pname">alt_override</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Override alt text. Use the <code>alt_text</code> below for this placement instead of the alt saved on the media item.</td></tr>
+              <tr><td class="prop"><span class="pname">alt_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Alt text for this placement. Used only when <code>alt_override</code> is on; left empty, the media alt still applies.</td></tr>
               <tr><td class="prop"><span class="pname">body</span></td><td><span class="ptype">html</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Short supporting copy.</td></tr>
               <tr><td class="prop"><span class="pname">link_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Link label (needs a URL too).</td></tr>
               <tr><td class="prop"><span class="pname">link_href</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Link destination.</td></tr>
@@ -2821,6 +2844,20 @@ props:
     image:
       title: Image
       $ref: json-schema-definitions://canvas.module/image
+    decorative:
+      title: &#x27;Decorative Image&#x27;
+      description: &#x27;Hide this image from screen readers (empty alt text). Use for images that add no information.&#x27;
+      type: boolean
+      default: false
+    alt_override:
+      title: &#x27;Override alt text&#x27;
+      description: &#x27;Use the alt text below for this placement instead of the one saved on the media item.&#x27;
+      type: boolean
+      default: false
+    alt_text:
+      title: &#x27;Alt text&#x27;
+      description: &#x27;Used only when &quot;Override alt text&quot; is on. Leave empty to keep the media alt text.&#x27;
+      type: string
     title:
       title: Title
       type: string
@@ -2912,7 +2949,12 @@ props:
  * Jarvis card SDC — four image layouts via the `variant` prop.
  */
 #}
+{# Alt text: Decorative wins (empty alt); else the per-placement override when
+   it has text; else the media item&#x27;s alt. #}
+{% set img_alt = decorative|default(false) ? &#x27;&#x27; : (alt_override|default(false) and alt_text|default(&#x27;&#x27;)|trim ? alt_text|trim : image.alt|default(&#x27;&#x27;)) %}
 {% import &#x27;@jarvis/jarvis-spacing.html.twig&#x27; as jarvis %}
+{% import &#x27;@jarvis/jarvis-url.html.twig&#x27; as safe %}
+{% set link_href = safe.url(link_href|default(&#x27;&#x27;)) %}
 {% set space = jarvis.classes(padding|default(&#x27;none&#x27;), padding_size|default(&#x27;medium&#x27;), margin|default(&#x27;none&#x27;), margin_size|default(&#x27;medium&#x27;), (vertical_padding is defined ? vertical_padding : false)) %}
 {% set variant = variant|default(&#x27;image-top&#x27;) %}
 {# ADA (WCAG 1.3.1): heading level is a prop so cards can slot into the page&#x27;s
@@ -2945,7 +2987,7 @@ props:
     &lt;div class=&quot;row g-0 {{ variant == &#x27;image-right&#x27; ? &#x27;flex-md-row-reverse&#x27; : &#x27;&#x27; }}&quot;&gt;
       {% if has_image %}
         &lt;div class=&quot;col-md-5&quot;&gt;
-          &lt;img src=&quot;{{ image.src }}&quot; alt=&quot;{{ image.alt|default(&#x27;&#x27;) }}&quot; class=&quot;jarvis-card__img jarvis-card__img--side w-100 h-100&quot;&gt;
+          &lt;img src=&quot;{{ image.src }}&quot; alt=&quot;{{ img_alt }}&quot; class=&quot;jarvis-card__img jarvis-card__img--side w-100 h-100&quot;&gt;
         &lt;/div&gt;
       {% endif %}
       &lt;div class=&quot;{{ has_image ? &#x27;col-md-7&#x27; : &#x27;col-12&#x27; }}&quot;&gt;
@@ -2959,7 +3001,7 @@ props:
   &lt;/div&gt;
 {% else %}
   &lt;div class=&quot;{{ base }}&quot;&gt;
-    {% if has_image %}&lt;img src=&quot;{{ image.src }}&quot; alt=&quot;{{ image.alt|default(&#x27;&#x27;) }}&quot; class=&quot;card-img-top jarvis-card__img&quot;&gt;{% endif %}
+    {% if has_image %}&lt;img src=&quot;{{ image.src }}&quot; alt=&quot;{{ img_alt }}&quot; class=&quot;card-img-top jarvis-card__img&quot;&gt;{% endif %}
     &lt;div class=&quot;card-body&quot;&gt;
       {% if title %}&lt;{{ h }} class=&quot;card-title h4&quot;&gt;{{ title }}&lt;/{{ h }}&gt;{% endif %}
       {% if body %}&lt;div class=&quot;card-text&quot;&gt;{{ body|raw }}&lt;/div&gt;{% endif %}
@@ -3052,6 +3094,9 @@ props:
             <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
             <tbody>
               <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The image file.</td></tr>
+              <tr><td class="prop"><span class="pname">decorative</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Decorative Image. Hides the image from screen readers by rendering an empty alt. Wins over the override below.</td></tr>
+              <tr><td class="prop"><span class="pname">alt_override</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Override alt text. Use the <code>alt_text</code> below for this placement instead of the alt saved on the media item.</td></tr>
+              <tr><td class="prop"><span class="pname">alt_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Alt text for this placement. Used only when <code>alt_override</code> is on; left empty, the media alt still applies.</td></tr>
               <tr><td class="prop"><span class="pname">image_style</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">original</span></td><td class="desc-cell">Named crop to apply.<span class="enum-list"><span class="enum enum--def">original</span><span class="enum">thumbnail</span><span class="enum">medium</span><span class="enum">large</span><span class="enum">wide</span><span class="enum">jarvis_hero_banner</span></span></td></tr>
               <tr><td class="prop"><span class="pname">caption</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Caption shown beneath the image.</td></tr>
               <tr><td class="prop"><span class="pname">full_width</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Break out to full width instead of the contained measure.</td></tr>
@@ -3078,6 +3123,20 @@ props:
           alt: &#x27;Jarvis theme banner&#x27;
           width: 1774
           height: 887
+    decorative:
+      title: &#x27;Decorative Image&#x27;
+      description: &#x27;Hide this image from screen readers (empty alt text). Use for images that add no information.&#x27;
+      type: boolean
+      default: false
+    alt_override:
+      title: &#x27;Override alt text&#x27;
+      description: &#x27;Use the alt text below for this placement instead of the one saved on the media item.&#x27;
+      type: boolean
+      default: false
+    alt_text:
+      title: &#x27;Alt text&#x27;
+      description: &#x27;Used only when &quot;Override alt text&quot; is on. Leave empty to keep the media alt text.&#x27;
+      type: string
     image_style:
       title: &#x27;Image style&#x27;
       # ponytail: hardcoded enum of site image styles; regenerate if styles change.
@@ -3166,6 +3225,9 @@ props:
  * Jarvis image SDC.
  */
 #}
+{# Alt text: Decorative wins (empty alt); else the per-placement override when
+   it has text; else the media item&#x27;s alt. #}
+{% set img_alt = decorative|default(false) ? &#x27;&#x27; : (alt_override|default(false) and alt_text|default(&#x27;&#x27;)|trim ? alt_text|trim : image.alt|default(&#x27;&#x27;)) %}
 {% import &#x27;@jarvis/jarvis-spacing.html.twig&#x27; as jarvis %}
 {% set space = jarvis.classes(padding|default(&#x27;none&#x27;), padding_size|default(&#x27;medium&#x27;), margin|default(&#x27;none&#x27;), margin_size|default(&#x27;medium&#x27;), (vertical_padding is defined ? vertical_padding : false)) %}
 {% set has_image = image.src is defined and image.src %}
@@ -3179,7 +3241,7 @@ props:
 {% set mh_class = match_height|default(false) ? &#x27;jarvis-image--match-height&#x27; : &#x27;&#x27; %}
 &lt;figure class=&quot;{{ wrapper }} {{ round_class }} {{ mh_class }} mb-0 {{ space }}&quot;&gt;
   {% if has_image %}
-    &lt;img src=&quot;{{ img_src }}&quot; alt=&quot;{{ image.alt|default(&#x27;&#x27;) }}&quot;{% if not styled and image.width %} width=&quot;{{ image.width }}&quot;{% endif %}{% if not styled and image.height %} height=&quot;{{ image.height }}&quot;{% endif %} class=&quot;img-fluid w-100 jarvis-image__img&quot;{{ priority|default(false) ? &#x27; fetchpriority=&quot;high&quot;&#x27; : &#x27; loading=&quot;lazy&quot;&#x27; }}&gt;
+    &lt;img src=&quot;{{ img_src }}&quot; alt=&quot;{{ img_alt }}&quot;{% if not styled and image.width %} width=&quot;{{ image.width }}&quot;{% endif %}{% if not styled and image.height %} height=&quot;{{ image.height }}&quot;{% endif %} class=&quot;img-fluid w-100 jarvis-image__img&quot;{% if priority|default(false) %} fetchpriority=&quot;high&quot;{% else %} loading=&quot;lazy&quot;{% endif %}&gt;
   {% endif %}
   {% if caption %}&lt;figcaption class=&quot;jarvis-image__caption text-body-secondary small mt-2&quot;&gt;{{ caption }}&lt;/figcaption&gt;{% endif %}
 &lt;/figure&gt;</code></pre></div>
@@ -3219,6 +3281,9 @@ props:
             <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
             <tbody>
               <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The photo behind the card.</td></tr>
+              <tr><td class="prop"><span class="pname">decorative</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Decorative Image. Hides the image from screen readers by rendering an empty alt. Wins over the override below.</td></tr>
+              <tr><td class="prop"><span class="pname">alt_override</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Override alt text. Use the <code>alt_text</code> below for this placement instead of the alt saved on the media item.</td></tr>
+              <tr><td class="prop"><span class="pname">alt_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Alt text for this placement. Used only when <code>alt_override</code> is on; left empty, the media alt still applies.</td></tr>
               <tr><td class="prop"><span class="pname">heading</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Heading inside the overlay card.</td></tr>
               <tr><td class="prop"><span class="pname">heading_level</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">h3</span></td><td class="desc-cell">The overlay heading is styled as a heading, so it is one in the markup too.<span class="enum-list"><span class="enum">h2</span><span class="enum enum--def">h3</span><span class="enum">h4</span><span class="enum">h5</span></span></td></tr>
               <tr><td class="prop"><span class="pname">text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Body line under the overlay heading.</td></tr>
@@ -3248,6 +3313,20 @@ props:
           alt: &#x27;Laptop showing the Jarvis theme&#x27;
           width: 1672
           height: 941
+    decorative:
+      title: &#x27;Decorative Image&#x27;
+      description: &#x27;Hide this image from screen readers (empty alt text). Use for images that add no information.&#x27;
+      type: boolean
+      default: false
+    alt_override:
+      title: &#x27;Override alt text&#x27;
+      description: &#x27;Use the alt text below for this placement instead of the one saved on the media item.&#x27;
+      type: boolean
+      default: false
+    alt_text:
+      title: &#x27;Alt text&#x27;
+      description: &#x27;Used only when &quot;Override alt text&quot; is on. Leave empty to keep the media alt text.&#x27;
+      type: string
     heading_level:
       title: &#x27;Heading level&#x27;
       description: &#x27;The overlay heading is styled as a heading, so it must be one in the markup too. Match the page outline.&#x27;
@@ -3364,9 +3443,14 @@ props:
  * classes for background colour + ADA-safe text vars.
  */
 #}
-{# ADA (WCAG 1.3.1): the overlay heading is 1.5rem/700, so it must be a real
-   heading element. person.css/image-overlay.css style the class, not the tag,
-   so the visual result is unchanged. #}
+{# ADA (WCAG 1.3.1): the overlay heading is bold and well above body size, so it
+   must be a real heading element. image-overlay.css sizes it per TAG off the
+   theme scale, so heading_level changes the rendered size — it used to be
+   pinned to the class at a flat 1.5rem, which made the prop a no-op
+   visually. #}
+{# Alt text: Decorative wins (empty alt); else the per-placement override when
+   it has text; else the media item&#x27;s alt. #}
+{% set img_alt = decorative|default(false) ? &#x27;&#x27; : (alt_override|default(false) and alt_text|default(&#x27;&#x27;)|trim ? alt_text|trim : image.alt|default(&#x27;&#x27;)) %}
 {% set hl = heading_level|default(&#x27;h3&#x27;) %}
 {% import &#x27;@jarvis/jarvis-spacing.html.twig&#x27; as jarvis %}
 {% set space = jarvis.classes(padding|default(&#x27;none&#x27;), padding_size|default(&#x27;medium&#x27;), margin|default(&#x27;none&#x27;), margin_size|default(&#x27;medium&#x27;), (vertical_padding is defined ? vertical_padding : false)) %}
@@ -3378,7 +3462,7 @@ props:
 {% set mh_class = match_height|default(false) ? &#x27;jarvis-image-overlay--match-height&#x27; : &#x27;&#x27; %}
 &lt;figure class=&quot;jarvis-image-overlay jarvis-image-overlay--{{ position }} {{ rounded_class }} {{ mh_class }} {{ space }}&quot;&gt;
   {% if has_image %}
-    &lt;img class=&quot;jarvis-image-overlay__img&quot; src=&quot;{{ image.src }}&quot;{% if image.alt is defined %} alt=&quot;{{ image.alt }}&quot;{% else %} alt=&quot;&quot;{% endif %}{% if image.width %} width=&quot;{{ image.width }}&quot;{% endif %}{% if image.height %} height=&quot;{{ image.height }}&quot;{% endif %} loading=&quot;lazy&quot;&gt;
+    &lt;img class=&quot;jarvis-image-overlay__img&quot; src=&quot;{{ image.src }}&quot; alt=&quot;{{ img_alt }}&quot;{% if image.width %} width=&quot;{{ image.width }}&quot;{% endif %}{% if image.height %} height=&quot;{{ image.height }}&quot;{% endif %} loading=&quot;lazy&quot;&gt;
   {% endif %}
   {% if heading or text %}
     {# jarvis-bg--* on the caption supplies the ADA-safe text colour vars; the
@@ -5196,6 +5280,9 @@ props:
               <tr><td class="prop"><span class="pname">name</span></td><td><span class="ptype">string</span></td><td><span class="pdef">Jane Doe</span></td><td class="desc-cell">Person's name.</td></tr>
               <tr><td class="prop"><span class="pname">heading_level</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">h3</span></td><td class="desc-cell">The name is styled as a heading, so it is one in the markup too. Match the page outline — one level below the heading above the cards.<span class="enum-list"><span class="enum">h2</span><span class="enum enum--def">h3</span><span class="enum">h4</span><span class="enum">h5</span></span></td></tr>
               <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Portrait photo (cropped to a Portrait style).</td></tr>
+              <tr><td class="prop"><span class="pname">decorative</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Decorative Image. Hides the image from screen readers by rendering an empty alt. Wins over the override below.</td></tr>
+              <tr><td class="prop"><span class="pname">alt_override</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Override alt text. Use the <code>alt_text</code> below for this placement instead of the alt saved on the media item.</td></tr>
+              <tr><td class="prop"><span class="pname">alt_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Alt text for this placement. Used only when <code>alt_override</code> is on; left empty, the media alt still applies.</td></tr>
               <tr><td class="prop"><span class="pname">position</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Job title / role.</td></tr>
               <tr><td class="prop"><span class="pname">phone</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Phone number (becomes a tap-to-call link).</td></tr>
               <tr><td class="prop"><span class="pname">email</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Email (becomes a mailto link).</td></tr>
@@ -5232,6 +5319,20 @@ props:
     image_uri:
       title: &#x27;Image source URI (internal)&#x27;
       # Original stream-wrapper URI; required for image_style to build the Portrait derivative.
+      type: string
+    decorative:
+      title: &#x27;Decorative Image&#x27;
+      description: &#x27;Hide this image from screen readers (empty alt text). Use for images that add no information.&#x27;
+      type: boolean
+      default: false
+    alt_override:
+      title: &#x27;Override alt text&#x27;
+      description: &#x27;Use the alt text below for this placement instead of the one saved on the media item.&#x27;
+      type: boolean
+      default: false
+    alt_text:
+      title: &#x27;Alt text&#x27;
+      description: &#x27;Used only when &quot;Override alt text&quot; is on. Leave empty to keep the media alt text.&#x27;
       type: string
     heading_level:
       title: &#x27;Name heading level&#x27;
@@ -5369,7 +5470,18 @@ props:
  * Jarvis person SDC — portrait, name, position, contact links.
  */
 #}
+{# Alt text: Decorative wins (empty alt); else the per-placement override when
+   it has text; else the media item&#x27;s alt. #}
+{% set img_alt = decorative|default(false) ? &#x27;&#x27; : (alt_override|default(false) and alt_text|default(&#x27;&#x27;)|trim ? alt_text|trim : image.alt|default(&#x27;&#x27;)) %}
 {% import &#x27;@jarvis/jarvis-spacing.html.twig&#x27; as jarvis %}
+{% import &#x27;@jarvis/jarvis-url.html.twig&#x27; as safe %}
+{% set link_href = safe.url(link_href|default(&#x27;&#x27;)) %}
+{% set linkedin = safe.url(linkedin|default(&#x27;&#x27;)) %}
+{% set x = safe.url(x|default(&#x27;&#x27;)) %}
+{% set facebook = safe.url(facebook|default(&#x27;&#x27;)) %}
+{% set instagram = safe.url(instagram|default(&#x27;&#x27;)) %}
+{% set youtube = safe.url(youtube|default(&#x27;&#x27;)) %}
+{% set github = safe.url(github|default(&#x27;&#x27;)) %}
 {% set space = jarvis.classes(padding|default(&#x27;none&#x27;), padding_size|default(&#x27;medium&#x27;), margin|default(&#x27;none&#x27;), margin_size|default(&#x27;medium&#x27;), (vertical_padding is defined ? vertical_padding : false)) %}
 {% set has_image = image.src is defined and image.src %}
 {# Crop server-side to the Portrait style; needs the original stream-wrapper URI. #}
@@ -5377,11 +5489,13 @@ props:
 {% set photo_src = portrait ?: image.src %}
 {% set variant = variant|default(&#x27;card&#x27;) %}
 &lt;div class=&quot;jarvis-person jarvis-person--{{ variant }} {{ space }}&quot;&gt;
-  {% if has_image %}&lt;img src=&quot;{{ photo_src }}&quot; alt=&quot;{{ image.alt|default(&#x27;&#x27;) }}&quot; class=&quot;jarvis-person__photo mb-3&quot;&gt;{% endif %}
+  {% if has_image %}&lt;img src=&quot;{{ photo_src }}&quot; alt=&quot;{{ img_alt }}&quot; class=&quot;jarvis-person__photo mb-3&quot;&gt;{% endif %}
   &lt;div class=&quot;jarvis-person__details&quot;&gt;
-  {# ADA (WCAG 1.3.1): the name is 1.8rem/700, i.e. visually a heading, so it has
-     to be a heading in the markup too. Visual size is unchanged — person.css
-     sets it on the class, not the element. #}
+  {# ADA (WCAG 1.3.1): the name is visually a heading (bold, well above body
+     size), so it has to be a heading in the markup too. person.css sizes it per
+     TAG off the theme scale, so heading_level changes the rendered size — it
+     used to be pinned to the class at a flat 1.8rem, which made the prop a
+     no-op visually. #}
   {% set h = heading_level|default(&#x27;h3&#x27;) %}
   {% if name %}&lt;{{ h }} class=&quot;jarvis-person__name text-primary&quot;&gt;{{ name }}&lt;/{{ h }}&gt;{% endif %}
   {% if position %}&lt;div class=&quot;jarvis-person__position&quot;&gt;{{ position }}&lt;/div&gt;{% endif %}
@@ -5529,6 +5643,9 @@ props:
             <tbody>
               <tr><td class="prop"><span class="pname">title</span><span class="req" title="required">✳</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The big number, e.g. <code>1,200+</code>. (It's labelled "Number" in the editor.) Required.</td></tr>
               <tr><td class="prop"><span class="pname">icon</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Small icon above the number.</td></tr>
+              <tr><td class="prop"><span class="pname">decorative</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Decorative Image. Hides the image from screen readers by rendering an empty alt. Wins over the override below.</td></tr>
+              <tr><td class="prop"><span class="pname">alt_override</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Override alt text. Use the <code>alt_text</code> below for this placement instead of the alt saved on the media item.</td></tr>
+              <tr><td class="prop"><span class="pname">alt_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Alt text for this placement. Used only when <code>alt_override</code> is on; left empty, the media alt still applies.</td></tr>
               <tr><td class="prop"><span class="pname">number_color</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">primary</span></td><td class="desc-cell"><code>primary</code> or <code>secondary</code> brand colour for the number.</td></tr>
               <tr><td class="prop"><span class="pname">count_up</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Animate the number from 0 when it scrolls into view (powered by <code>stat.js</code>).</td></tr>
               <tr><td class="prop"><span class="pname">body</span></td><td><span class="ptype">html</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The description under the number.</td></tr>
@@ -5553,6 +5670,20 @@ props:
     icon:
       title: Icon
       $ref: json-schema-definitions://canvas.module/image
+    decorative:
+      title: &#x27;Decorative Image&#x27;
+      description: &#x27;Hide this image from screen readers (empty alt text). Use for images that add no information.&#x27;
+      type: boolean
+      default: false
+    alt_override:
+      title: &#x27;Override alt text&#x27;
+      description: &#x27;Use the alt text below for this placement instead of the one saved on the media item.&#x27;
+      type: boolean
+      default: false
+    alt_text:
+      title: &#x27;Alt text&#x27;
+      description: &#x27;Used only when &quot;Override alt text&quot; is on. Leave empty to keep the media alt text.&#x27;
+      type: string
     title:
       title: &#x27;Number&#x27;
       type: string
@@ -5639,6 +5770,9 @@ props:
  * Jarvis stat card SDC — centered icon, big number, description.
  */
 #}
+{# Alt text: Decorative wins (empty alt); else the per-placement override when
+   it has text; else the media item&#x27;s alt. #}
+{% set img_alt = decorative|default(false) ? &#x27;&#x27; : (alt_override|default(false) and alt_text|default(&#x27;&#x27;)|trim ? alt_text|trim : icon.alt|default(&#x27;&#x27;)) %}
 {% import &#x27;@jarvis/jarvis-spacing.html.twig&#x27; as jarvis %}
 {% set space = jarvis.classes(padding|default(&#x27;none&#x27;), padding_size|default(&#x27;medium&#x27;), margin|default(&#x27;none&#x27;), margin_size|default(&#x27;medium&#x27;), (vertical_padding is defined ? vertical_padding : false)) %}
 {% set has_icon = icon.src is defined and icon.src %}
@@ -5646,7 +5780,7 @@ props:
   {# alt|default(&#x27;&#x27;) — the media picker omits the key entirely when no alt text
      is set, which is a hard error under strict_variables. Empty alt is also the
      right default for an icon that only decorates the number below it. #}
-  {% if has_icon %}&lt;img src=&quot;{{ icon.src }}&quot; alt=&quot;{{ icon.alt|default(&#x27;&#x27;) }}&quot; class=&quot;jarvis-stat__icon mb-3&quot;&gt;{% endif %}
+  {% if has_icon %}&lt;img src=&quot;{{ icon.src }}&quot; alt=&quot;{{ img_alt }}&quot; class=&quot;jarvis-stat__icon mb-3&quot;&gt;{% endif %}
   {# Custom colour classes (not Bootstrap text-*): overrides.css holds the ADA
      matrix that falls back to the section&#x27;s safe text colour when the pick
      can&#x27;t pass WCAG on the surrounding background. #}

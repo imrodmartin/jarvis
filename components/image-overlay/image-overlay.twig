@@ -11,6 +11,9 @@
    theme scale, so heading_level changes the rendered size — it used to be
    pinned to the class at a flat 1.5rem, which made the prop a no-op
    visually. #}
+{# Alt text: Decorative wins (empty alt); else the per-placement override when
+   it has text; else the media item's alt. #}
+{% set img_alt = decorative|default(false) ? '' : (alt_override|default(false) and alt_text|default('')|trim ? alt_text|trim : image.alt|default('')) %}
 {% set hl = heading_level|default('h3') %}
 {% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
 {% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : false)) %}
@@ -22,7 +25,7 @@
 {% set mh_class = match_height|default(false) ? 'jarvis-image-overlay--match-height' : '' %}
 <figure class="jarvis-image-overlay jarvis-image-overlay--{{ position }} {{ rounded_class }} {{ mh_class }} {{ space }}">
   {% if has_image %}
-    <img class="jarvis-image-overlay__img" src="{{ image.src }}"{% if image.alt is defined %} alt="{{ image.alt }}"{% else %} alt=""{% endif %}{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %} loading="lazy">
+    <img class="jarvis-image-overlay__img" src="{{ image.src }}" alt="{{ img_alt }}"{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %} loading="lazy">
   {% endif %}
   {% if heading or text %}
     {# jarvis-bg--* on the caption supplies the ADA-safe text colour vars; the

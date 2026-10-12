@@ -14,6 +14,20 @@ props:
           alt: 'Laptop showing the Jarvis theme'
           width: 1672
           height: 941
+    decorative:
+      title: 'Decorative Image'
+      description: 'Hide this image from screen readers (empty alt text). Use for images that add no information.'
+      type: boolean
+      default: false
+    alt_override:
+      title: 'Override alt text'
+      description: 'Use the alt text below for this placement instead of the one saved on the media item.'
+      type: boolean
+      default: false
+    alt_text:
+      title: 'Alt text'
+      description: 'Used only when "Override alt text" is on. Leave empty to keep the media alt text.'
+      type: string
     heading_level:
       title: 'Heading level'
       description: 'The overlay heading is styled as a heading, so it must be one in the markup too. Match the page outline.'
