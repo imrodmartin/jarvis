@@ -10,13 +10,16 @@
 {% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : false)) %}
 {% set zoom = zoom|default(14) %}
 {% set height = height|default(400) %}
-{% set q = address|url_encode %}
+{# Google matches a named place far more reliably than a bare street address,
+   and only centers on (and pins) a match. #}
+{% set place_name = place_name|default('')|trim %}
+{% set q = (place_name ? place_name ~ ', ' ~ address : address)|url_encode %}
 <div class="jarvis-map {{ space }}">
   <iframe
     class="jarvis-map__frame"
     style="height: {{ height }}px;"
     src="https://maps.google.com/maps?q={{ q }}&amp;z={{ zoom }}&amp;output=embed"
-    title="{{ address }}"
+    title="{{ place_name ? 'Map of ' ~ place_name : 'Map of ' ~ address }}"
     loading="lazy"
     referrerpolicy="no-referrer-when-downgrade"></iframe>
   {% if show_link is not defined or show_link %}

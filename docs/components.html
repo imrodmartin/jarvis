@@ -5133,6 +5133,7 @@ props:
             <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
             <tbody>
               <tr><td class="prop"><span class="pname">address</span><span class="req" title="required">✳</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">One-line address, e.g. <em>1600 Amphitheatre Parkway, Mountain View, CA</em>. Required.</td></tr>
+              <tr><td class="prop"><span class="pname">place_name</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Business or landmark name, e.g. <em>Battle of Richmond Visitor Center</em>. Google often can’t match a bare street address to a building, so it shows no pin and centers on the wrong spot. The name is added in front of the address, which puts the pin in the middle of the map.</td></tr>
               <tr><td class="prop"><span class="pname">zoom</span></td><td><span class="ptype">int 1–20</span></td><td><span class="pdef">14</span></td><td class="desc-cell">Zoom level: 1 = whole world, 20 = single building.</td></tr>
               <tr><td class="prop"><span class="pname">height</span></td><td><span class="ptype">integer</span></td><td><span class="pdef">400</span></td><td class="desc-cell">Map height in pixels.</td></tr>
               <tr><td class="prop"><span class="pname">show_link</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">true</span></td><td class="desc-cell">Show the "open in Google Maps" link below the map.</td></tr>
@@ -5157,6 +5158,10 @@ props:
       type: string
       examples:
         - &#x27;1600 Amphitheatre Parkway, Mountain View, CA&#x27;
+    place_name:
+      title: &#x27;Place name&#x27;
+      description: &#x27;Business or landmark name, e.g. &quot;Battle of Richmond Visitor Center&quot;. Google often can’t match a bare street address to a building, so it shows no pin and centers on the wrong spot; adding the name puts the pin in the middle of the map.&#x27;
+      type: string
     zoom:
       title: Zoom
       description: &#x27;Map zoom level (1 = world, 20 = building).&#x27;
@@ -5236,13 +5241,16 @@ props:
 {% set space = jarvis.classes(padding|default(&#x27;none&#x27;), padding_size|default(&#x27;medium&#x27;), margin|default(&#x27;none&#x27;), margin_size|default(&#x27;medium&#x27;), (vertical_padding is defined ? vertical_padding : false)) %}
 {% set zoom = zoom|default(14) %}
 {% set height = height|default(400) %}
-{% set q = address|url_encode %}
+{# Google matches a named place far more reliably than a bare street address,
+   and only centers on (and pins) a match. #}
+{% set place_name = place_name|default(&#x27;&#x27;)|trim %}
+{% set q = (place_name ? place_name ~ &#x27;, &#x27; ~ address : address)|url_encode %}
 &lt;div class=&quot;jarvis-map {{ space }}&quot;&gt;
   &lt;iframe
     class=&quot;jarvis-map__frame&quot;
     style=&quot;height: {{ height }}px;&quot;
     src=&quot;https://maps.google.com/maps?q={{ q }}&amp;amp;z={{ zoom }}&amp;amp;output=embed&quot;
-    title=&quot;{{ address }}&quot;
+    title=&quot;{{ place_name ? &#x27;Map of &#x27; ~ place_name : &#x27;Map of &#x27; ~ address }}&quot;
     loading=&quot;lazy&quot;
     referrerpolicy=&quot;no-referrer-when-downgrade&quot;&gt;&lt;/iframe&gt;
   {% if show_link is not defined or show_link %}

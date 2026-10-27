@@ -14,6 +14,10 @@ props:
       type: string
       examples:
         - '1600 Amphitheatre Parkway, Mountain View, CA'
+    place_name:
+      title: 'Place name'
+      description: 'Business or landmark name, e.g. "Battle of Richmond Visitor Center". Google often can’t match a bare street address to a building, so it shows no pin and centers on the wrong spot; adding the name puts the pin in the middle of the map.'
+      type: string
     zoom:
       title: Zoom
       description: 'Map zoom level (1 = world, 20 = building).'
