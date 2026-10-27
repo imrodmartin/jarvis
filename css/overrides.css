@@ -209,16 +209,25 @@ blockquote > :last-child {
 /* The link half of a split parent must not double the gap before the caret. */
 .jarvis-primary-menu nav .nav-item.dropdown > a { padding-right: 0.25rem; }
 
-/* Dropdown panel: keep the theme's shadow and rounding, let Bootstrap position
-   and toggle it. */
+/* Dropdown panel: square, unpadded edges so items sit flush, with the theme's
+   shadow; Bootstrap positions and toggles it. */
 .jarvis-primary-menu .dropdown-menu {
   min-width: 220px;
-  padding: 0.25rem 0;
+  padding: 0;
   border: 0;
-  border-radius: var(--bs-border-radius);
+  border-radius: 0;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  /* Current-page item: white on the theme secondary instead of Bootstrap's
+     stock blue. */
+  --bs-dropdown-link-active-bg: var(--bs-secondary);
+  --bs-dropdown-link-active-color: #fff;
 }
 .jarvis-primary-menu .dropdown-item { font-weight: 500; white-space: normal; }
+/* The nav a:hover/:focus primary colour above outranks Bootstrap's
+   .dropdown-item.active and :active (pressed), which put primary text on the
+   active background. These selectors outrank it in every hover/focus state. */
+.jarvis-primary-menu nav .dropdown-item.active,
+.jarvis-primary-menu nav .dropdown-item:active { color: var(--bs-dropdown-link-active-color); }
 
 /* Hamburger: 44px touch target. Visibility handled by .d-lg-none in markup. */
 .jarvis-menu-toggle {
