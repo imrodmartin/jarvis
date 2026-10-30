@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Shared section shell for the 1/2/3-column Jarvis SDCs.
+ * Shared section shell for the 1/2/3/4-column Jarvis SDCs.
  *
  * The three layouts differed only in the column <div>s inside the row — the
  * wrapper, background resolution, ADA text-colour matrix and overlay were
@@ -18,7 +18,7 @@
  */
 #}
 {% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
-{# vertical_padding falls back to FALSE. The 1/2/3-column component.yml files
+{# vertical_padding falls back to FALSE. The 1/2/3/4-column component.yml files
    ship `examples: [true]`, so Canvas seeds newly placed sections with the
    toggle ON and stores the value explicitly — this fallback only covers a
    render where the prop is absent entirely, and there an unchecked toggle must

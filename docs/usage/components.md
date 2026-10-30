@@ -50,7 +50,7 @@ Nineteen of the twenty-one components carry the same spacing controls
 Layout components hold other components in slots.
 
 - **Section** — a width/background wrapper with one content slot.
-- **1 Column / 2 Columns / 3 Columns** — responsive column rows with
+- **1 Column / 2 Columns / 3 Columns / 4 Columns** — responsive column rows with
   background image, overlay, and ratio controls; one slot per column.
 - **Card Full Image** — full-width two-column band: an edge-to-edge image slot
   beside a rich-text content slot.

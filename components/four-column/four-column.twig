@@ -1,0 +1,26 @@
+{#
+/**
+ * @file
+ * Jarvis 4-column layout. col-12 mobile -> stack; col-sm-6 tablet -> 2-up;
+ * col-lg-3 desktop -> 4-up. Everything placed inside wraps at each breakpoint.
+ *
+ * Wrapper, background resolution, ADA text-colour matrix and overlay live in
+ * the shared shell — see @jarvis/jarvis-columns-shell.html.twig.
+ */
+#}
+{% embed '@jarvis/jarvis-columns-shell.html.twig' with { count: 4 } %}
+  {% block columns %}
+    <div class="col-12 col-sm-6 col-lg-3">
+      {{ first }}
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+      {{ second }}
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+      {{ third }}
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+      {{ fourth }}
+    </div>
+  {% endblock %}
+{% endembed %}
