@@ -315,6 +315,7 @@
         <a href="#two-column">2 Columns</a>
         <a href="#three-column">3 Columns</a>
         <a href="#custom-columns">3 Columns (custom widths)</a>
+        <a href="#four-column">4 Columns</a>
         <a href="#card-full-image">Card Full Image</a>
       </div>
       <div class="nav-group">
@@ -349,9 +350,9 @@
       <header class="page">
         <p class="eyebrow">Jarvis Theme · Drupal 11 / 12</p>
         <h1>The Jarvis component reference</h1>
-        <p class="lede">Every building block that ships with the Jarvis theme, explained in plain language — the 21 components you drag into a page, plus the two small modules that make them work. Written for site builders who are new to Single Directory Components but comfortable in Drupal.</p>
+        <p class="lede">Every building block that ships with the Jarvis theme, explained in plain language — the 23 components you drag into a page, plus the two small modules that make them work. Written for site builders who are new to Single Directory Components but comfortable in Drupal.</p>
         <div class="meta-row">
-          <span class="pill"><b>21</b> components</span>
+          <span class="pill"><b>23</b> components</span>
           <span class="pill"><b>2</b> custom modules</span>
           <span class="pill">Bootstrap <b>5</b></span>
           <span class="pill">Drupal Canvas <span aria-hidden="true">·</span> Layout Builder</span>
@@ -376,7 +377,7 @@
       <!-- ===== FOUNDATIONS ===== -->
       <section class="prose">
         <h2 id="spacing"><span class="section-tag">Foundations</span>The shared spacing controls</h2>
-        <p>Nineteen of the twenty-one components expose the same set of spacing props — the two exceptions are <a href="#button">Button</a> and <a href="#card-full-image">Card Full Image</a>, which have none. Rather than repeat them in every table below, here they are once. When a component's badge says <em>"＋ standard spacing controls,"</em> it means this set.</p>
+        <p>Twenty-one of the twenty-three components expose the same set of spacing props — the two exceptions are <a href="#button">Button</a> and <a href="#card-full-image">Card Full Image</a>, which have none. Rather than repeat them in every table below, here they are once. When a component's badge says <em>"＋ standard spacing controls,"</em> it means this set.</p>
         <p>Under the hood they all funnel through one shared Twig helper, <code>jarvis-spacing.html.twig</code>, which turns your choices into utility classes (<code>jp-p-*</code>, <code>jp-m-*</code>, <code>jp-vpad</code>) defined in the theme's <code>overrides.css</code>. One source of truth — change spacing behaviour there and every component follows.</p>
         <div class="table-scroll">
           <table>
@@ -410,7 +411,7 @@
                 <td class="prop"><span class="pname">vertical_padding</span></td>
                 <td><span class="ptype">boolean</span></td>
                 <td><span class="pdef">false</span></td>
-                <td class="desc-cell">Adds a comfortable 30px top-and-bottom breathing room. <b>Off by default</b>, except on 1/2/3 Column, which insert with it on since sections almost always want the breathing room — turn it on elsewhere when a component needs to stand clear of its neighbours. (This flipped off in v2.x; earlier builds defaulted it on everywhere, which double-padded stacked components.)</td>
+                <td class="desc-cell">Adds a comfortable 30px top-and-bottom breathing room. <b>Off by default</b>, except on the 1, 2, 3 and 4 Column layouts, which insert with it on since sections almost always want the breathing room — turn it on elsewhere when a component needs to stand clear of its neighbours. (This flipped off in v2.x; earlier builds defaulted it on everywhere, which double-padded stacked components.)</td>
               </tr>
             </tbody>
           </table>
@@ -445,8 +446,8 @@
 </code></pre></div>
 </details>
 <h2 id="backgrounds"><span class="section-tag">Foundations</span>Backgrounds &amp; the contrast guard</h2>
-        <p>The three column layouts — <a href="#one-column">1&nbsp;Column</a>, <a href="#two-column">2&nbsp;Columns</a> and <a href="#three-column">3&nbsp;Columns</a> — share a background system. Rather than repeat it, here's how it works. (<a href="#card-full-image">Card&nbsp;Full&nbsp;Image</a> has a simpler <code>background</code> colour picker only — no image, overlay or contrast guard.)</p>
-        <p>All three now render through one shared partial, <code>templates/jarvis-columns-shell.html.twig</code>. The three layouts differed only in the column <code>&lt;div&gt;</code>s; the wrapper, background resolution, contrast matrix and overlay were byte-identical, so a fix had to be made three times. Each layout now embeds the shell and supplies just its columns.</p>
+        <p>The column layouts — <a href="#one-column">1&nbsp;Column</a>, <a href="#two-column">2&nbsp;Columns</a>, <a href="#three-column">3&nbsp;Columns</a>, <a href="#custom-columns">3&nbsp;Columns (custom widths)</a> and <a href="#four-column">4&nbsp;Columns</a> — share a background system. Rather than repeat it, here's how it works. (<a href="#card-full-image">Card&nbsp;Full&nbsp;Image</a> has a simpler <code>background</code> colour picker only — no image, overlay or contrast guard.)</p>
+        <p>All five now render through one shared partial, <code>templates/jarvis-columns-shell.html.twig</code>. The layouts differed only in the column <code>&lt;div&gt;</code>s; the wrapper, background resolution, contrast matrix and overlay were byte-identical, so a fix had to be made three times. Each layout now embeds the shell and supplies just its columns.</p>
         <p>You can give a container a solid colour <em>or</em> a background image. If you pick a colour <strong>and</strong> an image, the <strong>colour wins</strong> — the image is hidden but not deleted, so you can flip back by choosing "None" again. Over an image, an adjustable dark (or light) <strong>overlay</strong> keeps text readable.</p>
         <p>The clever part is the <strong>contrast guard</strong>. You can force a text colour on a whole section with <code>text_color</code>, but Jarvis won't let you pick an unreadable combination. It checks your choice against the section's own background using WCAG AA (the accessibility contrast standard). If it passes, your colour is used; if it fails, Jarvis quietly falls back to a colour it knows is legible. Over a <em>photo</em> — where brightness is unknowable — it honours your pick and leans on the overlay to carry readability.</p>
         <div class="table-scroll">
@@ -1452,6 +1453,199 @@ slots:
   {% endblock %}
 {% endembed %}
 </code></pre></div>
+</details>
+        </article>
+        <article class="comp" id="four-column">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">4 Columns</h3>
+            <span class="comp__id">jarvis:four-column</span>
+            <span class="chip chip--layout">Jarvis Layout</span>
+          </div>
+          <p class="comp__desc">Four columns on desktop, two on tablet, stacked full-width on mobile — the responsive stepping is automatic. Same background system as the other columns.</p>
+          <div class="badges"><a class="badge" href="#backgrounds">＋ background &amp; contrast system</a><a class="badge" href="#spacing">＋ standard spacing controls</a></div>
+          <p class="subhead">No unique props</p>
+          <p class="comp__desc">The widths are fixed even quarters — there is no <code>ratio</code> prop, because four columns at 25% each is the only arrangement that still works when they fold to two-up on tablet. If you need uneven widths, use <a href="#custom-columns">3 Columns (custom widths)</a>. Everything else is the full <a href="#backgrounds">background &amp; contrast</a> set and standard spacing, and like the other column layouts it inserts with <code>vertical_padding</code> already on.</p>
+          <p class="subhead">Slots</p>
+          <div class="slots">
+            <div class="slot"><span class="slot__name">first</span><span class="slot__desc">First column.</span></div>
+            <div class="slot"><span class="slot__name">second</span><span class="slot__desc">Second column.</span></div>
+            <div class="slot"><span class="slot__name">third</span><span class="slot__desc">Third column.</span></div>
+            <div class="slot"><span class="slot__name">fourth</span><span class="slot__desc">Fourth column.</span></div>
+          </div>
+<details class="src">
+<summary>&lt;/&gt; Source · 2 files</summary>
+<div class="srcfile"><div class="srcfile__name">four-column.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: &#x27;4 Columns&#x27;
+status: stable
+description: &#x27;Four columns on desktop, two on tablet, stacked full-width on mobile.&#x27;
+category: &#x27;Jarvis Layout&#x27;
+libraryOverrides:
+  dependencies:
+    - jarvis/reveal
+props:
+  type: object
+  properties:
+    width:
+      title: &#x27;Section width&#x27;
+      type: string
+      enum: [boxed, full]
+      &#x27;meta:enum&#x27;:
+        boxed: &#x27;Boxed (centred)&#x27;
+        full: &#x27;Full width&#x27;
+      default: boxed
+    background:
+      title: &#x27;Background colour&#x27;
+      type: string
+      enum: [none, primary, secondary, bg1, bg2, dark, light, image]
+      &#x27;meta:enum&#x27;:
+        none: None
+        primary: Primary
+        secondary: Secondary
+        bg1: &#x27;Background 1&#x27;
+        bg2: &#x27;Background 2&#x27;
+        dark: &#x27;Dark (#1a1a1a)&#x27;
+        light: &#x27;Light (#f5f5f5)&#x27;
+        image: &#x27;Image (select below)&#x27;
+      default: none
+      examples:
+        - none
+    background_image:
+      title: &#x27;Background image&#x27;
+      $ref: json-schema-definitions://canvas.module/image
+    overlay:
+      title: &#x27;Image overlay opacity (%)&#x27;
+      type: integer
+      minimum: 0
+      maximum: 100
+      default: 45
+    text_color:
+      title: &#x27;Text colour (overrides child components)&#x27;
+      description: &#x27;Ignored on Background 1 and Background 2. Those are arbitrary theme-setting colours, so the text colour there is computed automatically to meet WCAG AA contrast and cannot be overridden.&#x27;
+      type: string
+      enum: [inherit, primary, secondary, black, white]
+      &#x27;meta:enum&#x27;:
+        inherit: Default
+        primary: Primary
+        secondary: Secondary
+        black: Black
+        white: White
+      default: inherit
+      examples:
+        - inherit
+    gap:
+      title: &#x27;Column gap&#x27;
+      type: string
+      enum: [none, small, normal, large]
+      &#x27;meta:enum&#x27;:
+        none: None
+        small: Small
+        normal: Normal
+        large: Large
+      default: normal
+      examples:
+        - normal
+    padding:
+      title: Padding
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      &#x27;meta:enum&#x27;:
+        none: None
+        all: &#x27;All sides&#x27;
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    padding_size:
+      title: &#x27;Padding size&#x27;
+      type: string
+      enum: [small, medium, large]
+      &#x27;meta:enum&#x27;:
+        small: &#x27;Small (10px)&#x27;
+        medium: &#x27;Medium (20px)&#x27;
+        large: &#x27;Large (30px)&#x27;
+      default: medium
+    margin:
+      title: Margin
+      type: string
+      enum: [none, all, top, bottom, left, right]
+      &#x27;meta:enum&#x27;:
+        none: None
+        all: &#x27;All sides&#x27;
+        top: Top
+        bottom: Bottom
+        left: Left
+        right: Right
+      default: none
+    margin_size:
+      title: &#x27;Margin size&#x27;
+      type: string
+      enum: [small, medium, large]
+      &#x27;meta:enum&#x27;:
+        small: &#x27;Small (10px)&#x27;
+        medium: &#x27;Medium (20px)&#x27;
+        large: &#x27;Large (30px)&#x27;
+      default: medium
+    vertical_padding:
+      title: &#x27;Vertical padding (30px)&#x27;
+      type: boolean
+      default: true
+      # Canvas seeds a placed component&#x27;s stored value from examples[0], not
+      # from `default` — a prop with no examples arrives omitted. Sections are
+      # padded far more often than not, so the columns ship the example.
+      examples:
+        - true
+    animation:
+      title: &#x27;Scroll animation&#x27;
+      description: &#x27;Fades the section in as it scrolls into view. Honours the reduced-motion browser setting.&#x27;
+      type: string
+      enum: [none, right, left]
+      &#x27;meta:enum&#x27;:
+        none: None
+        right: &#x27;Fade from right&#x27;
+        left: &#x27;Fade from left&#x27;
+      default: none
+      examples:
+        - none
+slots:
+  first:
+    title: &#x27;Column 1&#x27;
+    description: &#x27;First column.&#x27;
+  second:
+    title: &#x27;Column 2&#x27;
+    description: &#x27;Second column.&#x27;
+  third:
+    title: &#x27;Column 3&#x27;
+    description: &#x27;Third column.&#x27;
+  fourth:
+    title: &#x27;Column 4&#x27;
+    description: &#x27;Fourth column.&#x27;</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">four-column.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis 4-column layout. col-12 mobile -&gt; stack; col-sm-6 tablet -&gt; 2-up;
+ * col-lg-3 desktop -&gt; 4-up. Everything placed inside wraps at each breakpoint.
+ *
+ * Wrapper, background resolution, ADA text-colour matrix and overlay live in
+ * the shared shell — see @jarvis/jarvis-columns-shell.html.twig.
+ */
+#}
+{% embed &#x27;@jarvis/jarvis-columns-shell.html.twig&#x27; with { count: 4 } %}
+  {% block columns %}
+    &lt;div class="col-12 col-sm-6 col-lg-3"&gt;
+      {{ first }}
+    &lt;/div&gt;
+    &lt;div class="col-12 col-sm-6 col-lg-3"&gt;
+      {{ second }}
+    &lt;/div&gt;
+    &lt;div class="col-12 col-sm-6 col-lg-3"&gt;
+      {{ third }}
+    &lt;/div&gt;
+    &lt;div class="col-12 col-sm-6 col-lg-3"&gt;
+      {{ fourth }}
+    &lt;/div&gt;
+  {% endblock %}
+{% endembed %}</code></pre></div>
 </details>
         </article>
 
