@@ -46,6 +46,15 @@ reveal:
     - core/once
     - core/drupal
 
+# Webform fields, buttons and the CAPTCHA group. Loaded with webform's own form
+# library via libraries-extend (see jarvis.info.yml), so only pages that render
+# a webform get it.
+webform:
+  version: 1.x
+  css:
+    theme:
+      css/webform.css: {}
+
 # Loaded onto the Canvas editor via libraries-extend (see jarvis.info.yml).
 # Widens the right settings tray while a CKEditor field is focused.
 canvas-tray-autoexpand:
