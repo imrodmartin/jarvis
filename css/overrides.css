@@ -180,10 +180,12 @@ blockquote > :last-child {
 
 .jarvis-primary-menu li { position: relative; }
 /* <nolink> items render as <span>, not <a> — style both identically so they sit
-   on the bar like real links. Scoped to nav so the hamburger's <span> bars are
-   not caught. The split toggle is included so it matches its sibling link. */
+   on the bar like real links. li > span matches only a span that IS the item:
+   spans inside a link (extlink's .extlink-nobreak) or inside the split toggle
+   (.visually-hidden) stay inline. The split toggle is included so it matches
+   its sibling link. */
 .jarvis-primary-menu nav a,
-.jarvis-primary-menu nav span,
+.jarvis-primary-menu nav li > span,
 .jarvis-primary-menu nav .jarvis-menu__toggle {
   display: block;
   padding: 0.75rem 1rem;
