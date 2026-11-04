@@ -40,6 +40,13 @@
       {# Only the top level opens a panel; deeper items flatten into it. #}
       {% set is_parent = has_children and depth == 0 %}
       {% set nolink = item.url.isRouted and item.url.routeName == '<nolink>' %}
+      {# in_active_trail is true for the page you are on AND every ancestor of
+         it, so on its own it cannot say which one you are actually reading.
+         The page you are on is the deepest one in the trail — the one with no
+         child in the trail — and that one gets aria-current, which screen
+         readers announce and CSS can single out. #}
+      {% set is_current = item.in_active_trail
+        and item.below|filter(child => child.in_active_trail)|length == 0 %}
       <li{{ item.attributes.addClass(depth == 0 ? 'nav-item' : '', is_parent ? 'dropdown' : '') }}>
         {% if is_parent %}
           {% if nolink %}
@@ -48,7 +55,8 @@
                     data-bs-toggle="dropdown" aria-expanded="false">{{ item.title }}</button>
           {% else %}
             <a href="{{ item.url }}"
-               class="nav-link{{ item.in_active_trail ? ' active' : '' }}">{{ item.title }}</a>
+               class="nav-link{{ item.in_active_trail ? ' active' : '' }}"
+               {{- is_current ? ' aria-current="page"' }}>{{ item.title }}</a>
             <button type="button"
                     class="nav-link dropdown-toggle dropdown-toggle-split jarvis-menu__toggle"
                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -61,7 +69,8 @@
             <span class="{{ depth == 0 ? 'nav-link' : 'dropdown-item' }}">{{ item.title }}</span>
           {% else %}
             <a href="{{ item.url }}"
-               class="{{ depth == 0 ? 'nav-link' : 'dropdown-item' }}{{ item.in_active_trail ? ' active' : '' }}">{{ item.title }}</a>
+               class="{{ depth == 0 ? 'nav-link' : 'dropdown-item' }}{{ item.in_active_trail ? ' active' : '' }}"
+               {{- is_current ? ' aria-current="page"' }}>{{ item.title }}</a>
           {% endif %}
           {# Depth >= 2: Bootstrap has no nested panel, so render ALL remaining
              descendants as further indented rows in the panel we are already
@@ -78,14 +87,22 @@
 
 {# Flattened descendants: every level below the panel renders as an indented
    row (Bootstrap's ps-* caps at 5). A <nolink> item labels its group instead
-   of rendering an empty-href anchor, which would be a broken tab stop. #}
+   of rendering an empty-href anchor, which would be a broken tab stop.
+
+   These carry .active like every other level: the page you are on should say
+   so wherever it appears in the menu, and a flattened row is still a menu
+   link. Without it the deepest pages were the only ones left unmarked. #}
 {% macro flatten(items, indent) %}
   {% import _self as menus %}
   {% for item in items %}
     {% if item.url.isRouted and item.url.routeName == '<nolink>' %}
       <span class="dropdown-item ps-{{ indent }}">{{ item.title }}</span>
     {% else %}
-      <a href="{{ item.url }}" class="dropdown-item ps-{{ indent }}">{{ item.title }}</a>
+      {% set is_current = item.in_active_trail
+        and item.below|filter(child => child.in_active_trail)|length == 0 %}
+      <a href="{{ item.url }}"
+         class="dropdown-item ps-{{ indent }}{{ item.in_active_trail ? ' active' : '' }}"
+         {{- is_current ? ' aria-current="page"' }}>{{ item.title }}</a>
     {% endif %}
     {% if item.below is not empty %}
       {{ menus.flatten(item.below, min(indent + 1, 5)) }}
