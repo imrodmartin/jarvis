@@ -3,10 +3,10 @@
     "description": "DXPR-style SDC theme with Bootstrap 5, built for Drupal Canvas and Layout Builder.",
     "type": "drupal-theme",
     "license": "GPL-2.0-or-later",
-    "homepage": "https://www.drupal.org/project/jarvis",
+    "homepage": "https://github.com/imrodmartin/jarvis",
     "support": {
-        "issues": "https://www.drupal.org/project/issues/jarvis",
-        "source": "https://git.drupalcode.org/project/jarvis"
+        "issues": "https://github.com/imrodmartin/jarvis/issues",
+        "source": "https://github.com/imrodmartin/jarvis"
     },
     "require": {
         "php": ">=8.3",

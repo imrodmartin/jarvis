@@ -45,19 +45,48 @@ ddev composer require drupal/jarvis
 unauthenticated 60-calls/hour API rate limit (and the occasional `502`) that
 otherwise blocks the install.
 
-Composer installs the theme to `web/themes/custom/jarvis` and downloads the
-contrib modules to `web/modules/contrib`. Then run, **in this order**:
+Composer puts the theme in **`web/themes/contrib/jarvis`** and the
+`jarvis_canvas` module in `web/modules/custom/jarvis-modules/jarvis_canvas`
+(nested under the package name — Drupal discovers it there), with the contrib
+modules in `web/modules/contrib`.
+
+`themes/contrib` is not a mistake: the theme declares `"type": "drupal-theme"`,
+which stock installer-paths route to contrib, and Drupal loads it the same
+either way. To keep it under `themes/custom`, add `"drupal/jarvis"` to the
+`web/themes/custom/{$name}` entry of `extra.installer-paths` **and move that
+entry above** `web/themes/contrib/{$name}` — composer/installers takes the
+first matching entry in file order, so a later package-name match loses to an
+earlier `type:drupal-theme`.
+
+### Then apply a recipe
+
+The theme ships components and templates; the **config** they need — media
+types, image styles, text formats, Canvas component entities — comes from a
+recipe. Both recipes are composer packages of their own, so you do not need a
+checkout of anything:
 
 ```bash
-# Apply the recipe against a freshly installed site. It installs Canvas,
-# canvas_field_component and this theme itself, then imports config and demo
-# content. Pass an absolute container path — ddev drush resolves relative paths
-# from the container working dir, not the project root. The recipe ships in the
-# jarvis-bootstrap-recipe repo, not in this one, so this path assumes you are
-# working in a checkout of that project.
-ddev drush recipe /var/www/html/recipes/jarvis
+# A blank site: builds the whole thing (theme, Canvas, demo content, AI stack).
+ddev composer config repositories.jarvis-recipe '{"type":"vcs","url":"https://github.com/imrodmartin/jarvis-recipe","no-api":true}'
+ddev composer require imrodmartin/jarvis-recipe drupal/ckeditor5_markdown drupal/default_content:^2.0@beta drupal/ai_media_image:^1.0@alpha
+ddev drush recipe /var/www/html/recipes/jarvis-recipe
 ddev drush cache:rebuild   # also organises the Canvas component folders
 ```
+
+```bash
+# A site that already has its own content and config: adds Jarvis alongside it,
+# changes no theme, no front page, no content.
+ddev composer config repositories.jarvis-install-recipe '{"type":"vcs","url":"https://github.com/imrodmartin/jarvis-install-recipe","no-api":true}'
+ddev composer require imrodmartin/jarvis-install-recipe
+ddev drush recipe /var/www/html/recipes/jarvis-install-recipe
+ddev drush cache:rebuild
+```
+
+Pass an absolute container path: `ddev drush` resolves relative paths from the
+docroot, while `recipes/` sits at the project root. The full walkthrough —
+including what the existing-site recipe leaves alone, and how to update — is
+[docs/INSTALL.md](https://github.com/imrodmartin/jarvis-bootstrap-recipe/blob/jarvis-bootstrap-recipe/docs/INSTALL.md)
+in the jarvis-bootstrap-recipe repo.
 
 > **Do not pre-install Canvas or the theme.** Earlier revisions of this file
 > told you to run `pm:install canvas` + `theme:install jarvis` +
