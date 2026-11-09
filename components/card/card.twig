@@ -16,6 +16,10 @@
    heading outline without skipping levels. Visual size stays .h4 regardless. #}
 {% set h = heading_level|default('h3') %}
 {% set has_image = image.src is defined and image.src %}
+{# ADA (WCAG 2.4.4): a row of identical "Read more" buttons is ambiguous out of
+   context, so each one carries its card's title for screen readers. #}
+{% set link_label %}{{ link_text }}{% if title %}<span class="visually-hidden">: {{ title }}</span>{% endif %}{% endset %}
+{% set date_line %}{% if date|default('') %}<p class="jarvis-card__date small mb-2"><time datetime="{{ date }}">{{ date|date('F j, Y') }}</time></p>{% endif %}{% endset %}
 {% set text_color = text_color|default('light') %}
 {# Light text gets a black overlay, black text a white one — the same split the
    column components use. Black text used to force the overlay to 0 and sit on
@@ -32,9 +36,9 @@
        server-side and raises it to whatever WCAG AA needs. #}
     {% if has_image %}<div class="jarvis-card__overlay{{ overlay_light ? ' jarvis-bg__overlay--light' : '' }}" style="opacity: {{ image.src|jarvis_overlay_alpha(overlay_light, overlay / 100) }};" aria-hidden="true"></div>{% endif %}
     <div class="card-img-overlay d-flex flex-column justify-content-end position-relative">
-      {% if title %}<{{ h }} class="card-title h4">{{ title }}</{{ h }}>{% endif %}
+      {% if title %}<{{ h }} class="card-title h4">{{ title }}</{{ h }}>{% endif %}{{ date_line }}
       {% if body %}<div class="card-text">{{ body|raw }}</div>{% endif %}
-      {% if link_text and link_href %}<a href="{{ link_href }}" class="btn btn-light btn-sm mt-2 align-self-start">{{ link_text }}</a>{% endif %}
+      {% if link_text and link_href %}<a href="{{ link_href }}" class="btn btn-light btn-sm mt-2 align-self-start">{{ link_label }}</a>{% endif %}
     </div>
   </div>
 {% elseif variant == 'image-left' or variant == 'image-right' %}
@@ -47,9 +51,9 @@
       {% endif %}
       <div class="{{ has_image ? 'col-md-7' : 'col-12' }}">
         <div class="card-body">
-          {% if title %}<{{ h }} class="card-title h4">{{ title }}</{{ h }}>{% endif %}
+          {% if title %}<{{ h }} class="card-title h4">{{ title }}</{{ h }}>{% endif %}{{ date_line }}
           {% if body %}<div class="card-text">{{ body|raw }}</div>{% endif %}
-          {% if link_text and link_href %}<a href="{{ link_href }}" class="btn btn-primary btn-sm mt-2">{{ link_text }}</a>{% endif %}
+          {% if link_text and link_href %}<a href="{{ link_href }}" class="btn btn-primary btn-sm mt-2">{{ link_label }}</a>{% endif %}
         </div>
       </div>
     </div>
@@ -58,9 +62,9 @@
   <div class="{{ base }}">
     {% if has_image %}<img src="{{ image.src }}" alt="{{ img_alt }}" class="card-img-top jarvis-card__img">{% endif %}
     <div class="card-body">
-      {% if title %}<{{ h }} class="card-title h4">{{ title }}</{{ h }}>{% endif %}
+      {% if title %}<{{ h }} class="card-title h4">{{ title }}</{{ h }}>{% endif %}{{ date_line }}
       {% if body %}<div class="card-text">{{ body|raw }}</div>{% endif %}
-      {% if link_text and link_href %}<a href="{{ link_href }}" class="btn btn-primary btn-sm mt-2">{{ link_text }}</a>{% endif %}
+      {% if link_text and link_href %}<a href="{{ link_href }}" class="btn btn-primary btn-sm mt-2">{{ link_label }}</a>{% endif %}
     </div>
   </div>
 {% endif %}

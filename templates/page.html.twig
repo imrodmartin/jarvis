@@ -138,12 +138,18 @@
         </div>
       </div>
     {% else %}
-      {# No sidebars: edge-to-edge so Canvas columns can go full width.
-         Non-Canvas content self-boxes via the column layout's own container.
+      {# No sidebars: edge-to-edge so Canvas columns can go full width; content
+         that is not built from sections is boxed below.
          Empty-region markers still print for the editor's region map. #}
       {{ sidebar_left_markup|raw }}
+      {# content_self_boxed from jarvis_preprocess_page(): anything that isn't
+         built from sections (Views pages, search, forms) gets the container. #}
       <div class="jarvis-content jarvis-content--full">
-        {{ page.content }}
+        {% if content_self_boxed %}
+          {{ page.content }}
+        {% else %}
+          <div class="container jarvis-content--boxed">{{ page.content }}</div>
+        {% endif %}
       </div>
       {{ sidebar_right_markup|raw }}
     {% endif %}

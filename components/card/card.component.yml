@@ -72,6 +72,11 @@ props:
         h3: H3
         h4: H4
       default: h3
+    date:
+      title: Date
+      description: 'Optional. Shown under the title, for example a post''s publication date.'
+      type: string
+      format: date
     body:
       title: Body
       type: string
