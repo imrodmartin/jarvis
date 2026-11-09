@@ -22,9 +22,11 @@ plugins:
 
 nav:
   - Home: index.md
-  # The handbook is a standalone HTML page copied verbatim into the built site,
-  # so it is linked absolutely rather than as a MkDocs page.
-  - The Jarvis Handbook: https://project.pages.drupalcode.org/jarvis/jarvis-guide.html
+  # The Handbook and the Technical Guide are standalone HTML pages copied
+  # verbatim into the built site, so they are linked absolutely rather than as
+  # MkDocs pages.
+  - The Jarvis Handbook: https://project.pages.drupalcode.org/jarvis/handbook.html
+  - The Jarvis Technical Guide: https://project.pages.drupalcode.org/jarvis/jarvis-guide.html
   - Installation: installation.md
   - Configuration: configuration.md
   - Usage:

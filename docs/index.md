@@ -29,15 +29,16 @@ Jarvis targets Drupal `^11 || ^12` and PHP `>= 8.3`.
 - A companion recipe that installs the theme, its modules, and demo content in one
   step.
 
-## Start here: the Jarvis Handbook
+## Start here
 
-**[Read the Jarvis Handbook](jarvis-guide.html)**
+**[The Jarvis Handbook](handbook.html)** is for site builders and content
+editors: building pages in Canvas, publishing content, branding the site, and
+keeping it accessible. No code.
 
-The handbook is the main documentation for this theme. It covers the whole
-system in one document: what each part is and why it exists, the build steps
-for that part, and a closing reference to all twenty-one components with their
-props, slots, and a worked example of placing each one. If you read one thing,
-read that.
+**[The Jarvis Technical Guide](jarvis-guide.html)** is for developers. It covers
+the whole system in one document: what each part is and why it exists, the build
+steps for that part, and a reference to all twenty-four components with their
+props, slots, and a worked example of placing each one.
 
 The pages below are the short reference material, for when you already know
 what you are looking for.

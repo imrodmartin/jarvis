@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Jarvis Handbook: Build Pages, Publish Content, Stay Accessible</title>
+<style>
+  :root {
+    --ink: #1b2a4a; --body: #2b3444; --muted: #5b6577; --rule: #dfe4ec;
+    --blue: #2d6cdf; --blue-dark: #1e4fa8; --bg: #ffffff; --panel: #f6f8fb;
+    --code-bg: #1b2333; --code-ink: #e6edf7;
+    --warn-bg: #fff8e6; --warn-edge: #e0a800;
+    --note-bg: #eef4ff; --note-edge: #2d6cdf;
+    --good-bg: #edf8f0; --good-edge: #2e7d46;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--body);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 96px; }
+  header.mast { background: linear-gradient(160deg, #1b2a4a, #2d6cdf); color: #fff; padding: 56px 24px 48px; margin-bottom: 40px; }
+  header.mast .wrap { padding-bottom: 0; }
+  header.mast h1 { margin: 0 0 12px; font-size: 2.4rem; line-height: 1.15; }
+  header.mast p { margin: 0; font-size: 1.1rem; opacity: .92; max-width: 62ch; }
+  .kicker { text-transform: uppercase; letter-spacing: .12em; font-size: .76rem; font-weight: 700; opacity: .8; margin-bottom: 10px; }
+  h2 { font-size: 1.7rem; color: var(--ink); margin: 56px 0 8px; padding-bottom: 8px; border-bottom: 2px solid var(--rule); }
+  h3 { font-size: 1.22rem; color: var(--ink); margin: 34px 0 6px; }
+  h4 { font-size: 1.02rem; color: var(--ink); margin: 24px 0 4px; }
+  p, li { max-width: 72ch; }
+  a { color: var(--blue-dark); }
+  .lede { font-size: 1.06rem; color: var(--muted); }
+  nav.toc { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 20px 24px; }
+  nav.toc h2 { margin: 0 0 10px; font-size: 1.05rem; border: 0; padding: 0; }
+  nav.toc ol { margin: 0; padding-left: 20px; }
+  nav.toc li { margin: 3px 0; }
+  nav.toc a { text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+  .codewrap { position: relative; margin: 16px 0 22px; }
+  .codewrap .label { font: 600 .74rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .08em; display: block; margin-bottom: 6px; }
+  pre { background: var(--code-bg); color: var(--code-ink); padding: 16px 18px; border-radius: 8px;
+    overflow-x: auto; font: 13.5px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; margin: 0; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  p code, li code, td code, .box code { background: var(--panel); border: 1px solid var(--rule);
+    padding: 1px 5px; border-radius: 4px; font-size: .88em; }
+  .box pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+  .copy { position: absolute; top: 26px; right: 10px; background: rgba(255,255,255,.12); color: #fff;
+    border: 1px solid rgba(255,255,255,.28); border-radius: 6px; padding: 4px 10px; font-size: .76rem; cursor: pointer; }
+  .copy:hover { background: rgba(255,255,255,.24); }
+  .copy.done { background: #2e7d46; border-color: #2e7d46; }
+  .box { border-left: 4px solid; border-radius: 6px; padding: 14px 18px; margin: 20px 0; }
+  .box p { margin: 0 0 8px; } .box p:last-child { margin: 0; }
+  .box .t { font-weight: 700; display: block; margin-bottom: 4px; }
+  .box pre { margin: 8px 0; }
+  .note { background: var(--note-bg); border-color: var(--note-edge); }
+  .warn { background: var(--warn-bg); border-color: var(--warn-edge); }
+  .good { background: var(--good-bg); border-color: var(--good-edge); }
+  table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: .94rem; }
+  th, td { border: 1px solid var(--rule); padding: 8px 11px; text-align: left; vertical-align: top; }
+  th { background: var(--panel); font-weight: 600; color: var(--ink); }
+  .tree { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 16px 18px;
+    font: 13.5px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-x: auto; white-space: pre; margin: 18px 0; }
+  hr { border: 0; border-top: 1px solid var(--rule); margin: 48px 0; }
+  footer { color: var(--muted); font-size: .9rem; }
+  @media (max-width: 640px) { header.mast h1 { font-size: 1.8rem; } body { font-size: 16px; } }
+  @media print { header.mast { background: none; color: #000; } .copy { display: none; }
+    pre { background: #f4f4f4; color: #000; border: 1px solid #ccc; } }
+
+  h5 { font-size: .97rem; color: var(--ink); margin: 20px 0 4px; }
+
+.mast__logo { display: block; width: 100%; max-width: 210px; height: auto; margin: 0 0 18px; }
+
+figure { margin: 22px 0; }
+figure img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 8px; }
+figure img.tall { width: 62%; }
+figcaption { color: var(--muted); font-size: .88rem; margin-top: 6px; }
+@media print { figure { break-inside: avoid; } }
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="kicker">DrupalHelps Handbook</div>
+    <h1>The Jarvis Handbook</h1>
+    <p>Build pages, publish content, and keep your site on brand and accessible with Jarvis and Drupal Canvas. For site builders and content editors. No code required.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+<p class="lede">This handbook is for the people who run the site: site builders, content editors, communications staff. You don't need to know Drupal's internals, and you won't touch code. If you can edit a document and drag a file into a folder, you can build pages with Jarvis.</p>
+
+<div class="note box">
+  <span class="t">What this handbook is not</span>
+  <p>It's not a developer guide. If you want to know how Jarvis is built, or build a theme like it, read <a href="jarvis-guide.html">The Jarvis Technical Guide</a>. Screenshots in this handbook come from DrupalHelps.com, a live Jarvis site. Your menus, colors and some fields will differ. The screens and buttons won't.</p>
+</div>
+
+<nav class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#two-ways">Two ways content gets built</a></li>
+    <li><a href="#editor">A tour of the Canvas editor</a></li>
+    <li><a href="#build-page">Build a page, step by step</a></li>
+    <li><a href="#components">Pick the right component</a></li>
+    <li><a href="#posts">Blog posts and Basic pages</a></li>
+    <li><a href="#templates">Templates: change every post at once</a></li>
+    <li><a href="#media">Images, documents and video</a></li>
+    <li><a href="#menus">Menus</a></li>
+    <li><a href="#brand">Your brand: colors, fonts and logo</a></li>
+    <li><a href="#forms-share">Forms, sharing and search</a></li>
+    <li><a href="#a11y">Accessibility: your part</a></li>
+    <li><a href="#trouble">When something looks wrong</a></li>
+  </ol>
+</nav>
+
+<hr>
+
+<h2 id="two-ways">1. Two ways content gets built</h2>
+
+<p>Everything on a Jarvis site is built one of two ways, and knowing which one you're in saves most of the confusion new editors run into.</p>
+
+<table>
+  <thead><tr><th></th><th>Canvas pages</th><th>Content items</th></tr></thead>
+  <tbody>
+    <tr><td><strong>What they are</strong></td><td>One-off pages you design visually</td><td>Blog posts and Basic pages you fill in with a form</td></tr>
+    <tr><td><strong>Examples</strong></td><td>Home page, landing pages, a training overview, a product page</td><td>Every blog post, an accessibility statement, an about page</td></tr>
+    <tr><td><strong>Where you edit</strong></td><td>The Canvas editor: drag, drop, set options</td><td>The edit form: title, body, image, fields</td></tr>
+    <tr><td><strong>Where the look comes from</strong></td><td>The page itself. You arrange every section.</td><td>A <strong>template</strong> shared by every item of that type</td></tr>
+  </tbody>
+</table>
+
+<p>The template is the part people miss. When you write a blog post, you don't design it. You fill in the fields, and the Blog template decides where the image goes, where the date sits and how the share buttons line up. Change the template once and every post changes with it. That's chapter 6.</p>
+
+<div class="good box"><span class="t">The rule</span><p>If it's a one-off page, build it in Canvas. If you'll write 50 of them, it's a content item.</p></div>
+
+<hr>
+
+<h2 id="editor">2. A tour of the Canvas editor</h2>
+
+<p>Canvas is Drupal's visual page builder. You see the page as visitors will, and you build it by dragging components onto it. Open any Canvas page and you'll see 4 areas.</p>
+
+<figure><img src="images/handbook/canvas-editor.jpg" alt="The Canvas editor: a narrow toolbar on the left, the page preview in the middle, and the Page data panel on the right with Title, URL alias, Page template and SEO settings."><figcaption>The Canvas editor with a page open. Left: the tool rail. Center: the live preview. Right: Page data.</figcaption></figure>
+
+<ul>
+  <li><strong>The top bar.</strong> The page's name and status (Published or Unpublished) sit in the middle. On the right are <strong>Preview</strong> (the eye icon) and the publish button, which reads <strong>No changes</strong> until you edit something. The Drupal icon at the far left is <strong>Exit Drupal Canvas</strong>, back to the admin.</li>
+  <li><strong>The tool rail on the left.</strong> <strong>Library</strong> (the plus sign) holds every component you can add. <strong>Layers</strong> shows the page as an outline. <strong>Pages</strong> lists your Canvas pages, and <strong>Templates</strong> holds the content templates. This handbook doesn't cover <strong>Code</strong> or <strong>Brand kit</strong>, which are for developers and designers.</li>
+  <li><strong>The preview in the middle.</strong> Click anything on the page to select it. The size menu at the top left switches between Desktop, Tablet and Mobile, so you can check every screen size before you publish.</li>
+  <li><strong>The settings panel on the right.</strong> With nothing selected, it shows <strong>Page data</strong>: the title, the URL alias and the SEO settings. Select a component and it shows that component's settings instead.</li>
+</ul>
+
+<p>Canvas saves as you work. Nothing you do reaches visitors until you publish it, so you can experiment freely.</p>
+
+<div class="good box"><span class="t">The rule</span><p>Left rail to find things, middle to arrange them, right panel to set them.</p></div>
+
+<hr>
+
+<h2 id="build-page">3. Build a page, step by step</h2>
+
+<h3>Create the page</h3>
+
+<ol>
+  <li>Open Canvas and click <strong>Pages</strong> in the left rail.</li>
+  <li>Click <strong>New</strong> and choose <strong>New page</strong>.</li>
+  <li>In <strong>Page data</strong> on the right, set the <strong>Title</strong> and the <strong>URL alias</strong>, for example <code>/training</code>.</li>
+  <li>Open <strong>SEO settings</strong> and write a <strong>Meta description</strong>: 1 or 2 sentences that make someone want to click the result in Google.</li>
+</ol>
+
+<figure><img src="images/handbook/canvas-pages.jpg" alt="The Pages panel, listing Canvas pages with their URLs, a search box, a New button and an Unpublished badge on draft pages."><figcaption>The Pages panel. Draft pages carry an Unpublished badge.</figcaption></figure>
+
+<p>Each page in the list has its own menu with <strong>Duplicate page</strong>, <strong>Set as homepage</strong> and <strong>Unpublish page</strong>. Duplicating a page you like is the fastest way to start a new one.</p>
+
+<h3>Start with a section</h3>
+
+<p>Every page is a stack of sections, and every section is a layout component. Build the layout first and fill it second.</p>
+
+<ol>
+  <li>Click <strong>Library</strong> in the left rail. Components are grouped into folders.</li>
+  <li>Open <strong>Sections</strong> and drag <strong>2 Columns</strong> onto the page.</li>
+  <li>Open <strong>Content</strong> and drag a <strong>WYSIWYG</strong> into Column 1 and an <strong>Image</strong> into Column 2.</li>
+</ol>
+
+<figure><img src="images/handbook/canvas-library.jpg" alt="The Library panel with Components and Patterns tabs, a search box, and folders for Content, Other and Sections listing components like Button, Card, Hero and Image."><figcaption>The Library. Search it, or open a folder and drag a component onto the page.</figcaption></figure>
+
+<p>Columns stack on phones automatically. A 3 Columns section shows 3 across on a desktop, 2 on a tablet and 1 on a phone. You don't set anything for that to happen.</p>
+
+<h3>Set a component's options</h3>
+
+<p>Click a component on the page, or click its name in <strong>Layers</strong>, and its settings open on the right. Every field there is labeled in plain language: Title, Image, Heading level, Background, Padding.</p>
+
+<figure><img src="images/handbook/canvas-layers-selected.jpg" alt="The Layers panel on the left with a Card selected inside a 3 Columns section, and the Card's settings on the right: image position, overlay opacity, text color, image and alt text options."><figcaption>A Card selected in Layers, with its settings on the right.</figcaption></figure>
+
+<p>Layers is also the easiest way to work with a long page. Drag items in the outline to reorder them, or right-click a component for <strong>Duplicate</strong>, <strong>Copy</strong>, <strong>Paste</strong>, <strong>Move up</strong>, <strong>Move down</strong> and <strong>Delete</strong>.</p>
+
+<h3>Save sections you reuse as patterns</h3>
+
+<p>Built a section you'll want again, like a row of 3 cards with a heading? Right-click it and choose <strong>Create pattern</strong>. It appears under the <strong>Patterns</strong> tab in the Library, ready to drag onto any page.</p>
+
+<h3>Preview, then publish</h3>
+
+<ol>
+  <li>Click <strong>Preview</strong> and check the page at Desktop, Tablet and Mobile.</li>
+  <li>Click the publish button at the top right. It now reads <strong>Review 1 change</strong>, or however many changes you've made.</li>
+  <li>The <strong>Unpublished changes</strong> panel lists everything waiting to go live. Tick what's ready and click <strong>Publish selected changes</strong>.</li>
+</ol>
+
+<p>Changed your mind? <strong>Discard changes</strong> in the same panel throws the edits away and puts the page back the way visitors see it.</p>
+
+<div class="good box"><span class="t">The rule</span><p>Nothing is live until you publish it. If a visitor can't see your change, check the publish button first.</p></div>
+
+<hr>
+
+<h2 id="components">4. Pick the right component</h2>
+
+<p>Jarvis ships 24 components, filed into 3 folders in the Library. You'll use 6 of them most of the time: 2 Columns, 3 Columns, WYSIWYG, Image, Card and Button. The rest are there when a page needs something specific.</p>
+
+<h3>Sections: the layout</h3>
+<table>
+  <thead><tr><th>Component</th><th>Use it for</th></tr></thead>
+  <tbody>
+    <tr><td>Section</td><td>A plain wrapper for one band of content</td></tr>
+    <tr><td>1 Column</td><td>A single column with a background color or image</td></tr>
+    <tr><td>2 Columns</td><td>Text beside an image, or 2 cards side by side. Ratios like 50/50 or 66/33.</td></tr>
+    <tr><td>3 Columns</td><td>A row of 3 cards, stats or people</td></tr>
+    <tr><td>3 Columns (custom widths)</td><td>A content area with a sidebar. Set each column's width, and a column at 0% disappears.</td></tr>
+    <tr><td>4 Columns</td><td>4 short items: stats, logos, small cards</td></tr>
+  </tbody>
+</table>
+
+<p>Every section has the same core options: Width (boxed or full), Background (a brand color or an image), Text color, Gap, Padding and Margin.</p>
+
+<h3>Content: what visitors read</h3>
+<table>
+  <thead><tr><th>Component</th><th>Use it for</th></tr></thead>
+  <tbody>
+    <tr><td>WYSIWYG</td><td>Rich text with headings, lists, links and embedded media. Your everyday text block.</td></tr>
+    <tr><td>Text</td><td>Rich text with control over reading width and alignment</td></tr>
+    <tr><td>Hero</td><td>A full-width banner: heading, subheading, a button and a background image</td></tr>
+    <tr><td>Card</td><td>Image, title, short text and a link, with the image on top, left, right or behind</td></tr>
+    <tr><td>Card Full Image</td><td>A band with an image filling one half and text in the other</td></tr>
+    <tr><td>Call to Action</td><td>A centered heading, a line of text and one button</td></tr>
+    <tr><td>Large Call to Action</td><td>A bigger pitch: heading, lead text, 3 icon rows and 2 links</td></tr>
+    <tr><td>Stat card</td><td>One big number with a short description</td></tr>
+    <tr><td>Person</td><td>A portrait, name, role and contact details</td></tr>
+    <tr><td>Button</td><td>A standalone button, when nothing else on the page carries one</td></tr>
+    <tr><td>Image</td><td>A single image, with an optional caption</td></tr>
+    <tr><td>Image Overlay</td><td>An image with a colored text card in the corner</td></tr>
+    <tr><td>Map</td><td>A Google map from a one-line address</td></tr>
+    <tr><td>Video</td><td>A YouTube, Vimeo or uploaded video, with captions</td></tr>
+    <tr><td>Video with Sidebar</td><td>A video beside a title, description and buttons</td></tr>
+  </tbody>
+</table>
+
+<h3>Other</h3>
+<table>
+  <thead><tr><th>Component</th><th>Use it for</th></tr></thead>
+  <tbody>
+    <tr><td>Timeline</td><td>Up to 6 steps or questions, shown as tabs, an accordion or a vertical rail. It makes a good FAQ.</td></tr>
+    <tr><td>Share</td><td>Share buttons for the page: Facebook, X, LinkedIn, Bluesky, Reddit, email and copy link</td></tr>
+    <tr><td>Video Background</td><td>Video playing behind a text card</td></tr>
+  </tbody>
+</table>
+
+<p>Your site can also place <strong>blocks</strong> from the Library, like the Webform block or the 3-card Blog block. They work like any other component.</p>
+
+<div class="good box"><span class="t">The rule</span><p>Start with a section, then fill it. A component dropped straight onto the page has nothing to hold it in line with the rest.</p></div>
+
+<hr>
+
+<h2 id="posts">5. Blog posts and Basic pages</h2>
+
+<p>Blog posts and Basic pages are content items. You don't design them. You fill in a form, and a template does the layout.</p>
+
+<h3>Write a post</h3>
+
+<ol>
+  <li>Go to <strong>Content</strong> and click <strong>Add content</strong>, then <strong>Blog</strong>. The <strong>Create</strong> menu in the admin sidebar gets you there too.</li>
+  <li>Fill in the fields below.</li>
+  <li>Leave <strong>Published</strong> ticked to go live, or untick it to save a draft, then click <strong>Save</strong>.</li>
+</ol>
+
+<figure><img src="images/handbook/content-list.jpg" alt="The Content list with an Add content button, filters for title, content type and published status, and a table of blog posts and pages."><figcaption>The Content list. Filter by type or status to find what you need.</figcaption></figure>
+
+<table>
+  <thead><tr><th>Field</th><th>What goes in it</th></tr></thead>
+  <tbody>
+    <tr><td>Title</td><td>The headline. It's also the page's main heading and the title search engines show.</td></tr>
+    <tr><td>Body</td><td>The post itself. Use real headings from the Paragraph menu, not bold text.</td></tr>
+    <tr><td>Hero Banner</td><td>The main image, picked from the media library. It leads the post and its card.</td></tr>
+    <tr><td>Publication Date</td><td>The date shown on the post and its card (Blog only)</td></tr>
+    <tr><td>Video</td><td>An optional video for the post (Blog only)</td></tr>
+    <tr><td>Abstract</td><td>2 or 3 sentences that sum the content up. It's the text on cards and teasers.</td></tr>
+    <tr><td>URL alias, Meta tags, Menu settings</td><td>In the sidebar: the address, the search description and an optional menu link</td></tr>
+  </tbody>
+</table>
+
+<figure><img src="images/handbook/blog-form.jpg" alt="The Create Blog form: Title, Body with an editor toolbar, Hero Banner, Publication Date, Filed Under, Files, Video and Abstract, with a sidebar for menu settings, meta tags and URL alias." class="tall"><figcaption>The Create Blog form on DrupalHelps.com. This site adds a few of its own fields, like Filed Under and Keywords.</figcaption></figure>
+
+<h3>Why the Abstract matters</h3>
+
+<p>Listings don't show your body text. They show cards, and every card shows the Abstract. A post without one gets a card with an image, a title and nothing else.</p>
+
+<figure><img src="images/handbook/tips-cards.jpg" alt="A blog listing of cards, each with an image, title, date, a short abstract and a Read more button."><figcaption>A blog listing. The text under each date is the Abstract.</figcaption></figure>
+
+<p>Write it for a reader deciding whether to click: what the post covers and why it's worth their time. If your site has AI configured, the Abstract can be drafted for you. Read it before you publish anyway.</p>
+
+<div class="good box"><span class="t">The rule</span><p>Write the Abstract last, when you know what the post actually says.</p></div>
+
+<hr>
+
+<h2 id="templates">6. Templates: change every post at once</h2>
+
+<p>Every content type has templates, and each template controls one way the content is shown. Change a template and every item of that type changes the moment you publish.</p>
+
+<figure><img src="images/handbook/canvas-templates.jpg" alt="The Templates panel listing content types: Blog with Card template, Full content template and Teaser template, and Basic with the same three, plus a Page templates section."><figcaption>The Templates panel. Each content type has 3 templates.</figcaption></figure>
+
+<table>
+  <thead><tr><th>Template</th><th>Where it's used</th></tr></thead>
+  <tbody>
+    <tr><td>Full content</td><td>The page a visitor sees when they open the post</td></tr>
+    <tr><td>Card</td><td>Grid listings, like the Blog page and the 3-card Blog block</td></tr>
+    <tr><td>Teaser</td><td>Stacked lists, like topic pages, with the image on the left</td></tr>
+  </tbody>
+</table>
+
+<p>A template works like a Canvas page, with one difference: instead of typing a value into a component, you link the setting to a field. The Card's image is linked to the Hero Banner, its text to the Abstract. Canvas previews the template with a real post, so you see actual content while you work.</p>
+
+<div class="warn box"><span class="t">Before you publish a template</span><p>Preview it with 2 or 3 different posts: one with a long title, one with no image. A template that looks perfect with one post can break with another.</p></div>
+
+<div class="good box"><span class="t">The rule</span><p>Edit the template when every post should change. Edit the post when only one should.</p></div>
+
+<hr>
+
+<h2 id="media">7. Images, documents and video</h2>
+
+<p>Every image, PDF and video lives in the <strong>media library</strong>, and you reuse it from there. Upload once, place it anywhere.</p>
+
+<figure><img src="images/handbook/media-library.jpg" alt="The Media list with an Add media button, filters for name, type and status, and a table of images and remote videos with thumbnails."><figcaption>The media library under Content, then Media.</figcaption></figure>
+
+<ul>
+  <li><strong>Images.</strong> Upload, write the alt text, and set the focal point: click the part of the photo that matters, and Jarvis keeps it in frame when the image is cropped for a card or banner.</li>
+  <li><strong>Documents.</strong> PDFs and other files, for download links and file fields.</li>
+  <li><strong>Remote video.</strong> Paste a YouTube or Vimeo link. Turn captions on at YouTube or Vimeo.</li>
+  <li><strong>Video.</strong> An uploaded video file. Add a captions file (WebVTT, <code>.vtt</code>) in the Video component.</li>
+</ul>
+
+<p>Alt text is written once, on the media item, and every placement uses it. When one placement needs different wording, components with an image have <strong>Override alt text</strong>. For a purely decorative image, tick <strong>Decorative image</strong> so screen readers skip it.</p>
+
+<div class="good box"><span class="t">The rule</span><p>Write the alt text when you upload, not when you place. You'll never be in a better position to describe the image.</p></div>
+
+<hr>
+
+<h2 id="menus">8. Menus</h2>
+
+<p>The main navigation is a menu you manage in the admin, not on the page.</p>
+
+<figure><img src="images/handbook/menu.jpg" alt="The Edit menu Main navigation screen with an Add link button and a list of links, some indented under parents, each with an Enabled checkbox."><figcaption>Structure, then Menus, then Main navigation.</figcaption></figure>
+
+<ol>
+  <li>Go to <strong>Structure</strong>, then <strong>Menus</strong>, and edit <strong>Main navigation</strong>.</li>
+  <li>Click <strong>Add link</strong>, enter the title and the page, and save.</li>
+  <li>Drag links to reorder them. Drag a link under and to the right of another to make it a dropdown item.</li>
+  <li>Untick <strong>Enabled</strong> to hide a link without deleting it.</li>
+</ol>
+
+<p>For a blog post or Basic page, you can also add the menu link from <strong>Menu settings</strong> in the sidebar of its edit form.</p>
+
+<p>Jarvis marks the page a visitor is on in the menu, for sighted visitors and screen readers alike, and every dropdown works from the keyboard. You don't set anything for that.</p>
+
+<div class="good box"><span class="t">The rule</span><p>Keep the top level short. Every extra item is one more thing a visitor has to read before they find what they came for.</p></div>
+
+<hr>
+
+<h2 id="brand">9. Your brand: colors, fonts and logo</h2>
+
+<p>Your brand is set once, in the theme settings, and every component follows it. Go to <strong>Appearance</strong>, then <strong>Settings</strong>, then <strong>Jarvis</strong>.</p>
+
+<figure><img src="images/handbook/theme-settings.jpg" alt="Jarvis theme settings, Colors section: Primary, Secondary, Title background, Title text and Footer background, each with a color swatch, a hex value and contrast badges for small and large text."><figcaption>Theme settings. The badges next to each color are a live contrast check.</figcaption></figure>
+
+<ul>
+  <li><strong>Colors.</strong> Primary and Secondary drive buttons, backgrounds and accents. There are settings for the title area, footer and backgrounds too.</li>
+  <li><strong>Fonts.</strong> Choose Google Fonts for headings, body text and navigation. Jarvis downloads them and serves them from your own site, so visitors' browsers never call Google.</li>
+  <li><strong>Sizes.</strong> The base text size and each heading size.</li>
+  <li><strong>Logo.</strong> Upload it on the same page, in the <strong>Logo image</strong> section.</li>
+</ul>
+
+<h3>Read the badges</h3>
+
+<p>Every color shows its contrast against the text that will sit on it, checked against WCAG 1.4.3 Contrast (Minimum), Level AA: 4.5:1 for normal text and 3:1 for large text. A green check passes. A red cross fails.</p>
+
+<p>Take the screenshot above. The Primary color, a light blue, scores 2.59:1 against white. That fails for both small and large text, so every white-text button in that color is hard to read. The fix isn't in the content. It's a darker shade of the same blue, chosen right here.</p>
+
+<div class="good box"><span class="t">The rule</span><p>If a badge is red, change the color. No amount of careful writing makes low-contrast text readable.</p></div>
+
+<hr>
+
+<h2 id="forms-share">10. Forms, sharing and search</h2>
+
+<h3>Forms</h3>
+
+<p>Forms are built with Webform, under <strong>Structure</strong>, then <strong>Webforms</strong>. To put one on a Canvas page, drag the <strong>Webform</strong> block from the Library and choose the form. Jarvis styles the fields and buttons to match your brand, and spam protection is already on.</p>
+
+<h3>Share buttons</h3>
+
+<p>Drag <strong>Share</strong> from the Library to the end of a page. Tick the networks you want and pick a shape. The buttons sit centered with no visible label, and screen readers still announce them as "Share". To add it to every blog post, put Share in the Blog's Full content template and link its Share text to the Title. DrupalHelps.com does exactly that.</p>
+
+<h3>Search and social</h3>
+
+<p>Each Canvas page has <strong>SEO settings</strong> in Page data: the page title, the meta description, and an image for social shares. Blog posts and Basic pages have the same thing under <strong>Meta tags</strong>. The defaults are sensible. The meta description is the one worth writing yourself, because it's the sentence people read before they decide to click.</p>
+
+<div class="good box"><span class="t">The rule</span><p>Write the meta description for a person scanning results, not for a search engine.</p></div>
+
+<hr>
+
+<h2 id="a11y">11. Accessibility: your part</h2>
+
+<p>Jarvis handles a lot of accessibility for you. It can't handle all of it, and knowing where the line falls is the whole job.</p>
+
+<table>
+  <thead><tr><th>Jarvis handles</th><th>You handle</th></tr></thead>
+  <tbody>
+    <tr><td>Text contrast over images: overlays darken until the text passes WCAG AA</td><td>Alt text that says what the image means</td></tr>
+    <tr><td>Contrast checks on your brand colors</td><td>Headings in order, without skipping levels</td></tr>
+    <tr><td>Keyboard-friendly menus and visible focus</td><td>Link text that says where it goes</td></tr>
+    <tr><td>Screen reader names on buttons, like each card's "Read more"</td><td>Captions on your videos</td></tr>
+    <tr><td>Turning animation off for visitors who ask their device to reduce motion</td><td>Plain language, short paragraphs, real lists</td></tr>
+  </tbody>
+</table>
+
+<h3>The checklist</h3>
+
+<ul>
+  <li><strong>One H1 per page.</strong> On a Canvas page the page title is the H1. Every heading you add starts at H2.</li>
+  <li><strong>Don't skip heading levels.</strong> H2, then H3, then H4. Cards, heroes and sections have a <strong>Heading level</strong> setting. Set it one level below the heading above it. Screen reader users move around a page by its headings, and a skipped level reads as a missing section.</li>
+  <li><strong>Write alt text that does a job.</strong> "Rod teaching a room of 20 site builders" tells the reader something. "Photo of people" doesn't. Screen readers already announce that it's an image, so never start with "Image of".</li>
+  <li><strong>Make every link say where it goes.</strong> "Download the 2026 training schedule (PDF)", never "click here".</li>
+  <li><strong>Caption every video.</strong> WCAG 1.2.2 Captions (Prerecorded), Level A.</li>
+  <li><strong>Run the checker before you publish.</strong> Logged-in editors see the Editoria11y toggle at the bottom right of every page. It flags missing alt text, skipped headings and vague links in place. Publish with zero flags.</li>
+</ul>
+
+<p>The cost is lopsided. Alt text takes seconds to write while the image is in front of you. Finding and fixing it later, across a whole site, takes far longer. The theme can't write it for you, and nobody fixes it once for everyone.</p>
+
+<div class="good box"><span class="t">The rule</span><p>If it's in the editor, it's yours. If it's in the theme, report it, and it gets fixed once for every page.</p></div>
+
+<hr>
+
+<h2 id="trouble">12. When something looks wrong</h2>
+
+<table>
+  <thead><tr><th>What you see</th><th>What's going on</th><th>What to do</th></tr></thead>
+  <tbody>
+    <tr><td>Visitors don't see your change</td><td>It's saved but not published</td><td>Click <strong>Review changes</strong> and publish it</td></tr>
+    <tr><td>A card has no text under the title</td><td>The post has no Abstract</td><td>Edit the post and write one</td></tr>
+    <tr><td>Text over a photo is darker than you set it</td><td>Jarvis raised the overlay so the text stays readable</td><td>Pick a calmer photo, or accept the darker overlay</td></tr>
+    <tr><td>A color you picked doesn't take on a section</td><td>It would fail contrast there, so Jarvis falls back to a safe color</td><td>Choose a color the section supports</td></tr>
+    <tr><td>Every post changed at once</td><td>Someone published a template</td><td>Open <strong>Templates</strong> and review the last change</td></tr>
+    <tr><td>Columns stack on a phone</td><td>That's on purpose: side-by-side columns are unreadable at phone width</td><td>Nothing. Check the order still makes sense stacked.</td></tr>
+    <tr><td>A component you need isn't in the Library</td><td>It may be disabled, or it may be a block</td><td>Search the Library by name, or ask your site builder</td></tr>
+  </tbody>
+</table>
+
+<div class="good box"><span class="t">The rule</span><p>When in doubt, check the publish button, then the template. Most surprises are one or the other.</p></div>
+
+</div>
+
+</body>
+</html>
