@@ -1,0 +1,93 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Share
+status: stable
+description: 'Share buttons for the current page: Facebook, X, LinkedIn, Bluesky, Reddit, email and copy link.'
+category: Jarvis
+libraryOverrides:
+  dependencies:
+    - core/drupal
+    - core/once
+    - jarvis/fontawesome
+props:
+  type: object
+  properties:
+    label:
+      title: Label
+      description: 'Shown before the buttons. Leave empty to hide it; screen readers still hear "Share".'
+      type: string
+      examples:
+        - Share
+    share_text:
+      title: 'Share text'
+      description: 'Optional. Sent with the link, for example the page title. In a content template, link it to the Title field.'
+      type: string
+    url:
+      title: 'Page URL'
+      description: 'Optional. Leave empty to share the page the buttons are on.'
+      type: string
+      format: uri-reference
+      x-allowed-schemes: [http, https]
+    facebook:
+      title: Facebook
+      type: boolean
+      default: true
+    x:
+      title: X
+      type: boolean
+      default: true
+    linkedin:
+      title: LinkedIn
+      type: boolean
+      default: true
+    bluesky:
+      title: Bluesky
+      type: boolean
+      default: false
+    reddit:
+      title: Reddit
+      type: boolean
+      default: false
+    email:
+      title: Email
+      type: boolean
+      default: true
+    copy_link:
+      title: 'Copy link'
+      type: boolean
+      default: true
+    color:
+      title: Colors
+      description: 'Brand uses each network''s own color. Dark uses one dark color for all.'
+      type: string
+      enum: [brand, dark]
+      'meta:enum':
+        brand: Brand
+        dark: Dark
+      default: brand
+    shape:
+      title: Shape
+      type: string
+      enum: [square, rounded, circle]
+      'meta:enum':
+        square: Square
+        rounded: Rounded
+        circle: Circle
+      default: rounded
+    size:
+      title: Size
+      type: string
+      enum: [small, medium, large]
+      'meta:enum':
+        small: 'Small (32px)'
+        medium: 'Medium (40px)'
+        large: 'Large (48px)'
+      default: medium
+    align:
+      title: Alignment
+      type: string
+      enum: [start, center, end]
+      'meta:enum':
+        start: Left
+        center: Center
+        end: Right
+      default: start

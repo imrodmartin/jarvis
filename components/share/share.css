@@ -1,0 +1,60 @@
+/* Jarvis share component. */
+.jarvis-share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.jarvis-share__label {
+  font-weight: 600;
+  margin-inline-end: 0.25rem;
+}
+.jarvis-share__btn {
+  --jarvis-share-size: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--jarvis-share-size);
+  height: var(--jarvis-share-size);
+  font-size: calc(var(--jarvis-share-size) * 0.45);
+  color: #fff;
+  background: #212529;
+  border: 0;
+  text-decoration: none;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.jarvis-share--small .jarvis-share__btn { --jarvis-share-size: 2rem; }
+.jarvis-share--large .jarvis-share__btn { --jarvis-share-size: 3rem; }
+.jarvis-share--square .jarvis-share__btn { border-radius: 0; }
+.jarvis-share--rounded .jarvis-share__btn { border-radius: 0.375rem; }
+.jarvis-share--circle .jarvis-share__btn { border-radius: 50%; }
+.jarvis-share__btn:hover,
+.jarvis-share__btn:focus-visible {
+  color: #fff;
+  filter: brightness(0.85);
+  transform: translateY(-1px);
+}
+/* ADA (WCAG 2.4.7): a visible ring that doesn't depend on the button color. */
+.jarvis-share__btn:focus-visible {
+  outline: 3px solid #000;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #fff;
+}
+.jarvis-share__svg {
+  width: 1em;
+  height: 1em;
+}
+/* Brand colors, darkened where needed so white icons keep 3:1 (WCAG 1.4.11). */
+.jarvis-share--brand .jarvis-share__btn--facebook { background: #0866ff; }
+.jarvis-share--brand .jarvis-share__btn--x { background: #000; }
+.jarvis-share--brand .jarvis-share__btn--linkedin { background: #0a66c2; }
+.jarvis-share--brand .jarvis-share__btn--bluesky { background: #0866ff; }
+.jarvis-share--brand .jarvis-share__btn--reddit { background: #d93a00; }
+.jarvis-share--brand .jarvis-share__btn--email { background: #5c636a; }
+.jarvis-share--brand .jarvis-share__btn--copy { background: #5c636a; }
+.jarvis-share__btn--copy.is-copied { background: #146c43; }
+@media (prefers-reduced-motion: reduce) {
+  .jarvis-share__btn { transition: none; }
+  .jarvis-share__btn:hover,
+  .jarvis-share__btn:focus-visible { transform: none; }
+}

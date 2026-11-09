@@ -1,0 +1,58 @@
+{#
+/**
+ * @file
+ * Jarvis share SDC. Share links for the current page (or `url`), built
+ * server-side so they work without JavaScript; only "Copy link" needs JS and
+ * stays hidden until share.js reveals it.
+ */
+#}
+{% import '@jarvis/jarvis-url.html.twig' as safe %}
+{% set share_url = safe.url(url|default('')) ?: url('<current>', {}, {'absolute': true}) %}
+{# safe.url() keeps relative paths relative; networks need an absolute URL. #}
+{% if share_url starts with '/' %}
+  {% set share_url = url('<front>', {}, {'absolute': true})|trim('/', 'right') ~ share_url %}
+{% endif %}
+{% set u = share_url|url_encode %}
+{% set t = share_text|default('')|url_encode %}
+{% set networks = [
+  { on: facebook ?? true, id: 'facebook', name: 'Facebook', icon: 'fa-brands fa-facebook-f', href: 'https://www.facebook.com/sharer/sharer.php?u=' ~ u },
+  { on: x ?? true, id: 'x', name: 'X', icon: 'fa-brands fa-x-twitter', href: 'https://x.com/intent/post?url=' ~ u ~ (t ? '&text=' ~ t) },
+  { on: linkedin ?? true, id: 'linkedin', name: 'LinkedIn', icon: 'fa-brands fa-linkedin-in', href: 'https://www.linkedin.com/sharing/share-offsite/?url=' ~ u },
+  { on: bluesky ?? false, id: 'bluesky', name: 'Bluesky', icon: '', href: 'https://bsky.app/intent/compose?text=' ~ (t ? t ~ '%20') ~ u },
+  { on: reddit ?? false, id: 'reddit', name: 'Reddit', icon: 'fa-brands fa-reddit-alien', href: 'https://www.reddit.com/submit?url=' ~ u ~ (t ? '&title=' ~ t) },
+] %}
+{% set classes = [
+  'jarvis-share',
+  'jarvis-share--' ~ (color|default('brand')),
+  'jarvis-share--' ~ (shape|default('rounded')),
+  'jarvis-share--' ~ (size|default('medium')),
+  'justify-content-' ~ (align|default('start')),
+] %}
+{# ADA: a named group so the icon-only buttons are announced as one set; each
+   button's visible icon is aria-hidden and its name is real text. #}
+<div class="{{ classes|join(' ') }}" role="group" aria-label="{{ label|default('')|trim ?: 'Share'|t }}">
+  {% if label|default('')|trim %}<span class="jarvis-share__label" aria-hidden="true">{{ label }}</span>{% endif %}
+  {% for n in networks|filter(n => n.on) %}
+    <a class="jarvis-share__btn jarvis-share__btn--{{ n.id }}" href="{{ n.href }}" target="_blank" rel="noopener noreferrer">
+      {% if n.icon %}
+        <i class="{{ n.icon }}" aria-hidden="true"></i>
+      {% else %}
+        <svg class="jarvis-share__svg" viewBox="0 0 600 530" aria-hidden="true" focusable="false"><path fill="currentColor" d="M135.7 44.0C204.5 95.6 278.5 200.4 305.7 256.6c27.2-56.2 101.2-161 170-212.6C525.3 6.8 605.7-22 605.7 69.8c0 18.3-10.5 154.0-16.7 176.0-21.4 76.6-99.4 96.1-168.8 84.3 121.3 20.6 152.1 88.9 85.5 157.2-126.6 129.9-181.9-32.6-196.1-74.2-2.6-7.6-3.8-11.2-3.8-8.2 0-3-1.2.6-3.8 8.2-14.2 41.6-69.5 204.1-196.1 74.2-66.6-68.3-35.8-136.6 85.5-157.2C77.3 341.9-.7 322.4-22.1 245.8-28.3 223.8-38.8 88.1-38.8 69.8c0-91.8 80.4-63 130.0-25.8z"/></svg>
+      {% endif %}
+      <span class="visually-hidden">{{ 'Share on @network'|t({'@network': n.name}) }} {{ '(opens in new tab)'|t }}</span>
+    </a>
+  {% endfor %}
+  {% if email ?? true %}
+    <a class="jarvis-share__btn jarvis-share__btn--email" href="mailto:?subject={{ t ?: u }}&amp;body={{ u }}">
+      <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+      <span class="visually-hidden">{{ 'Share by email'|t }}</span>
+    </a>
+  {% endif %}
+  {% if copy_link ?? true %}
+    <button type="button" class="jarvis-share__btn jarvis-share__btn--copy" data-jarvis-share-copy="{{ share_url }}" hidden>
+      <i class="fa-solid fa-link" aria-hidden="true"></i>
+      <span class="visually-hidden">{{ 'Copy link'|t }}</span>
+    </button>
+    <span class="jarvis-share__status visually-hidden" role="status" aria-live="polite"></span>
+  {% endif %}
+</div>
