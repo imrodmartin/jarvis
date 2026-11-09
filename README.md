@@ -10,11 +10,9 @@ repository — it wires this theme into a fully functional Drupal site (Canvas,
 demo content, forms, workflow, SEO, AI) with one recipe apply. This repo is
 just the theme, included there as a git submodule.
 
-**📘 [The Jarvis Handbook](docs/jarvis-guide.html) is the main documentation.**
-It covers the whole theme in one document: what each part does, the steps to
-build that part yourself, and a reference to all twenty-one components with their
-props, slots, and a worked example. Open it in a browser after cloning, or read
-it on the [published docs site](https://project.pages.drupalcode.org/jarvis).
+**📘 [The Jarvis Handbook](docs/handbook.html)** is the user guide for site builders and content editors.
+
+**🛠 [The Jarvis Technical Guide](docs/jarvis-guide.html)** is for developers: what each part does, how to build it, and a reference to all twenty-four components.
 
 ## Requirements
 
@@ -145,7 +143,7 @@ the site owner's request via the theme settings form and stored locally under
 Full documentation is under [`docs/`](docs/) and published at
 https://project.pages.drupalcode.org/jarvis.
 
-The main document is the handbook, [`docs/jarvis-guide.html`](docs/jarvis-guide.html).
+The two main documents are the Handbook for site builders, [`docs/handbook.html`](docs/handbook.html), and the Technical Guide for developers, [`docs/jarvis-guide.html`](docs/jarvis-guide.html).
 Everything else in `docs/` is short reference material: installation,
 configuration, and usage.
 
