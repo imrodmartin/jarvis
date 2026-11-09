@@ -95,7 +95,7 @@ working theme.</p>
   <p>Each chapter opens with the explanation: what the part is, why it exists, how it fits
   with the rest. Then a <strong>Build it yourself</strong> panel marks the hands on half,
   where the same ground is covered as instructions you can type. The final chapter is a
-  reference to all twenty-one components, written for somebody who has never met a Single
+  reference to all twenty-four components, written for somebody who has never met a Single
   Directory Component.</p>
 </div>
 
@@ -195,7 +195,7 @@ working theme.</p>
 │   │   ├── hero.component.yml   Schema: props and slots
 │   │   ├── hero.twig            Markup
 │   │   └── hero.css             Styles, loaded only when the component renders
-│   └── card/ text/ stat/ two-column/ ...   (19 in total)
+│   └── card/ text/ stat/ two-column/ ...   (24 in total)
 ├── css/
 │   ├── overrides.css         The main stylesheet
 │   ├── ckeditor5.css         Styles the rich text editing area
@@ -206,6 +206,7 @@ working theme.</p>
 │   └── color-settings.js     Settings form: live contrast badges
 ├── templates/
 │   ├── page.html.twig                  Region layout
+│   ├── field.html.twig                 Field wrapper (label classes)
 │   ├── menu--main.html.twig            Main menu markup
 │   ├── jarvis-spacing.html.twig        Shared Twig macro
 │   └── jarvis-columns-shell.html.twig  Shared layout wrapper
@@ -240,13 +241,9 @@ working theme.</p>
     ├── recipe.yml
     ├── config/
     └── content/</code></pre></div>
-<p>---</p>
-<p>&lt;a name=&quot;2-key-concepts&quot;&gt;&lt;/a&gt;</p>
 <h3 id="2-key-concepts-in-plain-english">2. Key concepts, in plain English</h3>
 <table><thead><tr><th>Term</th><th>What it means for this tutorial</th></tr></thead><tbody><tr><td><strong>Theme</strong></td><td>The folder that controls how your site <em>looks</em>. Jarvis stands alone, it inherits from no other theme.</td></tr><tr><td><strong>Region</strong></td><td>A named drop-zone in the page (Header, Footer, Content…). Blocks and menus get placed into regions.</td></tr><tr><td><strong>Twig</strong></td><td>Drupal&#x27;s templating language (<code>{{ variable }}</code>, <code>{% if %}</code>). HTML with holes you fill in.</td></tr><tr><td><strong>Library</strong></td><td>A named bundle of CSS + JS. Drupal only loads a library when something asks for it.</td></tr><tr><td><strong>SDC (Single Directory Component)</strong></td><td>A self-contained UI widget living in one folder: a <code>*.component.yml</code> (its &quot;form&quot;/schema) plus a <code>*.twig</code> (its HTML), and optional CSS/JS. Drupal core auto-discovers them.</td></tr><tr><td><strong>Props &amp; Slots</strong></td><td>A component&#x27;s inputs. <strong>Props</strong> are simple values (text, a number, a colour). <strong>Slots</strong> are <em>areas you drop other components into</em> (like a column that holds cards).</td></tr><tr><td><strong>Drupal Canvas</strong></td><td>A visual, drag-and-drop page builder (the successor experience to Layout Builder). It reads your SDC components and lets site builders arrange them on a canvas.</td></tr><tr><td><strong>Content template</strong></td><td>A saved Canvas layout for a <em>content type</em>, e.g. &quot;every Article renders its hero field as a Hero component, then its body as Text.&quot;</td></tr><tr><td><strong>Recipe</strong></td><td>A YAML-based installer. It turns on modules, imports config, and loads demo content in one command. Replaces the old &quot;install profile / features&quot; dance.</td></tr></tbody></table>
 <p><strong>The mental model:</strong> you build <em>components</em> once (developer job), then a <em>site builder</em> composes pages out of them in Canvas (no code). The theme settings let an admin re-skin the whole thing (colours/fonts) without touching CSS.</p>
-<p>---</p>
-<p>&lt;a name=&quot;3-prerequisites&quot;&gt;&lt;/a&gt;</p>
 <h3 id="3-prerequisites-site-setup">3. Prerequisites &amp; site setup</h3>
 <p>You need a working Drupal 11 site. This project uses <strong>DDEV</strong> (Docker-based local dev).</p>
 <div class="codewrap"><span class="label">bash</span><pre><code># From an empty project folder:
@@ -258,13 +255,11 @@ ddev drush site:install --account-name=admin --account-pass=admin -y
 ddev launch          # opens the site in your browser</code></pre></div>
 <p>Jarvis relies on <strong>Drupal Canvas</strong> and a few contrib modules. Install them now so they&#x27;re available while you build:</p>
 <div class="codewrap"><span class="label">bash</span><pre><code>ddev composer require drupal/canvas drupal/focal_point drupal/twig_tweak</code></pre></div>
-<div class="note box"><p><strong>Note on Canvas:</strong> Canvas is the drag-and-drop builder. Its machine name is <code>canvas</code>, and it ships a companion <code>canvas_field_component</code>. You <em>can</em> build and preview all the SDC components without Canvas, they also work in Layout Builder, but the Canvas page regions and content templates in Step 9-10 require it.</p></div>
+<div class="note box"><p><strong>Note on Canvas:</strong> Canvas is the drag-and-drop builder. Its machine name is <code>canvas</code>, and it ships a companion <code>canvas_field_component</code>. Jarvis components are placed with Canvas. Drupal core&#x27;s Layout Builder has no way to place a Single Directory Component, so Canvas is required, and the page regions and content templates in Steps 9 and 10 depend on it.</p></div>
 <p>Your theme goes in <code>web/themes/custom/jarvis/</code>. Create that folder:</p>
 <div class="codewrap"><span class="label">bash</span><pre><code>mkdir -p web/themes/custom/jarvis
 cd web/themes/custom/jarvis</code></pre></div>
 <p>Everything below is created inside that folder.</p>
-<p>---</p>
-<p>&lt;a name=&quot;step-1-scaffold-the-theme&quot;&gt;&lt;/a&gt;</p>
 <h3 id="step-1-scaffold-the-theme">Step 1, Scaffold the theme</h3>
 <h4 id="1a-jarvis-info-yml-the-theme-s-identity-card">1a. <code>jarvis.info.yml</code>, the theme&#x27;s identity card</h4>
 <p>Every theme needs a <code>*.info.yml</code>. The filename&#x27;s prefix (<code>jarvis</code>) is the theme&#x27;s <strong>machine name</strong> and must match the folder name.</p>
@@ -338,8 +333,6 @@ font-settings:
 <div class="codewrap"><span class="label">bash</span><pre><code>ddev drush theme:enable jarvis
 ddev drush config:set system.theme default jarvis -y
 ddev drush cr</code></pre></div>
-<p>---</p>
-<p>&lt;a name=&quot;step-2-bootstrap-and-css&quot;&gt;&lt;/a&gt;</p>
 <hr>
 <h2 id="sdc">2. Single Directory Components</h2>
 
@@ -476,7 +469,7 @@ props:
 
 <h4>A macro, for computing values</h4>
 
-<p>All but two components (Button and Card Full Image) accept padding and margin props. Rather than repeat the class building logic nineteen times, one macro owns it.</p>
+<p>All but three components (Button, Card Full Image and Share) accept padding and margin props. Rather than repeat the class building logic twenty-one times, one macro owns it.</p>
 
 <div class="codewrap">
   <span class="label">templates/jarvis-spacing.html.twig</span>
@@ -639,8 +632,6 @@ props:
 <div class="codewrap"><span class="label">bash</span><pre><code>ddev drush cr</code></pre></div>
 <p>Every component&#x27;s <code>examples:</code> values feed the SDC preview, so fill them in, they&#x27;re your free &quot;Storybook.&quot; Or just drop the component into a Canvas page (Step 9).</p>
 <p>You&#x27;ve now built a complete component. <strong>Card, Image, and Video follow the exact same recipe</strong>, a <code>.component.yml</code> describing props, a <code>.twig</code> rendering them, plus a <code>.css</code> for component-specific styling. Copy Text, change the props, change the markup.</p>
-<p>---</p>
-<p>&lt;a name=&quot;step-5-slots&quot;&gt;&lt;/a&gt;</p>
 <h3 id="step-5-components-with-slots-section-columns">Step 5, Components with slots (Section &amp; Columns)</h3>
 <p>Props are <em>values</em>. <strong>Slots</strong> are <em>areas that hold other components</em>. A slot is how you build a column layout: the builder drops a Card <em>into</em> the left column of a 2-column component.</p>
 <h4 id="5a-section-a-single-slot-wrapper">5a. Section, a single-slot wrapper</h4>
@@ -728,8 +719,6 @@ slots:
   &lt;/div&gt;
 &lt;/div&gt;</code></pre></div>
 <p><code>col-12</code> on mobile means each column is full width and they <strong>stack</strong>; <code>col-md-*</code> kicks in at ≥768px and puts them <strong>side by side</strong>. That single line is your entire responsive story. <code>one-column</code> and <code>three-column</code> are the same idea with one / three slots.</p>
-<p>---</p>
-<p>&lt;a name=&quot;step-6-hero&quot;&gt;&lt;/a&gt;</p>
 <h3 id="step-6-a-component-with-an-image-hero">Step 6, A component with an image (Hero)</h3>
 <p>The Hero shows how Canvas passes an <strong>image</strong> into a component. The magic is one line in the schema:</p>
 <div class="codewrap"><span class="label">yaml</span><pre><code>image:
@@ -789,8 +778,6 @@ props:
 <div class="note box"><span class="t">Why not do this in the browser</span><p>It was a script once, and the script could not be trusted. It downsampled every image to 16&times;16 and scored 4&times;4 blocks, so one block averaged a quarter of the image's width &mdash; far wider than a glyph. Two of this theme's own demo images came back needing <em>no</em> overlay when they really needed about 0.48. It also only ran after the image had loaded, so unreadable text was painted first and corrected afterwards, and a cross-origin image tainted the canvas so it could not sample at all. Reading the file on the server fixes all three at once, and an image that cannot be read falls back to an alpha solved against the worst image that could possibly exist.</p></div>
 <h4 id="image-styles-inside-components">Image styles inside components</h4>
 <p>For the <code>Image</code> component, note the <strong>named image style</strong> trick. Canvas gives you <code>image.src</code> — a finished public URL, not the <code>public://</code> URI a Drupal <strong>image style</strong> (say <code>jarvis_hero_banner</code>) needs — so the <code>jarvis_image_style</code> Twig filter looks the file back up from that URL and builds the derivative anyway. Where a raw file URI <em>is</em> on hand (Person&#x27;s portrait crop, content templates) you use <code>twig_tweak</code>&#x27;s <code>|image_style</code> filter directly. That&#x27;s why the recipe installs <code>twig_tweak</code>, and why image styles like <code>jarvis_hero_banner</code> and <code>wide</code> are shipped as config (Step 11). In a content template, use <code>|image_style</code> in the SDC, <strong>don&#x27;t</strong> try to use a Canvas &quot;adapter&quot; for it (adapters are not allowed inside content templates).</p>
-<p>---</p>
-<p>&lt;a name=&quot;step-7-colours&quot;&gt;&lt;/a&gt;</p>
 <hr>
 <h2 id="css">3. CSS and the theming contract</h2>
 
@@ -1005,8 +992,6 @@ libraries/bootstrap/js/bootstrap.bundle.min.js</code></pre></div>
 .jp-vpad { padding-top: 30px; padding-bottom: 30px; }
 .jp-nopad { padding-top: 0 !important; padding-bottom: 0 !important; }</code></pre></div>
 <p>The naming pattern is deliberate: <code>jp-{p|m}-{side}-{size}</code>. In Step 4 you&#x27;ll see the Twig that builds these class names from a component&#x27;s props, write the pattern once, reuse it in every component.</p>
-<p>---</p>
-<p>&lt;a name=&quot;step-3-page-template&quot;&gt;&lt;/a&gt;</p>
 <h3 id="step-7-colour-settings">Step 7, Colour settings</h3>
 <p>Goal: an admin picks brand colours on the theme settings page, and the whole site re-skins, no CSS edits. The trick: <strong>write the chosen colours out as CSS custom properties</strong>, and have <code>overrides.css</code> consume those properties.</p>
 <p>Three moving parts:</p>
@@ -1121,8 +1106,6 @@ function jarvis_preprocess_html(array &amp;$variables) {
 .jarvis-page-title { background: var(--jarvis-title-bg); color: var(--jarvis-title-color); }
 h1, h2, h3 { color: var(--jarvis-heading-color); }</code></pre></div>
 <p>That&#x27;s the payoff: <strong>define a variable in the map → consume it in CSS → the region is themeable with zero extra PHP.</strong></p>
-<p>---</p>
-<p>&lt;a name=&quot;step-8-fonts&quot;&gt;&lt;/a&gt;</p>
 <h3 id="step-8-font-settings-self-hosted-google-fonts">Step 8, Font settings (self-hosted Google Fonts)</h3>
 <p>Same idea, one level fancier. The admin picks a Google font per &quot;slot&quot; (base text, headings, nav, site name, blockquote) and targets it with a CSS selector. On <strong>save</strong>, the theme <em>downloads</em> those fonts and self-hosts them, so the live site never calls Google (better privacy + GDPR + speed).</p>
 <h4 id="8a-a-font-catalogue">8a. A font catalogue</h4>
@@ -1179,8 +1162,6 @@ if ($real &amp;&amp; file_exists($real)) {
   ];
 }</code></pre></div>
 <p>The takeaway pattern is identical to colours: <strong>shared map → form → save/output.</strong> Colours output inline on every request; fonts are generated once at save time into a file that&#x27;s then attached.</p>
-<p>---</p>
-<p>&lt;a name=&quot;step-9-canvas&quot;&gt;&lt;/a&gt;</p>
 <hr>
 <h2 id="js">4. JavaScript and Drupal behaviors</h2>
 
@@ -1371,6 +1352,27 @@ if ($real &amp;&amp; file_exists($real)) {
 {% endif %}</code></pre>
 </div>
 
+<h4>Boxing content that brings no container</h4>
+
+<p>Edge to edge is right for a Canvas page, because every section brings its own container. It is wrong for everything else: a Views page, search results, the login form, a webform page. Those would run to the edges of the screen with no gutter. So the preprocess hook sets one more flag, <code>content_self_boxed</code>, and the template wraps anything that is not built from sections:</p>
+
+<div class="codewrap">
+  <span class="label">templates/page.html.twig (excerpt)</span>
+  <pre><code>&lt;div class="jarvis-content jarvis-content--full"&gt;
+  {% if content_self_boxed %}
+    {{ page.content }}
+  {% else %}
+    &lt;div class="container jarvis-content--boxed"&gt;{{ page.content }}&lt;/div&gt;
+  {% endif %}
+&lt;/div&gt;</code></pre>
+</div>
+
+<p>The flag is true for Canvas pages and for nodes rendered through a Canvas content template. Everything else gets the container, with no setting for an editor to forget.</p>
+
+<h4>A field template, so "Label: Inline" works</h4>
+
+<p>Because Jarvis uses <code>base theme: false</code>, Drupal falls back to core&#x27;s bare field template, which prints no classes at all. That quietly broke a site builder setting: choosing <strong>Label: Inline</strong> on a field still showed the label above the value, because nothing marked the field as inline. Jarvis now ships <code>templates/field.html.twig</code>, which adds the usual <code>field</code>, <code>field__label</code> and <code>field__item</code> classes plus <code>field--label-inline</code>, and <code>css/fields.css</code> lays inline labels beside their values. Field labels are bold.</p>
+
 <h3>Preprocess: preparing variables before Twig</h3>
 
 <p>A preprocess hook runs before a template renders and can add or change the variables it receives. It is where PHP work belongs, so templates stay readable.</p>
@@ -1550,8 +1552,6 @@ if ($real &amp;&amp; file_exists($real)) {
 <p>The three ideas a beginner should take away:</p>
 <ol><li><strong><code>{{ page.REGION }}</code></strong> prints a region. The region names match <code>info.yml</code> exactly.</li><li><strong>Full-width vs boxed</strong> is just: wrap in <code>.container</code> (boxed) or don&#x27;t (full-width).</li><li><strong>Two clever bits worth understanding:</strong><ul><li><code>{{ page.primary_menu.jarvis_site_branding }}</code> renders <em>one specific block</em> out of a region by its block ID, so we can split the logo out of the mobile menu drawer. (Those block IDs come from the recipe in Step 11.)</li><li>A Drupal region is &quot;truthy&quot; even when it holds no blocks (it carries cache metadata), so to know whether a sidebar is <em>really</em> empty we render it to a string and <code>trim</code> it. When both sidebars are empty the content goes edge-to-edge, which lets a Canvas full-width column layout break out of the centred column.</li></ul></li></ol>
 <p><code>ddev drush cr</code> and reload, you now have a themed page shell.</p>
-<p>---</p>
-<p>&lt;a name=&quot;step-4-first-sdc&quot;&gt;&lt;/a&gt;</p>
 <hr>
 <h2 id="modules">6. The custom module</h2>
 
@@ -1622,8 +1622,6 @@ component_tree: {  }</code></pre></div>
 <ul><li><strong><code>id: jarvis.hero</code></strong> and <strong><code>region: hero</code></strong> tie this Canvas region to the theme region named <code>hero</code> from your <code>info.yml</code>.</li><li><strong><code>component_tree: {}</code></strong> starts empty, the builder fills it by dragging components in.</li><li><strong><code>status: false</code></strong> means the region isn&#x27;t force-enabled by default; enable the ones you want Canvas to own.</li></ul>
 <p>You provide one of these per region you want editable. Once they&#x27;re imported and cache is cleared, opening Canvas shows your <code>category: Jarvis</code> components in the sidebar, and dropping one writes its config into that region&#x27;s <code>component_tree</code>.</p>
 <div class="note box"><p><strong>Where do these files come from?</strong> You don&#x27;t hand-write the whole <code>component_tree</code>, you build a page in the Canvas UI, then export the resulting config with <code>ddev drush config:export</code> (or the Canvas export). The YAML you see in <code>recipe/config/</code> is the <em>captured result</em> of arranging components visually, which the recipe replays on a fresh site.</p></div>
-<p>---</p>
-<p>&lt;a name=&quot;step-10-content-templates&quot;&gt;&lt;/a&gt;</p>
 <h3 id="step-10-content-templates-fielded-nodes-components">Step 10, Content templates (fielded nodes → components)</h3>
 <p>A <strong>content template</strong> answers: &quot;when Drupal renders a <em>Blog</em> node, how should its fields map onto components?&quot; It&#x27;s a Canvas layout bound to a content type + view mode.</p>
 <p>Jarvis ships <code>canvas.content_template.node.blog.full.yml</code>. The important parts:</p>
@@ -1659,8 +1657,10 @@ component_tree:
 <p>The concepts a beginner needs:</p>
 <ul><li><strong><code>component_id: sdc.jarvis.image</code></strong>, references your SDC by machine path (<code>sdc.&lt;theme&gt;.&lt;component&gt;</code>).</li><li><strong><code>inputs</code></strong> are the component&#x27;s props. A static value (<code>image_style: jarvis_hero_banner</code>) is hard-coded; a <strong><code>sourceType: entity-field</code></strong> input with an <code>expression</code> <em>binds a node field</em> to the prop. That funky <code>ℹ︎␜entity:node…␝field_body␞</code> string is Canvas&#x27;s field-path syntax, you don&#x27;t type it by hand, Canvas writes it when you click &quot;link to field&quot; (the 🔗 icon) in the UI.</li><li><strong>Nesting</strong> (<code>parent_uuid</code> + <code>slot</code>) is how a component lands <em>inside another component&#x27;s slot</em>, here, a field display sits inside the Section&#x27;s <code>content</code> slot.</li><li><strong>Remember the binding rule:</strong> a required prop only exposes the 🔗 link icon when the field it binds to is also required. And for image styles inside a template, use the SDC&#x27;s own <code>|image_style</code> (via <code>twig_tweak</code>), content templates can&#x27;t use Canvas adapters.</li></ul>
 <p>To <em>style a whole content type&#x27;s fields</em>, you edit its content template (a ContentTemplate config entity), you don&#x27;t add a &quot;styling field&quot; to the node.</p>
-<p>---</p>
-<p>&lt;a name=&quot;step-11-recipe&quot;&gt;&lt;/a&gt;</p>
+<h4>Templates for listings: Card and Teaser</h4>
+<p>A content template is bound to a view mode, and Full is only one of them. The Jarvis recipe also ships <strong>Card</strong> and <strong>Teaser</strong> templates for Blog and Basic. Each holds a single Card component: Card puts the image on top, Teaser puts it on the left. Both show the hero image, the title, the publication date (Blog only), the <strong>Abstract</strong> and a Read more link.</p>
+<p>The Abstract is a long text field on Blog and Basic for two or three sentences that sum the content up. It feeds cards and teasers, and it is a good source for search and social descriptions. It can be written by hand or by an AI automator.</p>
+<p>Views then render content in those view modes instead of listing fields. The Blog View shows Cards in a responsive grid, as a three card block and as a <code>/blog</code> page with a pager. Core&#x27;s front page and taxonomy term listings already use Teaser, so they pick up the design with no change. Because these are Canvas templates, a site builder can redesign every card on the site in Canvas, without touching a View.</p>
 <hr>
 <h2 id="build">7. Build order: making one yourself</h2>
 
@@ -1747,8 +1747,6 @@ jarvis_font_base_weight: &#x27;300&#x27;
 jarvis_font_headings_family: &#x27;Open Sans&#x27;
 jarvis_font_headings_weight: &#x27;600&#x27;
 # …etc…</code></pre></div>
-<p>---</p>
-<p>&lt;a name=&quot;step-12-install&quot;&gt;&lt;/a&gt;</p>
 <h3 id="step-12-install-apply-and-test">Step 12, Install, apply, and test</h3>
 <p>Because the recipe&#x27;s Canvas config references the theme, the <strong>order matters</strong>. On a fresh site:</p>
 <div class="codewrap"><span class="label">bash</span><pre><code># Apply the recipe against a freshly installed site. It installs Canvas,
@@ -1762,8 +1760,6 @@ ddev drush uli</code></pre></div>
 <p>Then verify, in order:</p>
 <ol><li><strong>Front end loads</strong> with Bootstrap styling and your logo in the nav. → theme + libraries OK.</li><li><strong><code>/admin/appearance/settings/jarvis</code></strong> shows the Colours and Fonts sections. Change a colour, save, reload → the site re-skins. → Steps 7-8 OK.</li><li><strong>Save the Fonts form</strong> → check <code>sites/default/files/jarvis-fonts/jarvis-fonts.css</code> exists and the site uses the new fonts. → self-hosting OK.</li><li><strong>Edit the Test Page in Canvas</strong> → your <code>Jarvis</code> and <code>Jarvis Layout</code> components appear in the sidebar; drag a Hero in, set its image, save, view the page. → Steps 4-6, 9 OK.</li><li><strong>View a blog post</strong> → its hero field renders as the Hero component, body as Text, per the content template. → Step 10 OK.</li></ol>
 <p>If something&#x27;s missing, it&#x27;s almost always caching or order, see below.</p>
-<p>---</p>
-<p>&lt;a name=&quot;accessibility-editors&quot;&gt;&lt;/a&gt;</p>
 <hr>
 <h2 id="gotchas">8. Hard won lessons</h2>
 
@@ -1785,13 +1781,16 @@ ddev drush uli</code></pre></div>
 <h3>Patch files need wiring, not just existence</h3>
 <p>A patch sitting in a <code>patches/</code> folder does nothing on its own. Without a <code>composer-patches</code> entry it never re applies, and if the module directory is gitignored the fix exists only on the machine where it was made. Add <code>composer-exit-on-patch-failure</code> so a stale patch fails loudly instead of silently shipping unpatched code.</p>
 
+<h3>A new prop means re-exporting the component config</h3>
+<p>Canvas stores a config entity for every component, with a version hash of its props. The recipes ship those entities. Add a prop to a component, like the Card&#x27;s Date, and the shipped config no longer matches the theme: a fresh <code>drush recipe</code> stops with &quot;Configuration for the SDC prop Date (date) is missing.&quot; So every prop change goes out with a re-export of that component&#x27;s config into both recipes. Keep the old version hashes as history, so content saved against them still validates. The repository has a script for it: <code>ddev drush scr scripts/reexport-components.php -- card share</code>.</p>
+
 <h3>Prefer deleting to adding</h3>
 <p>The largest improvements on this project were deletions. Handing the menu to Bootstrap removed 148 lines of JavaScript and about 60 of CSS, and improved accessibility at the same time. Collapsing the colour blocks removed 35 lines. Sharing one contrast engine removed roughly 130. Less code, fewer places for a bug to hide.</p>
 
 <hr>
 
 <footer>
-  <p>Jarvis is a component driven Drupal 11 theme built on Bootstrap 5, for Drupal Canvas and Layout Builder, with WCAG 2.2 AA safeguards built in.</p>
+  <p>Jarvis is a component driven Drupal 11 theme built on Bootstrap 5 for Drupal Canvas, with WCAG 2.2 AA safeguards built in. This edition covers Jarvis 3.5.</p>
   <p>Written for DrupalHelps. Every code sample here is taken from the working theme.</p>
 </footer>
 <div class="good box"><span class="t">Build it yourself</span><p>What follows is the hands on half: the same ground as above, but written as instructions you can type.</p></div>
@@ -1809,7 +1808,7 @@ ddev drush uli</code></pre></div>
 <p>Happy theming.</p>
 <hr>
 <h2 id="components">9. Every component, one at a time</h2>
-<p class="lede">Twenty-one components ship with the theme. Each entry says what the component is for, lists every prop and slot, and walks through placing one. If you have never touched a Single Directory Component before, start with Section and Text, then work down the list.</p>
+<p class="lede">Twenty-four components ship with the theme. Each entry says what the component is for, lists every prop and slot, and walks through placing one. If you have never touched a Single Directory Component before, start with Section and Text, then work down the list.</p>
 <div class="note box"><span class="t">How to read these tables</span><p>A <strong>prop</strong> is a setting on the component. It appears as a field in the Canvas settings tray, labelled with the text in the Label column. <strong>Required</strong> means Canvas will not let you save without a value. A prop with a list of choices renders as a dropdown. A <strong>slot</strong> is a different thing: a hole you drag other components into.</p></div>
 <h3 id="layout-components">Layout components</h3>
 <p>Wrappers you drop other components into. Nearly every page starts with one of these.</p>
@@ -1885,6 +1884,14 @@ ddev drush uli</code></pre></div>
 <p>Everything 3 Columns has except <code>ratio</code>, plus these three:</p>
 <table><thead><tr><th>Prop</th><th>Label</th><th>Type</th><th>Required</th><th>Choices and default</th></tr></thead><tbody><tr><td><code>width_first</code></td><td>Column 1 width (%)</td><td><code>integer</code></td><td>No</td><td>0 to 100<br>Default <code>25</code></td></tr><tr><td><code>width_second</code></td><td>Column 2 width (%)</td><td><code>integer</code></td><td>No</td><td>0 to 100<br>Default <code>50</code></td></tr><tr><td><code>width_third</code></td><td>Column 3 width (%)</td><td><code>integer</code></td><td>No</td><td>0 to 100<br>Default <code>25</code></td></tr></tbody></table>
 <p><strong>Slots you can drag components into:</strong></p><table><thead><tr><th>Slot</th><th>Label in Canvas</th></tr></thead><tbody><tr><td><code>first</code></td><td>Column 1</td></tr><tr><td><code>second</code></td><td>Column 2</td></tr><tr><td><code>third</code></td><td>Column 3</td></tr></tbody></table>
+<h4 id="c-four-column">4 Columns <code>jarvis:four-column</code></h4>
+<p class="lede">Four columns on desktop, two on tablet, stacked full-width on mobile.</p>
+<p><strong>Use it when:</strong> Four short items in a row: stats, icons with a line of text, logos, or small cards.</p>
+<p>4 Columns works like 3 Columns with one more slot. Four across only happens on desktop. On a tablet it goes two by two, and on a phone every column stacks, so four narrow columns never get squeezed onto a small screen.</p>
+<div class="good box"><span class="t">A row of four stats</span><ol><li>Add 4 Columns.</li><li>Drop a Stat into each of the four slots.</li><li>Give each one a short number and a one line description.</li></ol></div>
+<h5>Props</h5>
+<p>Everything 3 Columns has except <code>ratio</code>: all four columns are always equal.</p>
+<p><strong>Slots you can drag components into:</strong></p><table><thead><tr><th>Slot</th><th>Label in Canvas</th></tr></thead><tbody><tr><td><code>first</code></td><td>Column 1</td></tr><tr><td><code>second</code></td><td>Column 2</td></tr><tr><td><code>third</code></td><td>Column 3</td></tr><tr><td><code>fourth</code></td><td>Column 4</td></tr></tbody></table>
 <h3 id="content-components">Content components</h3>
 <p>The things a visitor actually reads.</p>
 <h4 id="c-text">Text <code>jarvis:text</code></h4>
@@ -1926,10 +1933,10 @@ ddev drush uli</code></pre></div>
 <h4 id="c-card">Card <code>jarvis:card</code></h4>
 <p class="lede">Flexible card with image at top, left, right, or as background.</p>
 <p><strong>Use it when:</strong> A self contained unit: image, title, short text, and a link.</p>
-<p>Card has four layouts, chosen with the Variant prop. Image top is the classic stacked card. Image left and Image right put the picture beside the text. Background puts the image behind everything, which is where the overlay and contrast handling come in.</p><p>Heading level defaults to <code>h3</code>, usually right for a card sitting under a section heading. Change it if your page outline needs something else.</p>
+<p>Card has four layouts, chosen with the Variant prop. Image top is the classic stacked card. Image left and Image right put the picture beside the text. Background puts the image behind everything, which is where the overlay and contrast handling come in.</p><p>Heading level defaults to <code>h3</code>, usually right for a card sitting under a section heading. Change it if your page outline needs something else.</p><p>An optional Date prints under the title, for example a post&#x27;s publication date in a Card view mode template. The button also carries the card&#x27;s title as hidden text, so a screen reader hears &quot;Read more: Your post title&quot; instead of a row of identical &quot;Read more&quot; links.</p>
 <div class="good box"><span class="t">Three linked cards</span><ol><li>Add a Three Column layout.</li><li>Drop a Card into each slot.</li><li>On each card set Variant to Image top, pick an image, set Title and Body.</li><li>Set Link text and Link so the card leads somewhere.</li></ol></div>
 <h5>Props</h5>
-<table><thead><tr><th>Prop</th><th>Label</th><th>Type</th><th>Required</th><th>Choices and default</th></tr></thead><tbody><tr><td><code>variant</code></td><td>Image position</td><td><code>string</code></td><td>No</td><td><code>image-top</code>, <code>image-left</code>, <code>image-right</code>, <code>background</code><br>Default <code>image-top</code></td></tr><tr><td><code>overlay</code></td><td>Overlay opacity (%)</td><td><code>integer</code></td><td>No</td><td>Default <code>40</code></td></tr><tr><td><code>text_color</code></td><td>Text color</td><td><code>string</code></td><td>No</td><td><code>light</code>, <code>black</code><br>Default <code>light</code></td></tr><tr><td><code>image</code></td><td>Image</td><td><code>image</code></td><td>No</td><td>Pick a media item</td></tr><tr><td><code>title</code></td><td>Title</td><td><code>string</code></td><td>Yes</td><td>Free text</td></tr><tr><td><code>heading_level</code></td><td>Heading level</td><td><code>string</code></td><td>No</td><td><code>h2</code>, <code>h3</code>, <code>h4</code><br>Default <code>h3</code></td></tr><tr><td><code>body</code></td><td>Body</td><td><code>string</code></td><td>No</td><td>Free text</td></tr><tr><td><code>link_text</code></td><td>Link text</td><td><code>string</code></td><td>No</td><td>Free text</td></tr><tr><td><code>link_href</code></td><td>Link URL</td><td><code>string</code></td><td>No</td><td>Free text</td></tr><tr><td><code>hover</code></td><td>Hover effect</td><td><code>boolean</code></td><td>No</td><td>Default <code>False</code></td></tr><tr><td><code>padding</code></td><td>Padding</td><td><code>string</code></td><td>No</td><td><code>none</code>, <code>all</code>, <code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code><br>Default <code>none</code></td></tr><tr><td><code>padding_size</code></td><td>Padding size</td><td><code>string</code></td><td>No</td><td><code>small</code>, <code>medium</code>, <code>large</code><br>Default <code>medium</code></td></tr><tr><td><code>margin</code></td><td>Margin</td><td><code>string</code></td><td>No</td><td><code>none</code>, <code>all</code>, <code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code><br>Default <code>none</code></td></tr><tr><td><code>margin_size</code></td><td>Margin size</td><td><code>string</code></td><td>No</td><td><code>small</code>, <code>medium</code>, <code>large</code><br>Default <code>medium</code></td></tr><tr><td><code>vertical_padding</code></td><td>Vertical padding (30px)</td><td><code>boolean</code></td><td>No</td><td>Default <code>False</code></td></tr></tbody></table>
+<table><thead><tr><th>Prop</th><th>Label</th><th>Type</th><th>Required</th><th>Choices and default</th></tr></thead><tbody><tr><td><code>variant</code></td><td>Image position</td><td><code>string</code></td><td>No</td><td><code>image-top</code>, <code>image-left</code>, <code>image-right</code>, <code>background</code><br>Default <code>image-top</code></td></tr><tr><td><code>overlay</code></td><td>Overlay opacity (%)</td><td><code>integer</code></td><td>No</td><td>Default <code>40</code></td></tr><tr><td><code>text_color</code></td><td>Text color</td><td><code>string</code></td><td>No</td><td><code>light</code>, <code>black</code><br>Default <code>light</code></td></tr><tr><td><code>image</code></td><td>Image</td><td><code>image</code></td><td>No</td><td>Pick a media item</td></tr><tr><td><code>title</code></td><td>Title</td><td><code>string</code></td><td>Yes</td><td>Free text</td></tr><tr><td><code>heading_level</code></td><td>Heading level</td><td><code>string</code></td><td>No</td><td><code>h2</code>, <code>h3</code>, <code>h4</code><br>Default <code>h3</code></td></tr><tr><td><code>date</code></td><td>Date</td><td><code>string</code> (date)</td><td>No</td><td>A date, shown as &quot;November 7, 2026&quot;</td></tr><tr><td><code>body</code></td><td>Body</td><td><code>string</code></td><td>No</td><td>Free text</td></tr><tr><td><code>link_text</code></td><td>Link text</td><td><code>string</code></td><td>No</td><td>Free text</td></tr><tr><td><code>link_href</code></td><td>Link URL</td><td><code>string</code></td><td>No</td><td>Free text</td></tr><tr><td><code>hover</code></td><td>Hover effect</td><td><code>boolean</code></td><td>No</td><td>Default <code>False</code></td></tr><tr><td><code>padding</code></td><td>Padding</td><td><code>string</code></td><td>No</td><td><code>none</code>, <code>all</code>, <code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code><br>Default <code>none</code></td></tr><tr><td><code>padding_size</code></td><td>Padding size</td><td><code>string</code></td><td>No</td><td><code>small</code>, <code>medium</code>, <code>large</code><br>Default <code>medium</code></td></tr><tr><td><code>margin</code></td><td>Margin</td><td><code>string</code></td><td>No</td><td><code>none</code>, <code>all</code>, <code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code><br>Default <code>none</code></td></tr><tr><td><code>margin_size</code></td><td>Margin size</td><td><code>string</code></td><td>No</td><td><code>small</code>, <code>medium</code>, <code>large</code><br>Default <code>medium</code></td></tr><tr><td><code>vertical_padding</code></td><td>Vertical padding (30px)</td><td><code>boolean</code></td><td>No</td><td>Default <code>False</code></td></tr></tbody></table>
 <p>No slots. Everything this component shows comes from its props.</p>
 <div class="codewrap"><span class="label">Calling it from a Twig template</span><pre><code>{{ include(&#x27;jarvis:card&#x27;, {
   title: &#x27;Title&#x27;
@@ -2026,6 +2033,19 @@ ddev drush uli</code></pre></div>
   text: &#x27;Text&#x27;
 }) }}</code></pre></div>
 <div class="note box"><span class="t">Worth knowing</span><p>Ticking &quot;open in new tab&quot; adds a visually hidden &quot;(opens in new tab)&quot; note for screen reader users, plus the security attributes browsers want. Do not hand roll that.</p></div>
+<h4 id="c-share">Share <code>jarvis:share</code></h4>
+<p class="lede">Share buttons for the page they are on: Facebook, X, LinkedIn, Bluesky, Reddit, email and copy link.</p>
+<p><strong>Use it when:</strong> You want visitors to pass a page on, usually at the end of a post or landing page.</p>
+<p>Each network has its own checkbox, so you show only the ones your audience uses. Colors can follow each network&#x27;s brand or use one dark color, and the buttons can be square, rounded or circles in three sizes.</p><p>The links are built on the server, so they work without JavaScript. Copy link is the exception: it needs the browser&#x27;s clipboard, so it stays hidden until the page&#x27;s script confirms it can work, then tells screen reader users &quot;Link copied&quot;. Leave Page URL empty to share the page the buttons are on. In a content template, link Share text to the Title field and Page URL to the content&#x27;s own URL.</p>
+<div class="good box"><span class="t">Share buttons at the end of every blog post</span><ol><li>Open the Blog content template in Canvas.</li><li>Add Share at the bottom.</li><li>Link Share text to the Title, and Page URL to the content&#x27;s absolute URL.</li><li>Tick the networks you want and pick a shape.</li></ol></div>
+<h5>Props</h5>
+<table><thead><tr><th>Prop</th><th>Label</th><th>Type</th><th>Required</th><th>Choices and default</th></tr></thead><tbody><tr><td><code>label</code></td><td>Label</td><td><code>string</code></td><td>No</td><td>Free text. Empty hides it; screen readers still hear &quot;Share&quot;</td></tr><tr><td><code>share_text</code></td><td>Share text</td><td><code>string</code></td><td>No</td><td>Free text, usually the title</td></tr><tr><td><code>url</code></td><td>Page URL</td><td><code>string</code></td><td>No</td><td>Empty shares the current page</td></tr><tr><td><code>facebook</code>, <code>x</code>, <code>linkedin</code>, <code>email</code>, <code>copy_link</code></td><td>One checkbox each</td><td><code>boolean</code></td><td>No</td><td>Default on</td></tr><tr><td><code>bluesky</code>, <code>reddit</code></td><td>One checkbox each</td><td><code>boolean</code></td><td>No</td><td>Default off</td></tr><tr><td><code>color</code></td><td>Colors</td><td><code>string</code></td><td>No</td><td><code>brand</code>, <code>dark</code><br>Default <code>brand</code></td></tr><tr><td><code>shape</code></td><td>Shape</td><td><code>string</code></td><td>No</td><td><code>square</code>, <code>rounded</code>, <code>circle</code><br>Default <code>rounded</code></td></tr><tr><td><code>size</code></td><td>Size</td><td><code>string</code></td><td>No</td><td><code>small</code> (32px), <code>medium</code> (40px), <code>large</code> (48px)<br>Default <code>medium</code></td></tr><tr><td><code>align</code></td><td>Alignment</td><td><code>string</code></td><td>No</td><td><code>start</code>, <code>center</code>, <code>end</code><br>Default <code>start</code></td></tr></tbody></table>
+<p>No slots. Everything this component shows comes from its props.</p>
+<div class="codewrap"><span class="label">Calling it from a Twig template</span><pre><code>{{ include(&#x27;jarvis:share&#x27;, {
+  share_text: node.label,
+  bluesky: true
+}) }}</code></pre></div>
+<div class="note box"><span class="t">Worth knowing</span><p>Share replaces the Better Social Sharing Buttons module, whose block settings do not survive the Canvas editor. Every icon only button has a real text name, and the brand colors keep white icons at 3:1 contrast.</p></div>
 <h3 id="media-components">Media components</h3>
 <p>Pictures and video, with the accessibility handling built in.</p>
 <h4 id="c-image">Image <code>jarvis:image</code></h4>
@@ -2111,8 +2131,6 @@ ddev drush uli</code></pre></div>
 <h2 id="a11y">Accessibility for content editors</h2>
 <p>The theme handles colour contrast automatically, overlays darken until text passes WCAG, unsafe colour picks fall back to a safe colour, and the settings form warns on failing combinations. What it <em>can&#x27;t</em> do is judge your content. The checklist below covers the failures only an editor can prevent:</p>
 <ul><li><strong>One H1 per page.</strong> The page title (or the hero&#x27;s heading at level H1) is the only H1. Additional heroes and section headings use H2.</li><li><strong>Don&#x27;t skip heading levels.</strong> H2 → H3 → H4, in order. The Hero, CTA and Card components all have a &quot;Heading level&quot; option, set it to one level below the heading that precedes them. Screen-reader users navigate by heading outline; a skipped level is a broken table of contents.</li><li><strong>Write real alternative text.</strong> Describe what the image <em>communicates</em> (&quot;Team collaborating around a whiteboard&quot;), not what it is (&quot;image&quot;, &quot;photo of…&quot; , the screen reader already announces it&#x27;s an image). Purely decorative images get <em>empty</em> alt text, not a filename.</li><li><strong>Link text says where it goes.</strong> &quot;Read the 2026 annual report&quot;, never &quot;click here&quot; or a bare &quot;read more&quot;. Screen-reader users pull up links as a list, out of context.</li><li><strong>Caption your videos.</strong> YouTube/Vimeo: enable captions on the platform. Directly-uploaded video files: supply a WebVTT (.vtt) file in the Video component&#x27;s &quot;Captions file URL&quot; option.</li><li><strong>Run the checker before publishing.</strong> The Editoria11y toggle (bottom-right on every page when you&#x27;re logged in) flags all of the above in place. Publish with zero flags.</li><li><strong>Trust the fallbacks.</strong> If a colour you picked &quot;doesn&#x27;t take&quot; on a coloured section, that&#x27;s the ADA guard keeping the text readable, pick a colour the section supports instead of fighting it.</li></ul>
-<p>---</p>
-<p>&lt;a name=&quot;troubleshooting&quot;&gt;&lt;/a&gt;</p>
 
 <hr>
 
