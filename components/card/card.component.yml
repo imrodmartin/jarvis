@@ -62,6 +62,11 @@ props:
       type: string
       examples:
         - 'Card title'
+    title_link:
+      title: 'Link the title'
+      description: 'Makes the title a link to the Link URL. With this on, Link text is optional.'
+      type: boolean
+      default: false
     heading_level:
       title: 'Heading level'
       description: 'Match the page outline — one level below the heading above the cards.'
