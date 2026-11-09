@@ -13,10 +13,8 @@ props:
   properties:
     label:
       title: Label
-      description: 'Shown before the buttons. Leave empty to hide it; screen readers still hear "Share".'
+      description: 'Optional visible text before the buttons. Empty by default; screen readers always hear "Share".'
       type: string
-      examples:
-        - Share
     share_text:
       title: 'Share text'
       description: 'Optional. Sent with the link, for example the page title. In a content template, link it to the Title field.'
@@ -90,4 +88,4 @@ props:
         start: Left
         center: Center
         end: Right
-      default: start
+      default: center
