@@ -5,8 +5,9 @@ description: 'Freeform CKEditor rich-text block. Full-width by default, with an 
 category: Jarvis
 props:
   type: object
-  required:
-    - body
+  # Body is optional: in a content template it is usually bound to the body
+  # field, and a node saved with an empty body must render, not fail
+  # component validation on a NULL value.
   properties:
     body:
       title: Body

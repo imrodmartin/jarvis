@@ -9,5 +9,5 @@
 {% set align_class = { start: 'text-start', center: 'text-center', end: 'text-end' }[align|default('start')] %}
 {% set measure_class = measure|default('full') == 'readable' ? 'jarvis-wysiwyg--readable' : '' %}
 <div class="jarvis-wysiwyg {{ align_class }} {{ measure_class }} {{ space }}">
-  {{ body|raw }}
+  {{ body|default('')|raw }}
 </div>
