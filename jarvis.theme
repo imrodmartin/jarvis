@@ -226,6 +226,38 @@ function jarvis_preprocess_page(array &$variables) {
     $variables[$region . '_empty'] = trim(strip_tags($stripped)) === ''
       && !preg_match('/<(img|picture|video|iframe|svg|canvas|embed)\b/i', $stripped);
   }
+  $variables['content_self_boxed'] = _jarvis_content_self_boxed();
+}
+
+/**
+ * Whether the main content brings its own width, so the page must not box it.
+ *
+ * Canvas pages, nodes rendered through a Canvas content template and Layout
+ * Builder nodes are built from sections that each carry their own container
+ * (and may go full width on purpose). Everything else — Views pages, search,
+ * user and webform pages, nodes without a template — is bare content that
+ * would otherwise run edge to edge.
+ */
+function _jarvis_content_self_boxed(): bool {
+  $route_match = \Drupal::routeMatch();
+  if ($route_match->getParameter('canvas_page')) {
+    return TRUE;
+  }
+  $node = $route_match->getRouteName() === 'entity.node.canonical'
+    ? $route_match->getParameter('node')
+    : NULL;
+  if (!$node instanceof \Drupal\node\NodeInterface) {
+    return FALSE;
+  }
+  if (class_exists(\Drupal\canvas\Entity\ContentTemplate::class)) {
+    $template = \Drupal\canvas\Entity\ContentTemplate::loadForEntity($node, 'full');
+    if ($template && $template->status()) {
+      return TRUE;
+    }
+  }
+  $display = \Drupal::service('entity_display.repository')
+    ->getViewDisplay('node', $node->bundle(), 'full');
+  return (bool) $display->getThirdPartySetting('layout_builder', 'enabled', FALSE);
 }
 
 /**

@@ -1,0 +1,23 @@
+/* Field labels (templates/field.html.twig). */
+.field__label {
+  font-weight: 700;
+}
+/* "Label: Inline": label and value(s) share a line and wrap together. */
+.field--label-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.4em;
+}
+.field--label-inline .field__label::after {
+  content: ':';
+}
+.field--label-inline .field__items {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.4em;
+}
+/* Comma-separate multiple inline values (e.g. several topics). */
+.field--label-inline .field__items .field__item:not(:last-child)::after {
+  content: ',';
+}

@@ -51,11 +51,11 @@
 }
 /* Text color (background variant): the text_color enum is light | black. */
 .jarvis-card--text-light,
-.jarvis-card--text-light :is(.card-title, .card-text) {
+.jarvis-card--text-light :is(.card-title, .jarvis-card__date, .card-text) {
   color: #fff;
 }
 .jarvis-card--text-black,
-.jarvis-card--text-black :is(.card-title, .card-text) {
+.jarvis-card--text-black :is(.card-title, .jarvis-card__date, .card-text) {
   color: #000;
 }
 /* Light text -> black region behind the card for guaranteed contrast. This only
