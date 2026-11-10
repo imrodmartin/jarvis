@@ -22,7 +22,9 @@
         var label = button.querySelector('.jarvis-video-bg__toggle-label');
 
         function sync(paused) {
-          button.setAttribute('aria-pressed', paused ? 'true' : 'false');
+          // The label already says what the button will do. aria-pressed on top
+          // of a changing label announced "Play background video, pressed".
+          button.setAttribute('data-paused', paused ? 'true' : 'false');
           if (label) {
             label.textContent = paused
               ? Drupal.t('Play background video')

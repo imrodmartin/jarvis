@@ -21,7 +21,7 @@ props:
       x-allowed-schemes: [http, https]
       examples:
         - '/node/1'
-    variant:
+    style:
       title: Style
       type: string
       enum: [primary, secondary, outline-primary, outline-secondary, light, dark]

@@ -7,10 +7,15 @@
  */
 #}
 {% import '@jarvis/jarvis-url.html.twig' as safe %}
-{% set share_url = safe.url(url|default('')) ?: url('<current>', {}, {'absolute': true}) %}
+{# url() returns a render array and a macro returns Markup. Both must be plain
+   strings before `starts with` and url_encode see them: url_encode on the
+   array produced `u=%23markup=...` in every share link, and `starts with` is
+   false for anything that is not a string. Concatenating '' is what makes a
+   real string; |trim alone hands the Markup object back. #}
+{% set share_url = (safe.url(url|default('')) ~ '') ?: (url('<current>', {}, {'absolute': true})|render ~ '') %}
 {# safe.url() keeps relative paths relative; networks need an absolute URL. #}
 {% if share_url starts with '/' %}
-  {% set share_url = url('<front>', {}, {'absolute': true})|trim('/', 'right') ~ share_url %}
+  {% set share_url = (url('<front>', {}, {'absolute': true})|render ~ '')|trim('/', 'right') ~ share_url %}
 {% endif %}
 {% set u = share_url|url_encode %}
 {% set t = share_text|default('')|url_encode %}

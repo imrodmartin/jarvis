@@ -38,7 +38,7 @@ props:
       examples:
         - start
     color:
-      title: 'Text colour'
+      title: 'Text color'
       type: string
       enum: [inherit, primary, secondary, black, white]
       'meta:enum':

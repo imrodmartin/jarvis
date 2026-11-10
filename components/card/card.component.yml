@@ -8,7 +8,7 @@ props:
   required:
     - title
   properties:
-    variant:
+    layout:
       title: 'Image position'
       type: string
       enum: [image-top, image-left, image-right, background]

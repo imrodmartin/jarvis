@@ -1,7 +1,7 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
 name: 'Large Call to Action'
 status: stable
-description: 'Eyebrow, large heading, lead text, three icon+sentence rows separated by rules, a primary button and a reversed-colour link.'
+description: 'Eyebrow, large heading, lead text, three icon+sentence rows separated by rules, a primary button and a reversed-color link.'
 category: Jarvis
 libraryOverrides:
   dependencies:
@@ -102,7 +102,7 @@ props:
         - '/node/1'
     link_text:
       title: 'Link text'
-      description: 'Reversed-colour text link shown beside the button.'
+      description: 'Reversed-color text link shown beside the button.'
       type: string
       examples:
         - 'Meet Our Team'

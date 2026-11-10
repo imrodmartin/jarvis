@@ -8,14 +8,12 @@
   color: var(--bs-secondary-color, #6c757d);
   max-width: 46rem;
 }
-/* Size follows the chosen tag so the Heading level selector visibly changes it
-   (Bootstrap's display-* would pin one size regardless of h2/h3/h4). Anchored
-   to the theme's font-size settings like every other component's ladder — the
-   factors reproduce the reference sizes (2.75/2/1.5rem) at default settings.
-   Hardcoded sizes here ignored the site-wide typography controls. */
-h2.jarvis-large-cta__heading { font-size: calc(var(--jarvis-fs-h2, 2rem) * 1.375); line-height: 1.1; }
-h3.jarvis-large-cta__heading { font-size: calc(var(--jarvis-fs-h3, 1.75rem) * 1.143); line-height: 1.15; }
-h4.jarvis-large-cta__heading { font-size: var(--jarvis-fs-h4, 1.5rem); line-height: 1.2; }
+/* Size follows the chosen tag through the global hN rule in
+   css/overrides.css; the multipliers reproduce the reference sizes
+   (2.75 / 2 / 1.5rem) at default settings. */
+h2.jarvis-large-cta__heading { --jarvis-fs-scale: 1.375; line-height: 1.1; }
+h3.jarvis-large-cta__heading { --jarvis-fs-scale: 1.143; line-height: 1.15; }
+h4.jarvis-large-cta__heading { line-height: 1.2; }
 
 /* Rows: a rule above each one, echoing the reference. margin-top separates the
    first row from the lead text. */

@@ -112,63 +112,96 @@ props:
       default: 'none'
       examples:
         - 'fa-solid fa-calendar-days'
-    step1_label: &label
+    step1_label:
       title: 'Step 1 name'
       type: string
       examples:
         - 'October to December'
-    step1_content: &content
+    step1_content:
       title: 'Step 1 content'
       type: string
       contentMediaType: text/html
       'x-formatting-context': block
       examples:
         - '<p>Information sessions run monthly.</p>'
+    # Steps 2 and 3 seed their own example so a newly placed timeline shows
+    # three distinct steps. They used to merge step 1's `examples` through the
+    # YAML anchors, which seeded six identical tabs. Steps 4 to 6 ship no
+    # example on purpose: Canvas seeds from examples[0], so they start empty
+    # and the template drops a step with no name and no content.
     step2_icon:
       <<: *icon
       title: 'Step 2 icon'
+      examples:
+        - 'fa-solid fa-file-lines'
     step2_label:
-      <<: *label
       title: 'Step 2 name'
+      type: string
+      examples:
+        - 'January to March'
     step2_content:
-      <<: *content
       title: 'Step 2 content'
+      type: string
+      contentMediaType: text/html
+      'x-formatting-context': block
+      examples:
+        - '<p>Applications open. Submit yours online.</p>'
     step3_icon:
       <<: *icon
       title: 'Step 3 icon'
+      examples:
+        - 'fa-solid fa-flag-checkered'
     step3_label:
-      <<: *label
       title: 'Step 3 name'
+      type: string
+      examples:
+        - 'April to June'
     step3_content:
-      <<: *content
       title: 'Step 3 content'
+      type: string
+      contentMediaType: text/html
+      'x-formatting-context': block
+      examples:
+        - '<p>Decisions go out and enrollment begins.</p>'
     step4_icon:
       <<: *icon
       title: 'Step 4 icon'
+      examples:
+        - 'none'
     step4_label:
-      <<: *label
       title: 'Step 4 name'
+      type: string
     step4_content:
-      <<: *content
       title: 'Step 4 content'
+      type: string
+      contentMediaType: text/html
+      'x-formatting-context': block
     step5_icon:
       <<: *icon
       title: 'Step 5 icon'
+      examples:
+        - 'none'
     step5_label:
-      <<: *label
       title: 'Step 5 name'
+      type: string
     step5_content:
-      <<: *content
       title: 'Step 5 content'
+      type: string
+      contentMediaType: text/html
+      'x-formatting-context': block
     step6_icon:
       <<: *icon
       title: 'Step 6 icon'
+      examples:
+        - 'none'
     step6_label:
-      <<: *label
       title: 'Step 6 name'
+      type: string
     step6_content:
-      <<: *content
       title: 'Step 6 content'
+      type: string
+      contentMediaType: text/html
+      'x-formatting-context': block
     padding:
       title: Padding
       type: string

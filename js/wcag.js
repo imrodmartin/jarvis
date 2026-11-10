@@ -34,7 +34,7 @@
    */
   function chan(c) {
     c /= 255;
-    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
   }
 
   /**
@@ -100,19 +100,6 @@
   }
 
   /**
-   * Worst-case block: brightest for light text, darkest for dark text.
-   */
-  function extremeBlock(d, size, bs, darkest) {
-    var best = [0, 0, 0];
-    var bestLum = darkest ? 2 : -1;
-    blocks(d, size, bs).forEach(function (c) {
-      var l = lum(c[0], c[1], c[2]);
-      if (darkest ? l < bestLum : l > bestLum) { bestLum = l; best = c; }
-    });
-    return best;
-  }
-
-  /**
    * A black overlay at alpha `a` scales each sRGB channel by (1 - a).
    */
   function darken(c, a) {
@@ -126,32 +113,6 @@
     return [c[0] + (255 - c[0]) * a, c[1] + (255 - c[1]) * a, c[2] + (255 - c[2]) * a];
   }
 
-  /**
-   * Smallest black-overlay alpha (>= floor) that makes white text pass.
-   */
-  function neededAlpha(r, g, b, floor) {
-    var a = floor;
-    while (a < 0.95) {
-      var c = darken([r, g, b], a);
-      if (contrast(TEXT, lum(c[0], c[1], c[2])) >= NEED) break;
-      a += 0.02;
-    }
-    return a;
-  }
-
-  /**
-   * Smallest white-overlay alpha (>= floor) that makes dark text pass.
-   */
-  function neededAlphaLight(r, g, b, floor) {
-    var a = floor;
-    while (a < 0.95) {
-      var c = lighten([r, g, b], a);
-      if (contrast(DARK_TEXT, lum(c[0], c[1], c[2])) >= NEED) break;
-      a += 0.02;
-    }
-    return a;
-  }
-
   var api = {
     NEED: NEED,
     TEXT: TEXT,
@@ -163,11 +124,8 @@
     lumHex: lumHex,
     ratioHex: ratioHex,
     blocks: blocks,
-    extremeBlock: extremeBlock,
     darken: darken,
-    lighten: lighten,
-    neededAlpha: neededAlpha,
-    neededAlphaLight: neededAlphaLight
+    lighten: lighten
   };
 
   if (typeof module !== 'undefined' && module.exports) {

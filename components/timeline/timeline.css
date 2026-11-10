@@ -7,7 +7,6 @@
   --jarvis-timeline-accent: var(--bs-primary, #2d6cdf);
 }
 .jarvis-timeline--icon-size-small { --jarvis-timeline-icon: 1.5rem; }
-.jarvis-timeline--icon-size-medium { --jarvis-timeline-icon: 2rem; }
 .jarvis-timeline--icon-size-large { --jarvis-timeline-icon: 3rem; }
 
 .jarvis-timeline__icon {
@@ -61,11 +60,6 @@
 .jarvis-timeline__panels {
   padding-block-start: 1.5rem;
 }
-@media (prefers-reduced-motion: reduce) {
-  .jarvis-timeline .tab-pane.fade {
-    transition: none;
-  }
-}
 
 /* --- Accordion --- */
 .jarvis-timeline__item {
@@ -102,11 +96,6 @@
 }
 .jarvis-timeline__item .jarvis-timeline__content {
   padding-block-end: 1rem;
-}
-@media (prefers-reduced-motion: reduce) {
-  .jarvis-timeline__summary::after {
-    transition: none;
-  }
 }
 
 /* --- Vertical rail --- */

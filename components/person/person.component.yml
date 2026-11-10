@@ -6,7 +6,7 @@ category: Jarvis
 props:
   type: object
   properties:
-    variant:
+    layout:
       title: Layout
       type: string
       enum: [card, plain, image-left]

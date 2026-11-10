@@ -7,12 +7,11 @@
  * (Inter etc.), NOT the reference image's fonts.
  */
 #}
-{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
 {% import '@jarvis/jarvis-url.html.twig' as safe %}
 {% set button_href = safe.url(button_href|default('')) %}
 {% set link_href = safe.url(link_href|default('')) %}
-{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : false)) %}
-{% set h = heading_level|default('h2') ?: 'h2' %}
+{% set space = include('@jarvis/jarvis-spacing.html.twig') %}
+{% set h = heading_level|default('h2') %}
 {% set rows = [
   { icon: row1_icon|default('none'), text: row1_text },
   { icon: row2_icon|default('none'), text: row2_text },
@@ -23,16 +22,17 @@
   {% if heading %}<{{ h }} class="jarvis-large-cta__heading fw-bold mb-3">{{ heading }}</{{ h }}>{% endif %}
   {% if text %}<p class="jarvis-large-cta__text lead mb-0">{{ text }}</p>{% endif %}
 
+  {% set rows = rows|filter(row => row.text) %}
+  {% if rows %}
   <ul class="jarvis-large-cta__rows list-unstyled mb-0">
     {% for row in rows %}
-      {% if row.text %}
         <li class="jarvis-large-cta__row d-flex align-items-start">
           {% if row.icon and row.icon != 'none' %}<i class="{{ row.icon }} jarvis-large-cta__icon" aria-hidden="true"></i>{% endif %}
           <span class="jarvis-large-cta__row-text fw-bold">{{ row.text }}</span>
         </li>
-      {% endif %}
     {% endfor %}
   </ul>
+  {% endif %}
 
   {% if (button_text and button_href) or (link_text and link_href) %}
     <div class="jarvis-large-cta__actions d-flex flex-wrap align-items-center gap-3">

@@ -6,11 +6,15 @@
   --bs-primary: #2d6cdf;
   --bs-primary-rgb: 45, 108, 223;
   --bs-secondary: #1b2a4a;
+  --bs-secondary-rgb: 27, 42, 74;
+  /* Links follow the theme primary, not Bootstrap's stock #0d6efd. */
+  --bs-link-color: var(--bs-primary);
+  --bs-link-color-rgb: var(--bs-primary-rgb);
+  --bs-link-hover-color: color-mix(in srgb, var(--bs-primary) 80%, #000);
   --bs-body-font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --bs-body-color: #1b2130;
   --bs-border-radius: 0.65rem;
   --bs-border-radius-lg: 1rem;
-  --jarvis-section-gap: 4rem;
 }
 
 body {
@@ -26,7 +30,7 @@ body {
    viewport (a 2000px hero pushed the whole page sideways).
    Element selectors (0,0,1) so every existing class rule still wins:
    .jarvis-image--match-height's height:100% and Bootstrap's .h-100 are unaffected. */
-img, svg, video, iframe, table, pre {
+img, svg, video, iframe, table, pre, input, select, textarea {
   max-width: 100%;
 }
 img, video {
@@ -59,14 +63,44 @@ blockquote > :last-child {
   font-weight: 700;
 }
 
+/* Buttons follow the theme colours. Bootstrap compiles each variant against
+   its STOCK palette, so only the vars are re-pointed here; hover and active
+   shades are mixed from the same colour so they track a changed primary. */
+.btn-primary,
+.btn-secondary {
+  --bs-btn-bg: var(--jarvis-btn);
+  --bs-btn-border-color: var(--jarvis-btn);
+  --bs-btn-hover-bg: color-mix(in srgb, var(--jarvis-btn) 85%, #000);
+  --bs-btn-hover-border-color: color-mix(in srgb, var(--jarvis-btn) 85%, #000);
+  --bs-btn-active-bg: color-mix(in srgb, var(--jarvis-btn) 75%, #000);
+  --bs-btn-active-border-color: color-mix(in srgb, var(--jarvis-btn) 75%, #000);
+  --bs-btn-disabled-bg: var(--jarvis-btn);
+  --bs-btn-disabled-border-color: var(--jarvis-btn);
+}
+.btn-outline-primary,
+.btn-outline-secondary {
+  --bs-btn-color: var(--jarvis-btn);
+  --bs-btn-border-color: var(--jarvis-btn);
+  --bs-btn-hover-bg: var(--jarvis-btn);
+  --bs-btn-hover-border-color: var(--jarvis-btn);
+  --bs-btn-active-bg: var(--jarvis-btn);
+  --bs-btn-active-border-color: var(--jarvis-btn);
+  --bs-btn-disabled-color: var(--jarvis-btn);
+  --bs-btn-disabled-border-color: var(--jarvis-btn);
+}
+.btn-primary, .btn-outline-primary { --jarvis-btn: var(--bs-primary); }
+.btn-secondary, .btn-outline-secondary { --jarvis-btn: var(--bs-secondary); }
 .btn-primary {
-  --bs-btn-bg: var(--bs-primary);
-  --bs-btn-border-color: var(--bs-primary);
-  --bs-btn-hover-bg: #245ac0;
-  --bs-btn-hover-border-color: #245ac0;
   --bs-btn-padding-x: 1.6rem;
   --bs-btn-padding-y: 0.7rem;
   font-weight: 600;
+}
+/* Bootstrap's a:hover reads --bs-link-hover-color-rgb, which nothing here can
+   derive from a theme colour, so hover fell back to stock dark blue everywhere,
+   coloured sections included. :where() keeps this at (0,1,0): it beats the bare
+   `a` colour and loses to any class (.btn, .nav-link, footer links). */
+:where(a):hover {
+  color: var(--bs-link-hover-color);
 }
 
 /* Jarvis spacing utilities — exact px, driven by the padding/margin SDC props.
@@ -107,8 +141,9 @@ blockquote > :last-child {
 /* Vertical padding button: 30px top + bottom. */
 .jp-vpad { padding-top: 30px; padding-bottom: 30px; }
 
-/* No-padding toggle: overrides jp-vpad's top/bottom so rows can touch
-   vertically. !important because it must beat jp-vpad above. */
+/* No-padding toggle (1 Column): zeroes top/bottom so content can touch,
+   including the default padding a colored .jarvis-bg band adds. !important
+   because it must beat jp-vpad and the jp-p-* utilities above. */
 .jp-nopad { padding-top: 0 !important; padding-bottom: 0 !important; }
 
 /* Site logo: cap at 400px, pin left. Same rule whether branding sits in the
@@ -332,12 +367,17 @@ h1, h2, h3, h4, h5, h6 { color: var(--jarvis-heading-color); }
    utility classes are included so Bootstrap's responsive calc() sizes don't
    reassert themselves. */
 html { font-size: var(--jarvis-fs-base, 100%); }
-h1, .h1 { font-size: var(--jarvis-fs-h1, 2.5rem); }
-h2, .h2 { font-size: var(--jarvis-fs-h2, 2rem); }
-h3, .h3 { font-size: var(--jarvis-fs-h3, 1.75rem); }
-h4, .h4 { font-size: var(--jarvis-fs-h4, 1.5rem); }
-h5, .h5 { font-size: var(--jarvis-fs-h5, 1.25rem); }
-h6, .h6 { font-size: var(--jarvis-fs-h6, 1rem); }
+/* --jarvis-fs-scale lets a component enlarge its heading without restating
+   this ladder: the heading_level prop changes the TAG, the tag picks the size
+   here, and the component only sets a multiplier on its heading class (hero,
+   cta and video-background use 1.12). Six components used to carry their own
+   copy of these rules. */
+h1, .h1 { font-size: calc(var(--jarvis-fs-h1, 2.5rem) * var(--jarvis-fs-scale, 1)); }
+h2, .h2 { font-size: calc(var(--jarvis-fs-h2, 2rem) * var(--jarvis-fs-scale, 1)); }
+h3, .h3 { font-size: calc(var(--jarvis-fs-h3, 1.75rem) * var(--jarvis-fs-scale, 1)); }
+h4, .h4 { font-size: calc(var(--jarvis-fs-h4, 1.5rem) * var(--jarvis-fs-scale, 1)); }
+h5, .h5 { font-size: calc(var(--jarvis-fs-h5, 1.25rem) * var(--jarvis-fs-scale, 1)); }
+h6, .h6 { font-size: calc(var(--jarvis-fs-h6, 1rem) * var(--jarvis-fs-scale, 1)); }
 
 /* Canvas/editor: h2-h4 bold (Bootstrap defaults them to 500). */
 h2, .h2, h3, .h3, h4, .h4 { font-weight: 700; }
@@ -387,7 +427,11 @@ td:has(> span.file) { padding-right: 20px; }
    ADA-compliant text. Fixed brand backgrounds use hardcoded #000/#fff text;
    the arbitrary Background 1/2 colours use a text colour computed for WCAG AA in
    jarvis_preprocess_html(). */
-.jarvis-bg {
+/* :where() = zero specificity, so this is only the default. The padding and
+   vertical_padding props (.jp-p-*, .jp-vpad above) win when an editor sets
+   them; before, this rule sat later at equal specificity and silently beat
+   them, so a coloured section was always 2rem top and bottom. */
+:where(.jarvis-bg) {
   padding-block: 2rem; /* breathing room so text isn't flush to the colour band edge */
 }
 /* One foreground contract for every surface below. Each variant declares only
@@ -407,13 +451,17 @@ td:has(> span.file) { padding-right: 20px; }
 .jarvis-bg--bg2,
 .jarvis-bg--image,
 .jarvis-columns .jarvis-person--card,
-.jarvis-columns .jarvis-card:not(.jarvis-card--background) {
+.jarvis-columns .jarvis-card:not(.jarvis-card--background),
+[class*="jarvis-bg--"] :is(.jarvis-person--card, .jarvis-card:not(.jarvis-card--background), .jarvis-video-sidebar) {
   color: var(--jarvis-on);
   --bs-body-color: var(--jarvis-on);
   --bs-body-color-rgb: var(--jarvis-on-rgb);
   --bs-heading-color: var(--jarvis-on);
   --jarvis-heading-color: var(--jarvis-on); /* theme headings read this, not --bs-heading-color */
   --bs-emphasis-color: var(--jarvis-on);
+  /* Muted text (.text-body-secondary, image captions, lead copy). Bootstrap
+     fixes it at a dark grey, which measured 1.08:1 on a dark band. */
+  --bs-secondary-color: rgba(var(--jarvis-on-rgb), 0.75);
   --bs-link-color: var(--jarvis-link, var(--jarvis-on));
   --bs-link-color-rgb: var(--jarvis-link-rgb, var(--jarvis-on-rgb));
   --bs-link-hover-color: var(--jarvis-link-hover, var(--jarvis-on));
@@ -466,15 +514,19 @@ td:has(> span.file) { padding-right: 20px; }
   --jarvis-on-rgb: 255, 255, 255;
   --jarvis-link-hover: #e6e6e6;
 }
-.jarvis-bg--image > .jarvis-bg__overlay {
+/* One overlay for every image-backed surface: column sections, hero, and the
+   background card. Each used to restate these four declarations under its
+   own class. The parent sets position; the content sits above via z-index. */
+.jarvis-bg__overlay {
   position: absolute;
   inset: 0;
   background: #000;
   pointer-events: none;
 }
-/* Light overlay: used when the section's text is dark, so dark text stays
-   readable over a bright image (mirror of the default dark overlay). */
-.jarvis-bg--image > .jarvis-bg__overlay--light {
+/* Light overlay: used when the text is dark, so dark text stays readable over
+   a bright image (mirror of the default dark overlay). Must follow the rule
+   above: same specificity, later wins. */
+.jarvis-bg__overlay--light {
   background: #fff;
 }
 /* Keep the content above the overlay. */
@@ -489,12 +541,37 @@ td:has(> span.file) { padding-right: 20px; }
    Only the inputs are restated; the shared rule above wires them up. Links go
    brand-coloured here rather than following the text. */
 .jarvis-columns .jarvis-person--card,
-.jarvis-columns .jarvis-card:not(.jarvis-card--background) {
+.jarvis-columns .jarvis-card:not(.jarvis-card--background),
+[class*="jarvis-bg--"] :is(.jarvis-person--card, .jarvis-card:not(.jarvis-card--background), .jarvis-video-sidebar) {
   --jarvis-on: #1a1a1a;
   --jarvis-on-rgb: 26, 26, 26;
   --jarvis-link: var(--bs-primary);
   --jarvis-link-rgb: var(--bs-primary-rgb);
   --jarvis-link-hover: var(--bs-primary);
+}
+
+/* Outline buttons draw in the theme colour, which vanishes on a section of the
+   same colour (primary on primary measured 1.07:1). Inside any coloured
+   surface they use that surface's safe text colour instead. Resolved per
+   element, so a white card inside a dark section gets a dark outline. */
+[class*="jarvis-bg--"] :is(.btn-outline-primary, .btn-outline-secondary) {
+  --bs-btn-color: var(--jarvis-on);
+  --bs-btn-border-color: var(--jarvis-on);
+  --bs-btn-hover-color: var(--jarvis-on);
+  --bs-btn-hover-bg: rgba(var(--jarvis-on-rgb), 0.15);
+  --bs-btn-hover-border-color: var(--jarvis-on);
+  --bs-btn-active-color: var(--jarvis-on);
+  --bs-btn-active-bg: rgba(var(--jarvis-on-rgb), 0.25);
+  --bs-btn-active-border-color: var(--jarvis-on);
+}
+
+/* The Large column gap (.g-5) is a 3rem gutter, so the row's negative margins
+   reach past the container's 0.75rem padding and a full-width section scrolled
+   sideways by 12px on phones. Columns are stacked there anyway. */
+@media (max-width: 575.98px) {
+  .jarvis-columns .row.g-5 {
+    --bs-gutter-x: 1.5rem;
+  }
 }
 
 /* Site-wide: links have no underline. */
@@ -509,7 +586,6 @@ a {
 .jarvis-text a:not(.btn),
 .jarvis-wysiwyg a:not(.btn),
 .card-text a:not(.btn),
-.jarvis-cta__text a:not(.btn),
 .jarvis-footer a:not(.btn) {
   text-decoration: underline;
 }

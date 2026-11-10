@@ -222,6 +222,38 @@ function jarvis_font_settings_submit(array &$form, FormStateInterface $form_stat
     return;
   }
 
+  $slots = [];
+  foreach (array_keys(_jarvis_fonts()) as $key) {
+    foreach (['family', 'weight', 'selector'] as $part) {
+      $slots[$key][$part] = (string) $form_state->getValue("jarvis_font_{$key}_{$part}");
+    }
+  }
+  $error = _jarvis_build_fonts($slots);
+  if ($error) {
+    \Drupal::messenger()->addWarning(t('@error Kept the previously generated fonts. Save again to retry.', ['@error' => $error]));
+  }
+  else {
+    \Drupal::messenger()->addStatus(t('Fonts downloaded and self-hosted.'));
+  }
+}
+
+/**
+ * Downloads the chosen Google fonts and writes public://jarvis-fonts/.
+ *
+ * Split from the submit handler so jarvis_canvas can run it once after a
+ * recipe install, where the font settings arrive as config and no form is
+ * ever submitted.
+ *
+ * @param array $slots
+ *   Slot key => ['family' => ..., 'weight' => ..., 'selector' => ...].
+ *
+ * @return string|null
+ *   An error message when a download failed (nothing is written), else NULL.
+ */
+function _jarvis_build_fonts(array $slots): ?string {
+  /** @var \Drupal\Core\File\FileSystemInterface $fs */
+  $fs = \Drupal::service('file_system');
+  $dir = 'public://jarvis-fonts';
   $fs->prepareDirectory($dir, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
 
   $client = \Drupal::httpClient();
@@ -231,10 +263,10 @@ function jarvis_font_settings_submit(array &$form, FormStateInterface $form_stat
   $faces = [];
   $rules = [];
   $fetched = [];
-  foreach (array_keys(_jarvis_fonts()) as $key) {
-    $family = trim((string) $form_state->getValue("jarvis_font_{$key}_family"));
-    $variant = (string) ($form_state->getValue("jarvis_font_{$key}_weight") ?: '400');
-    $selector = trim((string) $form_state->getValue("jarvis_font_{$key}_selector"));
+  foreach ($slots as $slot) {
+    $family = trim((string) ($slot['family'] ?? ''));
+    $variant = (string) (($slot['weight'] ?? '') ?: '400');
+    $selector = trim((string) ($slot['selector'] ?? ''));
     if ($family === '' || $selector === '') {
       continue;
     }
@@ -264,11 +296,10 @@ function jarvis_font_settings_submit(array &$form, FormStateInterface $form_stat
       // Abort without touching jarvis-fonts.css. A partial rewrite would keep
       // this slot's font-family rule while dropping its @font-face payload —
       // and one flaky save used to wipe the previously good stylesheet.
-      \Drupal::messenger()->addWarning(t('Could not fetch %f from Google Fonts: @m. Kept the previously generated fonts — save again to retry.', [
-        '%f' => $family,
+      return (string) t('Could not fetch @f from Google Fonts: @m.', [
+        '@f' => $family,
         '@m' => $e->getMessage(),
-      ]));
-      return;
+      ]);
     }
 
     // Download each woff2 and point the url() at the local copy.
@@ -293,7 +324,10 @@ function jarvis_font_settings_submit(array &$form, FormStateInterface $form_stat
 
   $out = implode("\n", $faces) . "\n\n" . implode("\n", $rules) . "\n";
   $fs->saveData($out, "$dir/jarvis-fonts.css", FileExists::Replace);
-  \Drupal::messenger()->addStatus(t('Fonts downloaded and self-hosted.'));
+  // The stylesheet is a library asset with a fixed name; change the asset
+  // query string so browsers and the aggregator pick up the new copy.
+  \Drupal::service('asset.query_string')->reset();
+  return NULL;
 }
 
 /**
