@@ -1,16 +1,19 @@
 {#
 /**
  * @file
- * Shared video-URL helpers for the video and video-with-sidebar SDCs.
+ * Shared video player for the video and video-with-sidebar SDCs.
  *
- * Both components accept whatever an editor pastes — a YouTube watch link, a
- * youtu.be share link, a Vimeo page URL, an already-built embed URL, or a direct
- * media file. The normalisation was duplicated in both templates and differed
- * only in the variable it read, so a fix to one silently missed the other.
+ * Include it and it prints the player (or nothing when there is no source):
  *
- *   {% import '@jarvis/jarvis-video.html.twig' as video %}
- *   {% set embed_url = video.embed_url(src) %}
- *   {% set is_file = video.is_file(src) %}
+ *   {{ include('@jarvis/jarvis-video.html.twig') }}
+ *
+ * It reads these from the including template's context: video_media,
+ * video_url, captions_url, captions_lang, aspect, title, autoplay, muted.
+ * Both components used to carry this block verbatim, so a fix to one silently
+ * missed the other.
+ *
+ * The two URL helpers below are macros, so they can also be imported on their
+ * own: {% import '@jarvis/jarvis-video.html.twig' as video %}.
  */
 #}
 
@@ -44,3 +47,44 @@
     {{- url -}}
   {%- endif -%}
 {%- endmacro %}
+
+{% import _self as video %}
+{% import '@jarvis/jarvis-url.html.twig' as safe %}
+{# A Remote video media pick becomes the iframe; video_url is files only.
+   Splitting them is what keeps an arbitrary origin out of the iframe: a hosted
+   player can only arrive through the media library, so the src is always a URL
+   core's oEmbed provider registry already accepted. A player URL pasted into
+   video_url is not a file, so it renders nothing.
+   video_media arrives as the media item's oEmbed URL STRING, not an entity:
+   JarvisCanvasHooks::canvasStorablePropShapeAlter() builds the expression that
+   reads it off field_media_oembed_video. #}
+{% set media_url = safe.url(video_media|default('')) %}
+{% set file_url = safe.url(video_url|default('')) %}
+{% set file_url = video.is_file(file_url) is not empty ? file_url : '' %}
+{% set embed_url = media_url ? video.embed_url(media_url) : '' %}
+{% set captions = safe.url(captions_url|default('')) %}
+{% set ratio_class = { '16x9': 'ratio-16x9', '4x3': 'ratio-4x3', '21x9': 'ratio-21x9' }[aspect|default('16x9')] %}
+{% set label = title|default('Video'|t) %}
+{% set autoplay = autoplay|default(false) %}
+{% if embed_url or file_url %}
+  <div class="ratio {{ ratio_class }}">
+    {% if embed_url %}
+      {# The player needs scripts and its own origin's storage; nothing here
+         needs to navigate the top frame, open windows, submit forms or start
+         downloads, which is what an unsandboxed embed inherits. `autoplay` is
+         not in `allow`: the embed URL never carries autoplay=1, and the
+         autoplay prop drives the native <video> path only. #}
+      <iframe src="{{ embed_url }}" title="{{ label }}" sandbox="allow-scripts allow-same-origin allow-presentation" allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+    {% else %}
+      {# Reachable only when video_url points at a file. Autoplay implies
+         muted, because browsers block unmuted autoplay. aria-label gives the
+         native player the accessible name the iframe gets from title. #}
+      <video controls preload="metadata" aria-label="{{ label }}"{{ autoplay ? ' autoplay loop playsinline' : '' }}{{ (muted|default(false) or autoplay) ? ' muted' : '' }}>
+        <source src="{{ file_url }}">
+        {# ADA (WCAG 1.2.2): captions track for the native player. Hosted
+           embeds carry their own captions. #}
+        {% if captions %}<track kind="captions" src="{{ captions }}" srclang="{{ captions_lang|default('en') }}" label="{{ 'Captions'|t }}" default>{% endif %}
+      </video>
+    {% endif %}
+  </div>
+{% endif %}

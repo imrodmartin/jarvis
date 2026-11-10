@@ -62,7 +62,7 @@
       ).forEach((el) => {
         const m = (el.style.backgroundImage || '').match(/url\(["']?(.*?)["']?\)/);
         if (!m) return;
-        const ov = el.querySelector('.jarvis-hero__overlay, .jarvis-card__overlay, .jarvis-bg__overlay');
+        const ov = el.querySelector('.jarvis-bg__overlay');
         out.push({ url: m[1], lightText: !(ov && ov.classList.contains('jarvis-bg__overlay--light')) });
       });
     });
@@ -130,7 +130,8 @@
     && Object.keys(COLUMN_WIDTHS).find((p) =>
       input.name === p || new RegExp(`\\[${p}\\]($|\\[)`).test(input.name || ''));
 
-  const plainSlider = (num, emptyDefault, label, step = 1) => {
+  // onChange(value) fires after every slider move and every external update.
+  const plainSlider = (num, emptyDefault, label, step = 1, onChange = () => {}) => {
     num.setAttribute('data-jarvis-overlay-hidden', '');
     const wrap = document.createElement('div');
     wrap.className = 'jarvis-overlay-slider';
@@ -151,26 +152,28 @@
       setValue.call(num, range.value);
       num.dispatchEvent(new Event('input', { bubbles: true }));
       num.dispatchEvent(new Event('change', { bubbles: true }));
+      onChange(Number(range.value));
     });
+    // External updates (undo, server round-trip) flow back to the slider.
     num.addEventListener('input', () => {
       if (num.value !== '' && num.value !== range.value) {
         range.value = num.value;
         readout.textContent = `${range.value}%`;
+        onChange(Number(range.value));
       }
     });
+    return { wrap, range };
   };
 
   const enhance = (num) => {
-    num.setAttribute('data-jarvis-overlay-hidden', '');
-
-    // Which component owns this form? Probe order is load-bearing: `variant`
-    // is unique to card, but `heading_level` is on BOTH card and hero, so card
+    // Which component owns this form? Probe order is load-bearing: among the
+    // overlay-bearing components `layout` is unique to card, but `heading_level` is on BOTH card and hero, so card
     // must be tested first. The column layouts have neither prop.
     const uuid = (num.name.match(/canvas_component_props\[([^\]]+)\]/) || [])[1];
     const sibling = (prop) => (uuid
       ? document.querySelector(`[name*="${uuid}"][name*="${prop}"]`)
       : null);
-    const isCard = !!sibling('variant');
+    const isCard = !!sibling('layout');
     const isHero = !isCard && !!sibling('heading_level');
 
     // An empty field means the SDC's own |default() applies at render time.
@@ -179,74 +182,21 @@
     // actually renders.
     const emptyDefault = (isCard || isHero) ? 40 : 45;
 
-    const wrap = document.createElement('div');
-    wrap.className = 'jarvis-overlay-slider';
-
-    const range = document.createElement('input');
-    range.type = 'range';
-    range.min = 0;
-    range.max = 100;
-    range.step = 1;
-    range.value = num.value === '' ? emptyDefault : num.value;
-    range.setAttribute('aria-label', Drupal.t('Overlay opacity (%)'));
-
-    const readout = document.createElement('span');
-    readout.className = 'jarvis-overlay-readout';
-    readout.textContent = `${range.value}%`;
-
+    // The badge follows the slider. Dark text used to disable the slider here,
+    // from when card and hero zeroed the overlay for it; both now render a
+    // light overlay instead, so the control stays live for every text colour.
     const badge = document.createElement('span');
     badge.className = 'jarvis-overlay-badge';
     badge.hidden = true;
-
-    const note = document.createElement('span');
-    note.className = 'jarvis-overlay-note';
-    note.textContent = Drupal.t('No overlay — dark text sits on the bare image');
-    note.hidden = true;
-
-    wrap.append(range, readout, badge, note);
-    num.insertAdjacentElement('afterend', wrap);
-
-    // Same form holds the component's Text color select (shared uuid in the
-    // name). Dark/black text zeroes the overlay in card.twig ('black') and
-    // hero.twig ('dark'), so the slider is inert there — disable it and say
-    // why instead of showing a stale badge. Columns keep their slider: black
-    // text there flips to a light overlay instead.
-    const textColor = sibling('text_color');
-    const bareTextValue = isCard ? 'black' : (isHero ? 'dark' : null);
-    const overlayDisabled = () => !!textColor && !!bareTextValue && textColor.value === bareTextValue;
-    const applyDisabled = () => {
-      const off = overlayDisabled();
-      range.disabled = off;
-      readout.hidden = off;
-      note.hidden = !off;
-      if (off) badge.hidden = true;
-    };
-    if (textColor) textColor.addEventListener('change', () => { applyDisabled(); });
-
-    range.addEventListener('input', () => {
-      readout.textContent = `${range.value}%`;
-      setValue.call(num, range.value);
-      num.dispatchEvent(new Event('input', { bubbles: true }));
-      num.dispatchEvent(new Event('change', { bubbles: true }));
-      updateBadge(badge, Number(range.value));
-    });
-    // External updates (undo, server round-trip) flow back to the slider.
-    num.addEventListener('input', () => {
-      if (num.value !== '' && num.value !== range.value) {
-        range.value = num.value;
-        readout.textContent = `${range.value}%`;
-        updateBadge(badge, Number(range.value));
-      }
-    });
+    const { wrap, range } = plainSlider(num, emptyDefault, Drupal.t('Overlay opacity (%)'), 1, (value) => updateBadge(badge, value));
+    wrap.append(badge);
 
     const refresh = () => {
       if (!badge.isConnected) { refreshers.delete(refresh); return; }
-      if (overlayDisabled()) { badge.hidden = true; return; }
       updateBadge(badge, Number(range.value));
     };
     refreshers.add(refresh);
-    applyDisabled();
-    if (!overlayDisabled()) updateBadge(badge, Number(range.value));
+    updateBadge(badge, Number(range.value));
   };
 
   const scan = () => {

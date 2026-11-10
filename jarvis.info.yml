@@ -2,7 +2,7 @@ name: Jarvis
 type: theme
 base theme: false
 core_version_requirement: '>=11.3'
-version: '3.5.2'
+version: '4.0.0'
 description: 'DXPR-style SDC theme with Bootstrap 5, built for Drupal Canvas and Layout Builder.'
 package: Jarvis
 screenshot: screenshot.jpg
@@ -14,6 +14,9 @@ screenshot: screenshot.jpg
 # the problem, and stops the module being uninstalled while the theme is on.
 dependencies:
   - jarvis_canvas
+  # person.twig calls twig_tweak's |image_style filter. Same failure mode as
+  # above when it is missing: an "Unknown filter" white screen.
+  - twig_tweak
 libraries:
   - jarvis/global
 # Styles the CKEditor 5 editing area so authors see the theme's typography

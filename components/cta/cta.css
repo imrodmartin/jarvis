@@ -2,30 +2,9 @@
   font-size: 0.875rem;
   letter-spacing: 0.15em;
 }
-/* On a colored bg, jarvis-bg--* sets the ADA-safe text color (and the
-   --jarvis-heading-color var) on the container. Belt-and-braces: force
-   headings to inherit that color even if a global heading rule interferes. */
-.jarvis-cta[class*="jarvis-bg--"] :is(h1, h2, h3, h4, h5, h6) {
-  color: inherit;
-}
-/* Heading size keyed off the TAG, so the heading_level prop actually resizes.
-   Previously .display-4 was hardcoded in the twig: h2/h3/h4 changed the element
-   but every level rendered at calc(1.475rem + 2.7vw).
-
-   Mirrors hero.css — same theme scale (--jarvis-fs-*, configurable per site
-   with separate mobile values), same 1.12 factor, so a CTA heading keeps its
-   proportion to a hero heading at the matching level. Levels here are h2/h3/h4
-   (h2 default), which is why this starts one step down from hero's h1.
-   Defaults render h2 2.24rem / h3 1.96rem / h4 1.68rem. */
+/* Same 1.12 multiplier as the hero heading, applied to the global hN rule in
+   css/overrides.css. Levels are h2/h3/h4: 2.24rem / 1.96rem / 1.68rem. */
 .jarvis-cta__heading {
+  --jarvis-fs-scale: 1.12;
   line-height: 1.2;
-}
-h2.jarvis-cta__heading {
-  font-size: calc(var(--jarvis-fs-h2, 2rem) * 1.12);
-}
-h3.jarvis-cta__heading {
-  font-size: calc(var(--jarvis-fs-h3, 1.75rem) * 1.12);
-}
-h4.jarvis-cta__heading {
-  font-size: calc(var(--jarvis-fs-h4, 1.5rem) * 1.12);
 }

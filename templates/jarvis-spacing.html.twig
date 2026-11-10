@@ -3,32 +3,34 @@
  * @file
  * Shared spacing utility-class builder for the Jarvis SDCs.
  *
- * Maps the padding/margin/vertical_padding/no_padding props every component
- * repeats onto the jp-* utility classes in css/overrides.css. Imported as
- * `{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}` — call sites
- * pass |default()-guarded props so undefined props are safe under
- * strict_variables. One source of truth: change spacing behaviour here.
+ * Maps the padding / padding_size / margin / margin_size / vertical_padding
+ * props that almost every component declares onto the jp-* utility classes in
+ * css/overrides.css. Use it as:
  *
- * vertical_padding fallbacks are FALSE everywhere. Canvas ignores a prop's
- * schema `default` and seeds a placed component from `examples[0]`, so a prop
- * with no examples arrives omitted; a `true` fallback then padded sections
- * whose toggle read off until the editor flipped it on and back off — the
- * toggle and the rendered spacing disagreed. Keep the two in step: to make a
- * component default to padded, give vertical_padding `examples: [true]` (the
- * 1/2/3-column components do) and leave the fallback FALSE, so an absent prop
- * still matches an unchecked box.
+ *   {% set space = include('@jarvis/jarvis-spacing.html.twig') %}
  *
- * no_padding is the last argument and Section is the only component that
- * declares that prop, so every other caller omits it and it arrives null
- * (falsy). Passing `no_padding|default(false)` from components that never
- * define the prop only hardcoded false at 14 call sites.
+ * It reads the props straight from the including template's context, so the
+ * fallbacks live here once instead of at every call site. This used to be a
+ * macro that each of 17 templates called with the same five |default()
+ * arguments.
+ *
+ * vertical_padding falls back to FALSE. Canvas ignores a prop's schema
+ * `default` and seeds a placed component from `examples[0]`, so a prop with no
+ * examples arrives omitted; a `true` fallback then padded sections whose toggle
+ * read off until the editor flipped it on and back off. To make a component
+ * default to padded, give vertical_padding `examples: [true]` (the column
+ * components do) and leave the fallback FALSE, so an absent prop still matches
+ * an unchecked box.
+ *
+ * no_padding is declared by 1 Column only (inherited from the Section
+ * component it replaced), so for every other component it is simply absent.
  */
 #}
-{% macro classes(padding, padding_size, margin, margin_size, vertical_padding, no_padding) -%}
-  {{- [
-    padding != 'none' ? 'jp-p-' ~ padding ~ '-' ~ padding_size : '',
-    margin != 'none' ? 'jp-m-' ~ margin ~ '-' ~ margin_size : '',
-    vertical_padding ? 'jp-vpad' : '',
-    no_padding ? 'jp-nopad' : '',
-  ]|join(' ')|trim -}}
-{%- endmacro %}
+{%- set p = padding|default('none') -%}
+{%- set m = margin|default('none') -%}
+{{- [
+  p != 'none' ? 'jp-p-' ~ p ~ '-' ~ padding_size|default('medium') : '',
+  m != 'none' ? 'jp-m-' ~ m ~ '-' ~ margin_size|default('medium') : '',
+  vertical_padding|default(false) ? 'jp-vpad' : '',
+  no_padding|default(false) ? 'jp-nopad' : '',
+]|join(' ')|trim -}}

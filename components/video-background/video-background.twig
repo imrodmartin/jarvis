@@ -7,10 +7,9 @@
  * is painted by a separate __bg layer so box_opacity never fades the text.
  */
 #}
-{% import '@jarvis/jarvis-spacing.html.twig' as jarvis %}
 {% import '@jarvis/jarvis-url.html.twig' as safe %}
 {% set button_href = safe.url(button_href|default('')) %}
-{% set space = jarvis.classes(padding|default('none'), padding_size|default('medium'), margin|default('none'), margin_size|default('medium'), (vertical_padding is defined ? vertical_padding : false)) %}
+{% set space = include('@jarvis/jarvis-spacing.html.twig') %}
 {% set align = align|default('left') %}
 {% set justify_class = { left: 'justify-content-start', center: 'justify-content-center', right: 'justify-content-end' }[align] %}
 {% set height = height|default('medium') %}
@@ -53,8 +52,8 @@
     </div>
   </div>
   {% if src %}
-    <button type="button" class="jarvis-video-bg__toggle" data-jarvis-video-bg-toggle aria-pressed="false">
-      <span class="jarvis-video-bg__toggle-label">{{ 'Pause background video'|t }}</span>
+    <button type="button" class="jarvis-video-bg__toggle" data-jarvis-video-bg-toggle data-paused="false">
+      <span class="jarvis-video-bg__toggle-label visually-hidden">{{ 'Pause background video'|t }}</span>
     </button>
   {% endif %}
 </section>

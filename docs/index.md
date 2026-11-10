@@ -13,7 +13,7 @@ Jarvis targets Drupal `^11 || ^12` and PHP `>= 8.3`.
 
 ## Key features
 
-- Twenty-one SDC components (hero, card, section, columns, stat, person, video,
+- Twenty-three SDC components (hero, card, columns, stat, person, video,
   timeline, map, and more) that Canvas discovers on cache rebuild.
 - Bootstrap 5.3 as the base CSS layer, bundled with the theme.
 - Colour controls with hex fields paired to native colour pickers, applied as CSS
@@ -37,7 +37,7 @@ keeping it accessible. No code.
 
 **[The Jarvis Technical Guide](jarvis-guide.html)** is for developers. It covers
 the whole system in one document: what each part is and why it exists, the build
-steps for that part, and a reference to all twenty-four components with their
+steps for that part, and a reference to all twenty-three components with their
 props, slots, and a worked example of placing each one.
 
 The pages below are the short reference material, for when you already know

@@ -12,7 +12,7 @@
 
 const assert = require('assert');
 const w = require('./wcag.js');
-const { NEED, TEXT, DARK_TEXT, lum, contrast, rgbFromHex, ratioHex, blocks, extremeBlock, darken, lighten, neededAlpha, neededAlphaLight } = w;
+const { NEED, TEXT, DARK_TEXT, lum, contrast, rgbFromHex, ratioHex, blocks, darken, lighten } = w;
 
 // Primitives.
 // Pin DARK_TEXT to the true WCAG luminance of #212529 — a hand-copied 0.011
@@ -25,35 +25,24 @@ assert.strictEqual(Math.round(ratioHex('#ffffff', '#000000')), 21);
 // Symmetric — which is why the settings form lists each pair only once.
 assert.strictEqual(ratioHex('#2d6cdf', '#ffffff'), ratioHex('#ffffff', '#2d6cdf'));
 
-// Dark-overlay solver.
-assert.strictEqual(neededAlpha(0, 0, 0, 0), 0);
-[[255, 255, 255], [230, 225, 210], [200, 180, 150]].forEach(function (c) {
-  const a = neededAlpha(c[0], c[1], c[2], 0);
-  assert.ok(a > 0);
-  const o = darken(c, a);
-  assert.ok(contrast(TEXT, lum(o[0], o[1], o[2])) >= NEED);
-});
-assert.strictEqual(neededAlpha(230, 225, 210, 0.8), 0.8);
+// Overlay maths the editor badge composes: a black overlay at alpha 1 is black,
+// a white one is white, and each clears AA for its text colour.
+assert.deepStrictEqual(darken([200, 180, 150], 1), [0, 0, 0]);
+assert.deepStrictEqual(lighten([40, 40, 60], 1), [255, 255, 255]);
+assert.ok(contrast(TEXT, lum(...darken([255, 255, 255], 0.8))) >= NEED);
+assert.ok(contrast(DARK_TEXT, lum(...lighten([0, 0, 0], 0.9))) >= NEED);
 
-// Light-overlay solver: mirror of the above.
-assert.strictEqual(neededAlphaLight(255, 255, 255, 0), 0);
-[[0, 0, 0], [40, 40, 60], [90, 70, 50]].forEach(function (c) {
-  const a = neededAlphaLight(c[0], c[1], c[2], 0);
-  assert.ok(a > 0);
-  const o = lighten(c, a);
-  assert.ok(contrast(DARK_TEXT, lum(o[0], o[1], o[2])) >= NEED);
-});
-assert.strictEqual(neededAlphaLight(0, 0, 0, 0.9), 0.9);
-
-// Worst-block sampler on a left-black/right-white image: light text must
-// score the white block, dark text the black one, never the grey average.
+// Block sampler on a left-black/right-white image: it must return the pure
+// blocks, never one grey average. The worst-block solver itself now runs
+// server-side (jarvis_canvas OverlayAlpha); the editor badge scores every
+// block this returns.
 const half = new Array(16 * 16 * 4).fill(0).map(function (_, i) {
   const px = Math.floor(i / 4);
   return (i % 4 === 3) ? 255 : ((px % 16) < 8 ? 0 : 255);
 });
-assert.strictEqual(blocks(half, 16, 4).length, 16);
-assert.deepStrictEqual(extremeBlock(half, 16, 4, false), [255, 255, 255]);
-assert.deepStrictEqual(extremeBlock(half, 16, 4, true), [0, 0, 0]);
-assert.ok(neededAlpha(255, 255, 255, 0) > neededAlpha(127, 127, 127, 0));
+const sampled = blocks(half, 16, 4);
+assert.strictEqual(sampled.length, 16);
+assert.deepStrictEqual(sampled[0], [0, 0, 0]);
+assert.deepStrictEqual(sampled[3], [255, 255, 255]);
 
 console.log('wcag self-check ok');

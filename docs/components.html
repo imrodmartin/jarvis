@@ -310,7 +310,6 @@
       </div>
       <div class="nav-group">
         <p class="nav-group__title">Layout &amp; structure</p>
-        <a href="#section">Section</a>
         <a href="#one-column">1 Column</a>
         <a href="#two-column">2 Columns</a>
         <a href="#three-column">3 Columns</a>
@@ -418,7 +417,7 @@
         </div>
         <div class="note note--tip">
           <span class="note__icon">✓</span>
-          <div><b>The <a href="#section">Section</a> component adds one more:</b> <code>no_padding</code> (boolean, default <code>false</code>) — remove all inner padding so its contents can touch the edges, useful for full-bleed bands.</div>
+          <div><b>The <a href="#one-column">1 Column</a> component adds one more:</b> <code>no_padding</code> (boolean, default <code>false</code>). It removes the top and bottom padding, including the padding a colored background adds, so the contents can touch the edges. Use it for full-bleed bands. (Until Jarvis 4.0 this lived on the Section component, which 1 Column replaced.)</div>
         </div>
 
         <details class="src">
@@ -482,151 +481,6 @@
       <section>
         <h2 style="max-width:var(--measure)"><span class="section-tag">Reference</span>Layout &amp; structure</h2>
         <p class="prose" style="color:var(--ink-soft)">These components hold other components. They give the page its skeleton: sections, columns, and full-bleed bands. Each has one or more <strong>slots</strong> — the drop-zones where your content goes.</p>
-
-        <!-- SECTION -->
-        <article class="comp" id="section">
-          <div class="comp__head">
-            <h3 class="comp__name" style="margin:0">Section</h3>
-            <span class="comp__id">jarvis:section</span>
-            <span class="chip chip--content">Jarvis</span>
-          </div>
-          <p class="comp__desc">The simplest wrapper: a container that holds other components in its slot. Reach for it when you just need a band with a background or some breathing room around a group of components.</p>
-          <div class="badges"><a class="badge" href="#spacing">＋ standard spacing controls</a><span class="badge">＋ <code>no_padding</code></span></div>
-          <p class="subhead">Props</p>
-          <div class="table-scroll"><table>
-            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
-            <tbody>
-              <tr><td class="prop"><span class="pname">width</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">normal</span></td><td class="desc-cell"><code>normal</code> = contained; <code>full</code> = full width.</td></tr>
-              <tr><td class="prop"><span class="pname">bg</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">none</span></td><td class="desc-cell">Background colour.<span class="enum-list"><span class="enum enum--def">none</span><span class="enum">light</span><span class="enum">dark</span><span class="enum">primary</span><span class="enum">body-tertiary</span></span>Dark and primary backgrounds automatically switch text to white.</td></tr>
-            </tbody>
-          </table></div>
-          <p class="subhead">Slots</p>
-          <div class="slots"><div class="slot"><span class="slot__name">content</span><span class="slot__desc">Components placed inside this section.</span></div></div>
-<details class="src">
-<summary>&lt;/&gt; Source · 2 files</summary>
-<div class="srcfile"><div class="srcfile__name">section.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
-name: Section
-status: stable
-description: &#x27;Container/section wrapper that holds other components in its slot.&#x27;
-category: Jarvis
-props:
-  type: object
-  properties:
-    width:
-      title: Width
-      type: string
-      enum: [normal, full]
-      &#x27;meta:enum&#x27;:
-        normal: &#x27;Contained&#x27;
-        full: &#x27;Full width&#x27;
-      default: normal
-      examples:
-        - normal
-    bg:
-      title: &#x27;Background&#x27;
-      type: string
-      enum: [none, light, dark, primary, body-tertiary]
-      &#x27;meta:enum&#x27;:
-        none: None
-        light: Light
-        dark: Dark
-        primary: Primary
-        body-tertiary: &#x27;Subtle grey&#x27;
-      default: none
-      examples:
-        - none
-    padding:
-      title: Padding
-      type: string
-      enum: [none, all, top, bottom, left, right]
-      &#x27;meta:enum&#x27;:
-        none: None
-        all: &#x27;All sides&#x27;
-        top: Top
-        bottom: Bottom
-        left: Left
-        right: Right
-      default: none
-    padding_size:
-      title: &#x27;Padding size&#x27;
-      type: string
-      enum: [small, medium, large]
-      &#x27;meta:enum&#x27;:
-        small: &#x27;Small (10px)&#x27;
-        medium: &#x27;Medium (20px)&#x27;
-        large: &#x27;Large (30px)&#x27;
-      default: medium
-    margin:
-      title: Margin
-      type: string
-      enum: [none, all, top, bottom, left, right]
-      &#x27;meta:enum&#x27;:
-        none: None
-        all: &#x27;All sides&#x27;
-        top: Top
-        bottom: Bottom
-        left: Left
-        right: Right
-      default: none
-    margin_size:
-      title: &#x27;Margin size&#x27;
-      type: string
-      enum: [small, medium, large]
-      &#x27;meta:enum&#x27;:
-        small: &#x27;Small (10px)&#x27;
-        medium: &#x27;Medium (20px)&#x27;
-        large: &#x27;Large (30px)&#x27;
-      default: medium
-    vertical_padding:
-      title: &#x27;Vertical padding (30px)&#x27;
-      type: boolean
-      default: false
-    no_padding:
-      title: &#x27;Remove padding (let content touch)&#x27;
-      type: boolean
-      default: false
-slots:
-  content:
-    title: Content
-    description: &#x27;Components placed inside this section.&#x27;</code></pre></div>
-<div class="srcfile"><div class="srcfile__name">section.twig</div><pre class="code"><code>{#
-/**
- * @file
- * Jarvis section wrapper SDC with a `content` slot.
- */
-#}
-{% import &#x27;@jarvis/jarvis-spacing.html.twig&#x27; as jarvis %}
-{% set space = jarvis.classes(padding|default(&#x27;none&#x27;), padding_size|default(&#x27;medium&#x27;), margin|default(&#x27;none&#x27;), margin_size|default(&#x27;medium&#x27;), (vertical_padding is defined ? vertical_padding : false), no_padding|default(false)) %}
-{% set width = width|default(&#x27;normal&#x27;) %}
-{% set bg = bg|default(&#x27;none&#x27;) %}
-{# Use the theme&#x27;s .jarvis-bg--* cascade rather than Bootstrap&#x27;s bg-* plus a
-   hardcoded text-white. Bootstrap compiles its foreground against the STOCK
-   primary, so text-white silently fails AA once the site primary is themed —
-   the same trap cta.twig documents. The .jarvis-bg--* rules in
-   css/overrides.css set colour plus every --bs-* var, so headings and links
-   follow too, and the child-component ADA fallbacks are keyed on these
-   classes, so they never fired for anything placed in a Section before.
-
-   The base .jarvis-bg class is deliberately omitted: it carries padding-block
-   and Section already exposes its own padding props.
-
-   body-tertiary has no theme equivalent. It is a light surface, so Bootstrap&#x27;s
-   own class with the default body colour is correct for it. #}
-{% set bg_class = {
-  none: &#x27;&#x27;,
-  light: &#x27;jarvis-bg--light&#x27;,
-  dark: &#x27;jarvis-bg--dark&#x27;,
-  primary: &#x27;jarvis-bg--primary&#x27;,
-  &#x27;body-tertiary&#x27;: &#x27;bg-body-tertiary&#x27;,
-}[bg]|default(&#x27;&#x27;) %}
-{% set container = width == &#x27;full&#x27; ? &#x27;container-fluid&#x27; : &#x27;container&#x27; %}
-&lt;section class=&quot;jarvis-section {{ bg_class }} {{ space }}&quot;&gt;
-  &lt;div class=&quot;{{ container }}&quot;&gt;
-    {{ content }}
-  &lt;/div&gt;
-&lt;/section&gt;</code></pre></div>
-</details>
-        </article>
 
         <!-- ONE COLUMN -->
         <article class="comp" id="one-column">
@@ -1657,7 +1511,7 @@ slots:
             <span class="chip chip--layout">Jarvis Layout</span>
           </div>
           <p class="comp__desc">A full-width, two-part band: an image that fills its half edge-to-edge, beside a rich-text column. The classic "image on one side, words on the other" block. It uses two slots rather than image/text props, so you compose it from an <a href="#image">Image</a> and a <a href="#text">Text</a> (or WYSIWYG) component.</p>
-          <div class="note note--watch" style="margin-top:12px"><span class="note__icon">!</span><div>This component does <b>not</b> use the standard spacing controls — it's meant to bleed to the edges. Wrap it in a <a href="#section">Section</a> if you need surrounding space.</div></div>
+          <div class="note note--watch" style="margin-top:12px"><span class="note__icon">!</span><div>This component does <b>not</b> use the standard spacing controls — it's meant to bleed to the edges. Wrap it in a <a href="#one-column">1 Column</a> if you need surrounding space.</div></div>
           <p class="subhead">Props</p>
           <div class="table-scroll"><table>
             <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
@@ -2279,7 +2133,7 @@ props:
               <tr><td class="prop"><span class="pname">link_href</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">That link's URL.</td></tr>
             </tbody>
           </table></div>
-          <div class="note"><span class="note__icon">i</span><div>Drop it into a coloured <a href="#section">Section</a> and it adapts: the accent-coloured eyebrow, text, icons and link fall back to the section's ADA-safe text colour, and the button flips to white-on-dark — so nothing vanishes against the background.</div></div>
+          <div class="note"><span class="note__icon">i</span><div>Drop it into a coloured <a href="#one-column">1 Column</a> and it adapts: the accent-coloured eyebrow, text, icons and link fall back to the section's ADA-safe text colour, and the button flips to white-on-dark — so nothing vanishes against the background.</div></div>
           <div class="note"><span class="note__icon">i</span><div>The icon set is deliberately curated rather than a free-text field, so an editor can't paste a class that isn't in the loaded Font Awesome subset. Need a different icon? Add it to the <code>enum</code> and <code>meta:enum</code> in <code>large-call-to-action.component.yml</code>.</div></div>
 <details class="src">
 <summary>&lt;/&gt; Source · 3 files</summary>
@@ -2886,7 +2740,7 @@ props:
             <tbody>
               <tr><td class="prop"><span class="pname">text</span><span class="req" title="required">✳</span></td><td><span class="ptype">string</span></td><td><span class="pdef">Get started</span></td><td class="desc-cell">Button label. Required.</td></tr>
               <tr><td class="prop"><span class="pname">href</span></td><td><span class="ptype">uri</span></td><td><span class="pdef pdef--none">#</span></td><td class="desc-cell">Where the button links. Defaults to <code>#</code> if left blank.</td></tr>
-              <tr><td class="prop"><span class="pname">variant</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">primary</span></td><td class="desc-cell">Bootstrap button style.<span class="enum-list"><span class="enum enum--def">primary</span><span class="enum">secondary</span><span class="enum">outline-primary</span><span class="enum">outline-secondary</span><span class="enum">light</span><span class="enum">dark</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">style</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">primary</span></td><td class="desc-cell">Bootstrap button style.<span class="enum-list"><span class="enum enum--def">primary</span><span class="enum">secondary</span><span class="enum">outline-primary</span><span class="enum">outline-secondary</span><span class="enum">light</span><span class="enum">dark</span></span></td></tr>
               <tr><td class="prop"><span class="pname">size</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">medium</span></td><td class="desc-cell"><code>small</code> · <code>medium</code> · <code>large</code>.</td></tr>
               <tr><td class="prop"><span class="pname">new_tab</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Open in a new tab (adds a safe <code>rel="noopener noreferrer"</code>).</td></tr>
             </tbody>
@@ -2916,7 +2770,7 @@ props:
       x-allowed-schemes: [http, https]
       examples:
         - &#x27;/node/1&#x27;
-    variant:
+    style:
       title: Style
       type: string
       enum: [primary, secondary, outline-primary, outline-secondary, light, dark]
@@ -2977,7 +2831,7 @@ props:
             <tbody>
               <tr><td class="prop"><span class="pname">title</span><span class="req" title="required">✳</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Card heading. Required.</td></tr>
               <tr><td class="prop"><span class="pname">heading_level</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">h3</span></td><td class="desc-cell">The card title is styled as a heading, so it is one in the markup too. Match the page outline.<span class="enum-list"><span class="enum">h2</span><span class="enum enum--def">h3</span><span class="enum">h4</span></span></td></tr>
-              <tr><td class="prop"><span class="pname">variant</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">image-top</span></td><td class="desc-cell">Where the image goes.<span class="enum-list"><span class="enum enum--def">image-top</span><span class="enum">image-left</span><span class="enum">image-right</span><span class="enum">background</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">layout</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">image-top</span></td><td class="desc-cell">Where the image goes.<span class="enum-list"><span class="enum enum--def">image-top</span><span class="enum">image-left</span><span class="enum">image-right</span><span class="enum">background</span></span></td></tr>
               <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The card image.</td></tr>
               <tr><td class="prop"><span class="pname">decorative</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Decorative Image. Hides the image from screen readers by rendering an empty alt. Wins over the override below.</td></tr>
               <tr><td class="prop"><span class="pname">alt_override</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Override alt text. Use the <code>alt_text</code> below for this placement instead of the alt saved on the media item.</td></tr>
@@ -3003,7 +2857,7 @@ props:
   required:
     - title
   properties:
-    variant:
+    layout:
       title: &#x27;Image position&#x27;
       type: string
       enum: [image-top, image-left, image-right, background]
@@ -5478,7 +5332,7 @@ props:
           <div class="table-scroll"><table>
             <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
             <tbody>
-              <tr><td class="prop"><span class="pname">variant</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">card</span></td><td class="desc-cell">Layout.<span class="enum-list"><span class="enum enum--def">card</span> framed, centered<span class="enum">plain</span> no frame<span class="enum">image-left</span> row</span></td></tr>
+              <tr><td class="prop"><span class="pname">layout</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">card</span></td><td class="desc-cell">Layout.<span class="enum-list"><span class="enum enum--def">card</span> framed, centered<span class="enum">plain</span> no frame<span class="enum">image-left</span> row</span></td></tr>
               <tr><td class="prop"><span class="pname">name</span></td><td><span class="ptype">string</span></td><td><span class="pdef">Jane Doe</span></td><td class="desc-cell">Person's name.</td></tr>
               <tr><td class="prop"><span class="pname">heading_level</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">h3</span></td><td class="desc-cell">The name is styled as a heading, so it is one in the markup too. Match the page outline — one level below the heading above the cards.<span class="enum-list"><span class="enum">h2</span><span class="enum enum--def">h3</span><span class="enum">h4</span><span class="enum">h5</span></span></td></tr>
               <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Portrait photo (cropped to a Portrait style).</td></tr>
@@ -5503,7 +5357,7 @@ category: Jarvis
 props:
   type: object
   properties:
-    variant:
+    layout:
       title: Layout
       type: string
       enum: [card, plain, image-left]

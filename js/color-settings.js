@@ -16,7 +16,6 @@
   const toHex = (c) => `#${c.map((v) => v.toString(16).padStart(2, '0')).join('')}`;
 
   // Shared engine — see js/wcag.js, attached via the jarvis/wcag dependency.
-  const luminance = wcag.lumHex;
   const ratio = wcag.ratioHex;
 
   // Nearest fg that reaches `target` against bg: blend fg toward black and

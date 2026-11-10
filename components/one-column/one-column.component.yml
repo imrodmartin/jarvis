@@ -14,11 +14,11 @@ props:
       type: string
       enum: [boxed, full]
       'meta:enum':
-        boxed: 'Boxed (centred)'
+        boxed: 'Boxed (centered)'
         full: 'Full width'
       default: boxed
     background:
-      title: 'Background colour'
+      title: 'Background color'
       type: string
       enum: [none, primary, secondary, bg1, bg2, dark, light, image]
       'meta:enum':
@@ -43,8 +43,8 @@ props:
       maximum: 100
       default: 45
     text_color:
-      title: 'Text colour (overrides child components)'
-      description: 'Ignored on Background 1 and Background 2. Those are arbitrary theme-setting colours, so the text colour there is computed automatically to meet WCAG AA contrast and cannot be overridden.'
+      title: 'Text color (overrides child components)'
+      description: 'Ignored on Background 1 and Background 2. Those are arbitrary theme-setting colors, so the text color there is computed automatically to meet WCAG AA contrast and cannot be overridden.'
       type: string
       enum: [inherit, primary, secondary, black, white]
       'meta:enum':
@@ -119,6 +119,14 @@ props:
       # padded far more often than not, so the columns ship the example.
       examples:
         - true
+    # Carried over from the Section component, which 1 Column replaced. Only
+    # 1 Column declares it: it is the wrapper people reach for when an image or
+    # a card must run edge to edge inside a colored band.
+    no_padding:
+      title: 'Remove padding (let content touch)'
+      description: 'Drops the top and bottom padding, including the padding a colored background adds by default.'
+      type: boolean
+      default: false
     animation:
       title: 'Scroll animation'
       description: 'Fades the section in as it scrolls into view. Honours the reduced-motion browser setting.'

@@ -1,7 +1,7 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
 name: 'Video Background'
 status: stable
-description: 'Full-width band with an uploaded video playing behind a text card (left, centre or right). The video has its own opacity/dimming slider.'
+description: 'Full-width band with an uploaded video playing behind a text card (left, center or right). The video has its own opacity/dimming slider.'
 category: Jarvis
 libraryOverrides:
   dependencies:
@@ -40,13 +40,13 @@ props:
       enum: [left, center, right]
       'meta:enum':
         left: Left
-        center: Centre
+        center: Center
         right: Right
       default: left
       examples:
         - left
     box_background:
-      title: 'Text card colour'
+      title: 'Text card color'
       # Reuses the theme's jarvis-bg--* classes (background + ADA-safe text vars).
       type: string
       enum: [dark, light, primary, secondary, bg1, bg2, none]
@@ -63,7 +63,7 @@ props:
         - dark
     box_opacity:
       title: 'Text card opacity (%)'
-      description: 'Opacity of the coloured card only. The text on top of it stays fully opaque.'
+      description: 'Opacity of the colored card only. The text on top of it stays fully opaque.'
       type: integer
       minimum: 0
       maximum: 100

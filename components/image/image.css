@@ -1,10 +1,6 @@
-/* Rounded corners are opt-in via the `rounded` prop (default off). Full-width
-   images bleed square unless rounded is also on. */
+/* Rounded corners are opt-in via the `rounded` prop (default off). */
 .jarvis-image--rounded .jarvis-image__img {
   border-radius: 0.5rem;
-}
-.jarvis-image--full:not(.jarvis-image--rounded) .jarvis-image__img {
-  border-radius: 0;
 }
 /* Match column height: the enclosing Bootstrap .row stretches each column to
    equal height; fill that height and crop the image to cover it. Two classes

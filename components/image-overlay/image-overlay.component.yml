@@ -1,7 +1,7 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
 name: 'Image Overlay'
 status: stable
-description: 'An image with a coloured text card overlaid in the lower corner (left or right).'
+description: 'An image with a colored text card overlaid in the lower corner (left or right).'
 category: Jarvis
 props:
   type: object
@@ -60,7 +60,7 @@ props:
         right: 'Lower right'
       default: left
     background:
-      title: 'Overlay colour'
+      title: 'Overlay color'
       # Reuses the theme's jarvis-bg--* classes (background + ADA-safe text vars).
       type: string
       enum: [primary, secondary, bg1, bg2, dark, light]
@@ -74,7 +74,7 @@ props:
       default: primary
     overlay_opacity:
       title: 'Overlay opacity (%)'
-      description: 'Opacity of the coloured card behind the text. Text stays fully opaque.'
+      description: 'Opacity of the colored card behind the text. Text stays fully opaque.'
       type: integer
       minimum: 0
       maximum: 100

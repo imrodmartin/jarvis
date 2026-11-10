@@ -18,7 +18,7 @@ use Drupal\Core\Render\Markup;
 function _jarvis_colors() {
   return [
     'jarvis_color_primary'     => [t('Primary'), '--bs-primary', TRUE, '#2d6cdf'],
-    'jarvis_color_secondary'   => [t('Secondary'), '--bs-secondary', FALSE, '#1b2a4a'],
+    'jarvis_color_secondary'   => [t('Secondary'), '--bs-secondary', TRUE, '#1b2a4a'],
     'jarvis_color_title_bg'    => [t('Title background'), '--jarvis-title-bg', FALSE, ''],
     'jarvis_color_title_text'  => [t('Title text'), '--jarvis-title-color', FALSE, ''],
     'jarvis_color_footer_bg'   => [t('Footer background'), '--jarvis-footer-bg', FALSE, ''],
@@ -66,7 +66,7 @@ function _jarvis_luminance(string $hex): float {
   $c = [];
   foreach ([1, 3, 5] as $i) {
     $v = hexdec(substr($hex, $i, 2)) / 255;
-    $c[] = $v <= 0.03928 ? $v / 12.92 : (($v + 0.055) / 1.055) ** 2.4;
+    $c[] = $v <= 0.04045 ? $v / 12.92 : (($v + 0.055) / 1.055) ** 2.4;
   }
   return 0.2126 * $c[0] + 0.7152 * $c[1] + 0.0722 * $c[2];
 }
@@ -169,18 +169,13 @@ function jarvis_preprocess_html(array &$variables) {
     'jarvis-font-sizes',
   ];
 
-  // Attach the self-hosted fonts stylesheet generated on settings save.
-  $css = 'public://jarvis-fonts/jarvis-fonts.css';
-  $real = \Drupal::service('file_system')->realpath($css);
-  if ($real && file_exists($real)) {
-    $url = \Drupal::service('file_url_generator')->generateString($css);
-    $variables['#attached']['html_head'][] = [
-      [
-        '#tag' => 'link',
-        '#attributes' => ['rel' => 'stylesheet', 'href' => $url . '?' . filemtime($real)],
-      ],
-      'jarvis-fonts',
-    ];
+  // Attach the self-hosted fonts stylesheet generated on settings save. It is
+  // a library (jarvis/fonts, weighted after jarvis/global) rather than a
+  // <link> in html_head: head links print BEFORE the CSS placeholder, so
+  // Bootstrap's own `body { font-family }` came later at equal specificity and
+  // the Base font setting never applied.
+  if (file_exists('public://jarvis-fonts/jarvis-fonts.css')) {
+    $variables['#attached']['library'][] = 'jarvis/fonts';
   }
 }
 

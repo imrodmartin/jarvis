@@ -38,7 +38,7 @@ props:
       type: boolean
       default: false
     background:
-      title: 'Background colour'
+      title: 'Background color'
       type: string
       enum: [none, primary, secondary, bg1, bg2, dark, light]
       'meta:enum':

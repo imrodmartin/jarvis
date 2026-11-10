@@ -12,7 +12,7 @@ just the theme, included there as a git submodule.
 
 **📘 [The Jarvis Handbook](docs/handbook.html)** is the user guide for site builders and content editors.
 
-**🛠 [The Jarvis Technical Guide](docs/jarvis-guide.html)** is for developers: what each part does, how to build it, and a reference to all twenty-four components.
+**🛠 [The Jarvis Technical Guide](docs/jarvis-guide.html)** is for developers: what each part does, how to build it, and a reference to all twenty-three components.
 
 ## Requirements
 
