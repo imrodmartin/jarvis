@@ -2837,8 +2837,11 @@ props:
             <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
             <tbody>
               <tr><td class="prop"><span class="pname">title</span><span class="req" title="required">✳</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Card heading. Required.</td></tr>
+              <tr><td class="prop"><span class="pname">title_link</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Makes the title a link to <code>link_href</code>. With this on, <code>link_text</code> is optional.</td></tr>
+              <tr><td class="prop"><span class="pname">date</span></td><td><span class="ptype">date</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Optional date shown under the title, for example a post's publication date.</td></tr>
               <tr><td class="prop"><span class="pname">heading_level</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">h3</span></td><td class="desc-cell">The card title is styled as a heading, so it is one in the markup too. Match the page outline.<span class="enum-list"><span class="enum">h2</span><span class="enum enum--def">h3</span><span class="enum">h4</span></span></td></tr>
               <tr><td class="prop"><span class="pname">layout</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">image-top</span></td><td class="desc-cell">Where the image goes.<span class="enum-list"><span class="enum enum--def">image-top</span><span class="enum">image-left</span><span class="enum">image-right</span><span class="enum">background</span></span></td></tr>
+              <tr><td class="prop"><span class="pname">background</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">none</span></td><td class="desc-cell">Theme colour behind the card. Text, date, links and the button switch to black or white automatically, whichever passes WCAG AA on that colour — including Primary and Secondary, so a light brand colour gets black text. The button becomes an outline in the text colour.<span class="enum-list"><span class="enum enum--def">none</span><span class="enum">primary</span><span class="enum">secondary</span><span class="enum">bg1</span><span class="enum">bg2</span><span class="enum">dark</span><span class="enum">light</span></span>On the <code>background</code> layout a photo wins; the colour shows only when no image is set.</td></tr>
               <tr><td class="prop"><span class="pname">image</span></td><td><span class="ptype">image</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">The card image.</td></tr>
               <tr><td class="prop"><span class="pname">decorative</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Decorative Image. Hides the image from screen readers by rendering an empty alt. Wins over the override below.</td></tr>
               <tr><td class="prop"><span class="pname">alt_override</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Override alt text. Use the <code>alt_text</code> below for this placement instead of the alt saved on the media item.</td></tr>
@@ -2896,6 +2899,24 @@ props:
       default: light
       examples:
         - light
+    background:
+      title: &#x27;Background color&#x27;
+      description: &#x27;Theme color behind the card. Text, links and the button switch to black or white automatically for WCAG AA contrast. On &quot;Image as background&quot; it applies only when no image is set.&#x27;
+      # Reuses the theme&#x27;s jarvis-bg--* classes (background + ADA-safe text vars).
+      # &#x27;none&#x27; sentinel: Canvas never lists an SDC whose enum has an empty value.
+      type: string
+      enum: [none, primary, secondary, bg1, bg2, dark, light]
+      &#x27;meta:enum&#x27;:
+        none: None
+        primary: Primary
+        secondary: Secondary
+        bg1: &#x27;Background 1&#x27;
+        bg2: &#x27;Background 2&#x27;
+        dark: &#x27;Dark (#1a1a1a)&#x27;
+        light: &#x27;Light (#f5f5f5)&#x27;
+      default: none
+      examples:
+        - none
     image:
       title: Image
       $ref: json-schema-definitions://canvas.module/image
@@ -2918,6 +2939,11 @@ props:
       type: string
       examples:
         - &#x27;Card title&#x27;
+    title_link:
+      title: &#x27;Link the title&#x27;
+      description: &#x27;Makes the title a link to the Link URL. With this on, Link text is optional.&#x27;
+      type: boolean
+      default: false
     heading_level:
       title: &#x27;Heading level&#x27;
       description: &#x27;Match the page outline — one level below the heading above the cards.&#x27;
@@ -2928,6 +2954,11 @@ props:
         h3: H3
         h4: H4
       default: h3
+    date:
+      title: Date
+      description: &#x27;Optional. Shown under the title, for example a post&#x27;&#x27;s publication date.&#x27;
+      type: string
+      format: date
     body:
       title: Body
       type: string
@@ -2997,25 +3028,39 @@ props:
       title: &#x27;Hover effect&#x27;
       description: &#x27;Lifts the card slightly and darkens it while the pointer is over it.&#x27;
       type: boolean
-      default: false</code></pre></div>
+      default: false
+</code></pre></div>
 <div class="srcfile"><div class="srcfile__name">card.twig</div><pre class="code"><code>{#
 /**
  * @file
- * Jarvis card SDC — four image layouts via the `variant` prop.
+ * Jarvis card SDC: four image layouts via the `layout` prop.
  */
 #}
 {# Alt text: Decorative wins (empty alt); else the per-placement override when
    it has text; else the media item&#x27;s alt. #}
 {% set img_alt = decorative|default(false) ? &#x27;&#x27; : (alt_override|default(false) and alt_text|default(&#x27;&#x27;)|trim ? alt_text|trim : image.alt|default(&#x27;&#x27;)) %}
-{% import &#x27;@jarvis/jarvis-spacing.html.twig&#x27; as jarvis %}
 {% import &#x27;@jarvis/jarvis-url.html.twig&#x27; as safe %}
 {% set link_href = safe.url(link_href|default(&#x27;&#x27;)) %}
-{% set space = jarvis.classes(padding|default(&#x27;none&#x27;), padding_size|default(&#x27;medium&#x27;), margin|default(&#x27;none&#x27;), margin_size|default(&#x27;medium&#x27;), (vertical_padding is defined ? vertical_padding : false)) %}
-{% set variant = variant|default(&#x27;image-top&#x27;) %}
+{% set space = include(&#x27;@jarvis/jarvis-spacing.html.twig&#x27;) %}
+{# `layout` was called `variant` before Jarvis 4.0. Drupal core reserves that name
+   for its own component variants and injects an empty `variant` into every
+   component render array, which failed this prop&#x27;s enum check for any PHP
+   caller that left it out. The old name is still read here, so a template
+   that includes this component with `variant: ...` keeps its look. #}
+{% set layout = layout|default(variant|default(&#x27;image-top&#x27;)) %}
 {# ADA (WCAG 1.3.1): heading level is a prop so cards can slot into the page&#x27;s
    heading outline without skipping levels. Visual size stays .h4 regardless. #}
 {% set h = heading_level|default(&#x27;h3&#x27;) %}
 {% set has_image = image.src is defined and image.src %}
+{# ADA (WCAG 2.4.4): a row of identical &quot;Read more&quot; buttons is ambiguous out of
+   context, so each one carries its card&#x27;s title for screen readers. #}
+{% set link_label %}{{ link_text }}{% if title %}&lt;span class=&quot;visually-hidden&quot;&gt;: {{ title }}&lt;/span&gt;{% endif %}{% endset %}
+{# The title links to the card&#x27;s URL when asked, so the obvious target works.
+   text-reset keeps the heading&#x27;s color on every variant, including light text
+   over a background image; Bootstrap&#x27;s link-underline utilities add an
+   underline on hover only. #}
+{% set title_html %}{% if title_link|default(false) and link_href %}&lt;a href=&quot;{{ link_href }}&quot; class=&quot;text-reset text-decoration-underline link-underline link-underline-opacity-0 link-underline-opacity-100-hover&quot;&gt;{{ title }}&lt;/a&gt;{% else %}{{ title }}{% endif %}{% endset %}
+{% set date_line %}{% if date|default(&#x27;&#x27;) %}&lt;p class=&quot;jarvis-card__date small mb-2&quot;&gt;&lt;time datetime=&quot;{{ date }}&quot;&gt;{{ date|date(&#x27;F j, Y&#x27;) }}&lt;/time&gt;&lt;/p&gt;{% endif %}{% endset %}
 {% set text_color = text_color|default(&#x27;light&#x27;) %}
 {# Light text gets a black overlay, black text a white one — the same split the
    column components use. Black text used to force the overlay to 0 and sit on
@@ -3025,21 +3070,31 @@ props:
 {# One class for all four variants — the lift and the darkening are pure CSS
    (see card.css), so nothing else in here needs to know about it. #}
 {% set hover_class = hover|default(false) ? &#x27; jarvis-card--hover&#x27; : &#x27;&#x27; %}
-{% set base = &#x27;jarvis-card card h-100 jarvis-card--&#x27; ~ variant ~ hover_class ~ &#x27; &#x27; ~ space %}
-{% if variant == &#x27;background&#x27; %}
-  &lt;div class=&quot;{{ base }} jarvis-card--text-{{ text_color }} position-relative overflow-hidden border-0&quot;{% if has_image %} style=&quot;background-image: url(&#x27;{{ image.src }}&#x27;);&quot;{% endif %}&gt;
+{# Theme-color background. jarvis-bg--* paints the color and sets --jarvis-on,
+   the black-or-white text color that passes WCAG AA on it (computed in
+   jarvis_preprocess_html for the editable colors). On the background layout a
+   photo wins: its overlay + text_color already handle contrast. #}
+{% set bg = background|default(&#x27;none&#x27;) %}
+{% set has_bg = bg != &#x27;none&#x27; and (layout != &#x27;background&#x27; or not has_image) %}
+{% set bg_class = has_bg ? &#x27; jarvis-bg--&#x27; ~ bg ~ &#x27; border-0&#x27; : &#x27;&#x27; %}
+{# btn-primary vanishes on a primary card. Outline buttons on a jarvis-bg--*
+   surface draw in --jarvis-on (overrides.css), so they match the text. #}
+{% set btn = has_bg ? &#x27;btn-outline-primary&#x27; : &#x27;btn-primary&#x27; %}
+{% set base = &#x27;jarvis-card card h-100 jarvis-card--&#x27; ~ layout ~ hover_class ~ bg_class ~ &#x27; &#x27; ~ space %}
+{% if layout == &#x27;background&#x27; %}
+  &lt;div class=&quot;{{ base }}{{ has_bg ? &#x27;&#x27; : &#x27; jarvis-card--text-&#x27; ~ text_color }} position-relative overflow-hidden border-0&quot;{% if has_image %} style=&quot;background-image: url(&#x27;{{ image.src }}&#x27;);&quot;{% endif %}&gt;
     {# The author&#x27;s value is a floor; jarvis_overlay_alpha samples the image
        server-side and raises it to whatever WCAG AA needs. #}
-    {% if has_image %}&lt;div class=&quot;jarvis-card__overlay{{ overlay_light ? &#x27; jarvis-bg__overlay--light&#x27; : &#x27;&#x27; }}&quot; style=&quot;opacity: {{ image.src|jarvis_overlay_alpha(overlay_light, overlay / 100) }};&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;{% endif %}
+    {% if has_image %}&lt;div class=&quot;jarvis-bg__overlay{{ overlay_light ? &#x27; jarvis-bg__overlay--light&#x27; : &#x27;&#x27; }}&quot; style=&quot;opacity: {{ image.src|jarvis_overlay_alpha(overlay_light, overlay / 100) }};&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;{% endif %}
     &lt;div class=&quot;card-img-overlay d-flex flex-column justify-content-end position-relative&quot;&gt;
-      {% if title %}&lt;{{ h }} class=&quot;card-title h4&quot;&gt;{{ title }}&lt;/{{ h }}&gt;{% endif %}
+      {% if title %}&lt;{{ h }} class=&quot;card-title h4&quot;&gt;{{ title_html }}&lt;/{{ h }}&gt;{% endif %}{{ date_line }}
       {% if body %}&lt;div class=&quot;card-text&quot;&gt;{{ body|raw }}&lt;/div&gt;{% endif %}
-      {% if link_text and link_href %}&lt;a href=&quot;{{ link_href }}&quot; class=&quot;btn btn-light btn-sm mt-2 align-self-start&quot;&gt;{{ link_text }}&lt;/a&gt;{% endif %}
+      {% if link_text and link_href %}&lt;a href=&quot;{{ link_href }}&quot; class=&quot;btn {{ has_bg ? btn : &#x27;btn-light&#x27; }} btn-sm mt-2 align-self-start&quot;&gt;{{ link_label }}&lt;/a&gt;{% endif %}
     &lt;/div&gt;
   &lt;/div&gt;
-{% elseif variant == &#x27;image-left&#x27; or variant == &#x27;image-right&#x27; %}
+{% elseif layout == &#x27;image-left&#x27; or layout == &#x27;image-right&#x27; %}
   &lt;div class=&quot;{{ base }}&quot;&gt;
-    &lt;div class=&quot;row g-0 {{ variant == &#x27;image-right&#x27; ? &#x27;flex-md-row-reverse&#x27; : &#x27;&#x27; }}&quot;&gt;
+    &lt;div class=&quot;row g-0 {{ layout == &#x27;image-right&#x27; ? &#x27;flex-md-row-reverse&#x27; : &#x27;&#x27; }}&quot;&gt;
       {% if has_image %}
         &lt;div class=&quot;col-md-5&quot;&gt;
           &lt;img src=&quot;{{ image.src }}&quot; alt=&quot;{{ img_alt }}&quot; class=&quot;jarvis-card__img jarvis-card__img--side w-100 h-100&quot;&gt;
@@ -3047,9 +3102,9 @@ props:
       {% endif %}
       &lt;div class=&quot;{{ has_image ? &#x27;col-md-7&#x27; : &#x27;col-12&#x27; }}&quot;&gt;
         &lt;div class=&quot;card-body&quot;&gt;
-          {% if title %}&lt;{{ h }} class=&quot;card-title h4&quot;&gt;{{ title }}&lt;/{{ h }}&gt;{% endif %}
+          {% if title %}&lt;{{ h }} class=&quot;card-title h4&quot;&gt;{{ title_html }}&lt;/{{ h }}&gt;{% endif %}{{ date_line }}
           {% if body %}&lt;div class=&quot;card-text&quot;&gt;{{ body|raw }}&lt;/div&gt;{% endif %}
-          {% if link_text and link_href %}&lt;a href=&quot;{{ link_href }}&quot; class=&quot;btn btn-primary btn-sm mt-2&quot;&gt;{{ link_text }}&lt;/a&gt;{% endif %}
+          {% if link_text and link_href %}&lt;a href=&quot;{{ link_href }}&quot; class=&quot;btn {{ btn }} btn-sm mt-2&quot;&gt;{{ link_label }}&lt;/a&gt;{% endif %}
         &lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;
@@ -3058,12 +3113,13 @@ props:
   &lt;div class=&quot;{{ base }}&quot;&gt;
     {% if has_image %}&lt;img src=&quot;{{ image.src }}&quot; alt=&quot;{{ img_alt }}&quot; class=&quot;card-img-top jarvis-card__img&quot;&gt;{% endif %}
     &lt;div class=&quot;card-body&quot;&gt;
-      {% if title %}&lt;{{ h }} class=&quot;card-title h4&quot;&gt;{{ title }}&lt;/{{ h }}&gt;{% endif %}
+      {% if title %}&lt;{{ h }} class=&quot;card-title h4&quot;&gt;{{ title_html }}&lt;/{{ h }}&gt;{% endif %}{{ date_line }}
       {% if body %}&lt;div class=&quot;card-text&quot;&gt;{{ body|raw }}&lt;/div&gt;{% endif %}
-      {% if link_text and link_href %}&lt;a href=&quot;{{ link_href }}&quot; class=&quot;btn btn-primary btn-sm mt-2&quot;&gt;{{ link_text }}&lt;/a&gt;{% endif %}
+      {% if link_text and link_href %}&lt;a href=&quot;{{ link_href }}&quot; class=&quot;btn {{ btn }} btn-sm mt-2&quot;&gt;{{ link_label }}&lt;/a&gt;{% endif %}
     &lt;/div&gt;
   &lt;/div&gt;
-{% endif %}</code></pre></div>
+{% endif %}
+</code></pre></div>
 <div class="srcfile"><div class="srcfile__name">card.css</div><pre class="code"><code>.jarvis-card {
   overflow: hidden;
 }
@@ -3105,23 +3161,16 @@ props:
   background-size: cover;
   background-position: center;
 }
-.jarvis-card--background .jarvis-card__overlay {
-  position: absolute;
-  inset: 0;
-  background: #000;
-}
-/* Black text -&gt; white overlay, so raising it lightens the photo instead of
-   darkening it. One class deeper, to beat the #000 rule above. */
-.jarvis-card--background .jarvis-card__overlay.jarvis-bg__overlay--light {
-  background: #fff;
-}
-/* Text color (background variant): the text_color enum is light | black. */
+/* Text color (background variant): the text_color enum is light | black.
+   Body links follow it too: brand blue on the black no-image card measured
+   4.32:1. .card-text links stay underlined (overrides.css), so WCAG 1.4.1
+   still holds without the colour cue. */
 .jarvis-card--text-light,
-.jarvis-card--text-light :is(.card-title, .card-text) {
+.jarvis-card--text-light :is(.card-title, .jarvis-card__date, .card-text, .card-text a:not(.btn)) {
   color: #fff;
 }
 .jarvis-card--text-black,
-.jarvis-card--text-black :is(.card-title, .card-text) {
+.jarvis-card--text-black :is(.card-title, .jarvis-card__date, .card-text, .card-text a:not(.btn)) {
   color: #000;
 }
 /* Light text -&gt; black region behind the card for guaranteed contrast. This only
@@ -3131,7 +3180,8 @@ props:
    light. */
 .jarvis-card--background.jarvis-card--text-light {
   background-color: #000;
-}</code></pre></div>
+}
+</code></pre></div>
 </details>
         </article>
 
