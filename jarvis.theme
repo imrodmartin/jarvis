@@ -109,11 +109,15 @@ function jarvis_preprocess_html(array &$variables) {
       $lines[] = "{$var}-rgb:$r,$g,$b;";
     }
   }
-  // Background 1/2 are arbitrary user colours, so the ADA-safe text colour
+  // Background 1/2 (and primary/secondary) are arbitrary user colours, so the ADA-safe text colour
   // can't be hardcoded. Compute it here (black or white, whichever wins WCAG
   // contrast) and emit a companion var the section CSS reads for
   // text/heading/link colour.
+  // Primary/secondary too: an editor can pick a light brand colour, and the
+  // .jarvis-bg--primary/secondary surfaces (sections, cards) must follow it.
   $backgrounds = [
+    'jarvis_color_primary' => '--jarvis-primary',
+    'jarvis_color_secondary' => '--jarvis-secondary',
     'jarvis_color_bg_1' => '--jarvis-bg-1',
     'jarvis_color_bg_2' => '--jarvis-bg-2',
   ];

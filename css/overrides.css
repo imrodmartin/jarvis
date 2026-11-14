@@ -451,8 +451,8 @@ td:has(> span.file) { padding-right: 20px; }
 .jarvis-bg--bg2,
 .jarvis-bg--image,
 .jarvis-columns .jarvis-person--card,
-.jarvis-columns .jarvis-card:not(.jarvis-card--background),
-[class*="jarvis-bg--"] :is(.jarvis-person--card, .jarvis-card:not(.jarvis-card--background), .jarvis-video-sidebar) {
+.jarvis-columns .jarvis-card:not(.jarvis-card--background, [class*="jarvis-bg--"]),
+[class*="jarvis-bg--"] :is(.jarvis-person--card, .jarvis-card:not(.jarvis-card--background, [class*="jarvis-bg--"]), .jarvis-video-sidebar) {
   color: var(--jarvis-on);
   --bs-body-color: var(--jarvis-on);
   --bs-body-color-rgb: var(--jarvis-on-rgb);
@@ -467,19 +467,21 @@ td:has(> span.file) { padding-right: 20px; }
   --bs-link-hover-color: var(--jarvis-link-hover, var(--jarvis-on));
 }
 
-/* Fixed brand backgrounds: white text, slightly dimmed link hover. */
+/* Primary/secondary are editable theme colours, so like Background 1/2 the
+   safe text colour is computed in jarvis_preprocess_html(). The #fff fallback
+   covers the unset defaults (#2d6cdf, #1b2a4a), where white wins. Link hover
+   follows the text: a fixed dimmed white would vanish if black text wins. */
 .jarvis-bg--primary {
   background: var(--bs-primary, #2d6cdf);
-  --jarvis-on: #fff;
-  --jarvis-on-rgb: 255, 255, 255;
-  --jarvis-link-hover: #e6e6e6;
+  --jarvis-on: var(--jarvis-primary-text, #fff);
+  --jarvis-on-rgb: var(--jarvis-primary-text-rgb, 255, 255, 255);
 }
 .jarvis-bg--secondary {
   background: var(--bs-secondary, #1b2a4a);
-  --jarvis-on: #fff;
-  --jarvis-on-rgb: 255, 255, 255;
-  --jarvis-link-hover: #e6e6e6;
+  --jarvis-on: var(--jarvis-secondary-text, #fff);
+  --jarvis-on-rgb: var(--jarvis-secondary-text-rgb, 255, 255, 255);
 }
+/* Fixed backgrounds: hardcoded text, slightly dimmed link hover. */
 .jarvis-bg--dark {
   background: #1a1a1a;
   --jarvis-on: #fff;
@@ -541,8 +543,8 @@ td:has(> span.file) { padding-right: 20px; }
    Only the inputs are restated; the shared rule above wires them up. Links go
    brand-coloured here rather than following the text. */
 .jarvis-columns .jarvis-person--card,
-.jarvis-columns .jarvis-card:not(.jarvis-card--background),
-[class*="jarvis-bg--"] :is(.jarvis-person--card, .jarvis-card:not(.jarvis-card--background), .jarvis-video-sidebar) {
+.jarvis-columns .jarvis-card:not(.jarvis-card--background, [class*="jarvis-bg--"]),
+[class*="jarvis-bg--"] :is(.jarvis-person--card, .jarvis-card:not(.jarvis-card--background, [class*="jarvis-bg--"]), .jarvis-video-sidebar) {
   --jarvis-on: #1a1a1a;
   --jarvis-on-rgb: 26, 26, 26;
   --jarvis-link: var(--bs-primary);
