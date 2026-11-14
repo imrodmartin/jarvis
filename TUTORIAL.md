@@ -1305,7 +1305,7 @@ Then verify, in order:
    colour, save, reload → the site re-skins. → Steps 7–8 OK.
 3. **Save the Fonts form** → check `sites/default/files/jarvis-fonts/jarvis-fonts.css`
    exists and the site uses the new fonts. → self-hosting OK.
-4. **Edit the Test Page in Canvas** → your `Jarvis` and `Jarvis Layout` components appear in
+4. **Edit the Component Examples page in Canvas** → your `Jarvis` and `Jarvis Layout` components appear in
    the sidebar; drag a Hero in, set its image, save, view the page. → Steps 4–6, 9 OK.
 5. **View a blog post** → its hero field renders as the Hero component, body as Text,
    per the content template. → Step 10 OK.

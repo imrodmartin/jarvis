@@ -15,8 +15,8 @@ fill its fields in the settings tray on the right.
 
 Components fall into two groups:
 
-- Layout components hold other components in a slot: Section, 1 Column, 2 Columns,
-  3 Columns, and Card Full Image. Drop content components inside them.
+- Layout components hold other components in a slot: 1 Column, 2 Columns, 3 Columns,
+  4 Columns, and Card Full Image. Drop content components inside them.
 - Content components render on their own: Hero, Card, Text, WYSIWYG, Image, Video,
   Stat card, Person, Map, Call to Action, and the others.
 
