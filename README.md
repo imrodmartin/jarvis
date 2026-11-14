@@ -96,7 +96,7 @@ in the jarvis-bootstrap-recipe repo.
 >
 > The recipe lists both modules and the theme in its own `install:` list, so it
 > creates all of that itself in the right order. Verified end to end against an
-> empty database: 21/21 components enabled, blocks in their intended regions,
+> empty database: 23/23 components enabled, blocks in their intended regions,
 > 7 nodes and 2 Canvas pages rendering.
 
 ## What the recipe sets up
@@ -107,14 +107,14 @@ in the jarvis-bootstrap-recipe repo. In short, it:
 
 - Installs Canvas, this theme, and the `jarvis_canvas` glue module, plus the
   supporting contrib and site-feature modules
-- Ships exported Canvas component config for all 21 SDCs, content templates
+- Ships exported Canvas component config for all 23 SDCs, content templates
   for the **Blog** and **Basic** content types, page regions, and 5 reusable
   patterns
 - Imports base config: image styles (`jarvis_hero_banner`, `wide`,
   `portrait`), the `focal_point` crop type, media types + fields, the
   `jarvis_html`/`jarvis_full_html` text formats, and theme settings
-- Imports demo content: 7 nodes, 2 Canvas pages (a component showcase and a
-  Test Page), block content, media, and menu links — and sets the front page
+- Imports demo content: 7 nodes, 2 Canvas pages (a component showcase and
+  Component Examples), block content, media, and menu links — and sets the front page
   to the showcase (`/page/2`); change it under **Configuration → Basic site
   settings** if unwanted
 

@@ -1,6 +1,6 @@
 # Components
 
-Jarvis ships twenty-one SDC components. Canvas lists them under the **Jarvis**
+Jarvis ships twenty-three SDC components. Canvas lists them under the **Jarvis**
 category.
 
 **The prop-by-prop reference is the
@@ -10,8 +10,8 @@ maintained list; this page is just the map.
 
 ## Shared spacing props
 
-Nineteen of the twenty-one components carry the same spacing controls
-(**Button** and **Card Full Image** are the exceptions):
+Twenty of the twenty-three components carry the same spacing controls
+(**Button**, **Card Full Image** and **Share** are the exceptions):
 
 - `padding`: which sides get padding (none, all, top, bottom, left, right).
 - `padding_size`: small (10px), medium (20px), or large (30px).
@@ -44,13 +44,16 @@ Nineteen of the twenty-one components carry the same spacing controls
 - **Person** — portrait, name, position, contact details, social links.
 - **Map** — keyless Google Map embed from a one-line address.
 - **Button** — a single Bootstrap-styled button.
+- **Share** — share buttons for the current page: Facebook, X, LinkedIn,
+  Bluesky, Reddit, email and copy link.
 
 ## Layout components
 
 Layout components hold other components in slots.
 
-- **Section** — a width/background wrapper with one content slot.
 - **1 Column / 2 Columns / 3 Columns / 4 Columns** — responsive column rows with
   background image, overlay, and ratio controls; one slot per column.
+- **3 Columns (custom widths)** — three columns with a percentage width set
+  per column; a column set to 0% collapses.
 - **Card Full Image** — full-width two-column band: an edge-to-edge image slot
   beside a rich-text content slot.
