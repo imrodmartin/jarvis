@@ -39,13 +39,16 @@
   background-size: cover;
   background-position: center;
 }
-/* Text color (background variant): the text_color enum is light | black. */
+/* Text color (background variant): the text_color enum is light | black.
+   Body links follow it too: brand blue on the black no-image card measured
+   4.32:1. .card-text links stay underlined (overrides.css), so WCAG 1.4.1
+   still holds without the colour cue. */
 .jarvis-card--text-light,
-.jarvis-card--text-light :is(.card-title, .jarvis-card__date, .card-text) {
+.jarvis-card--text-light :is(.card-title, .jarvis-card__date, .card-text, .card-text a:not(.btn)) {
   color: #fff;
 }
 .jarvis-card--text-black,
-.jarvis-card--text-black :is(.card-title, .jarvis-card__date, .card-text) {
+.jarvis-card--text-black :is(.card-title, .jarvis-card__date, .card-text, .card-text a:not(.btn)) {
   color: #000;
 }
 /* Light text -> black region behind the card for guaranteed contrast. This only

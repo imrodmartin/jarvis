@@ -38,16 +38,26 @@
 {# One class for all four variants — the lift and the darkening are pure CSS
    (see card.css), so nothing else in here needs to know about it. #}
 {% set hover_class = hover|default(false) ? ' jarvis-card--hover' : '' %}
-{% set base = 'jarvis-card card h-100 jarvis-card--' ~ layout ~ hover_class ~ ' ' ~ space %}
+{# Theme-color background. jarvis-bg--* paints the color and sets --jarvis-on,
+   the black-or-white text color that passes WCAG AA on it (computed in
+   jarvis_preprocess_html for the editable colors). On the background layout a
+   photo wins: its overlay + text_color already handle contrast. #}
+{% set bg = background|default('none') %}
+{% set has_bg = bg != 'none' and (layout != 'background' or not has_image) %}
+{% set bg_class = has_bg ? ' jarvis-bg--' ~ bg ~ ' border-0' : '' %}
+{# btn-primary vanishes on a primary card. Outline buttons on a jarvis-bg--*
+   surface draw in --jarvis-on (overrides.css), so they match the text. #}
+{% set btn = has_bg ? 'btn-outline-primary' : 'btn-primary' %}
+{% set base = 'jarvis-card card h-100 jarvis-card--' ~ layout ~ hover_class ~ bg_class ~ ' ' ~ space %}
 {% if layout == 'background' %}
-  <div class="{{ base }} jarvis-card--text-{{ text_color }} position-relative overflow-hidden border-0"{% if has_image %} style="background-image: url('{{ image.src }}');"{% endif %}>
+  <div class="{{ base }}{{ has_bg ? '' : ' jarvis-card--text-' ~ text_color }} position-relative overflow-hidden border-0"{% if has_image %} style="background-image: url('{{ image.src }}');"{% endif %}>
     {# The author's value is a floor; jarvis_overlay_alpha samples the image
        server-side and raises it to whatever WCAG AA needs. #}
     {% if has_image %}<div class="jarvis-bg__overlay{{ overlay_light ? ' jarvis-bg__overlay--light' : '' }}" style="opacity: {{ image.src|jarvis_overlay_alpha(overlay_light, overlay / 100) }};" aria-hidden="true"></div>{% endif %}
     <div class="card-img-overlay d-flex flex-column justify-content-end position-relative">
       {% if title %}<{{ h }} class="card-title h4">{{ title_html }}</{{ h }}>{% endif %}{{ date_line }}
       {% if body %}<div class="card-text">{{ body|raw }}</div>{% endif %}
-      {% if link_text and link_href %}<a href="{{ link_href }}" class="btn btn-light btn-sm mt-2 align-self-start">{{ link_label }}</a>{% endif %}
+      {% if link_text and link_href %}<a href="{{ link_href }}" class="btn {{ has_bg ? btn : 'btn-light' }} btn-sm mt-2 align-self-start">{{ link_label }}</a>{% endif %}
     </div>
   </div>
 {% elseif layout == 'image-left' or layout == 'image-right' %}
@@ -62,7 +72,7 @@
         <div class="card-body">
           {% if title %}<{{ h }} class="card-title h4">{{ title_html }}</{{ h }}>{% endif %}{{ date_line }}
           {% if body %}<div class="card-text">{{ body|raw }}</div>{% endif %}
-          {% if link_text and link_href %}<a href="{{ link_href }}" class="btn btn-primary btn-sm mt-2">{{ link_label }}</a>{% endif %}
+          {% if link_text and link_href %}<a href="{{ link_href }}" class="btn {{ btn }} btn-sm mt-2">{{ link_label }}</a>{% endif %}
         </div>
       </div>
     </div>
@@ -73,7 +83,7 @@
     <div class="card-body">
       {% if title %}<{{ h }} class="card-title h4">{{ title_html }}</{{ h }}>{% endif %}{{ date_line }}
       {% if body %}<div class="card-text">{{ body|raw }}</div>{% endif %}
-      {% if link_text and link_href %}<a href="{{ link_href }}" class="btn btn-primary btn-sm mt-2">{{ link_label }}</a>{% endif %}
+      {% if link_text and link_href %}<a href="{{ link_href }}" class="btn {{ btn }} btn-sm mt-2">{{ link_label }}</a>{% endif %}
     </div>
   </div>
 {% endif %}
