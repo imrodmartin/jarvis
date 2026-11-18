@@ -5,6 +5,8 @@
  * Jarvis theme hooks.
  */
 
+use Drupal\block\Entity\Block;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Render\Markup;
 
@@ -213,6 +215,7 @@ function _jarvis_fonts() {
  */
 function jarvis_preprocess_page(array &$variables) {
   $renderer = \Drupal::service('renderer');
+  _jarvis_append_block_layout($variables, 'footer');
   foreach (['header', 'hero', 'sidebar_left', 'sidebar_right', 'page_title', 'primary_menu', 'footer'] as $region) {
     $markup = !empty($variables['page'][$region])
       ? (string) $renderer->render($variables['page'][$region])
@@ -226,6 +229,44 @@ function jarvis_preprocess_page(array &$variables) {
       && !preg_match('/<(img|picture|video|iframe|svg|canvas|embed)\b/i', $stripped);
   }
   $variables['content_self_boxed'] = _jarvis_content_self_boxed();
+}
+
+/**
+ * Render block-layout blocks placed in a region after its Canvas content.
+ *
+ * Canvas builds each region only from its PageRegion component tree, and it
+ * offers a block plugin as a component only when the block's settings are
+ * fully validatable. Blocks that fail that test (the AI chatbot, many contrib
+ * blocks) cannot be placed through Canvas at all, and block-layout placements
+ * are ignored. This appends the region's block-layout blocks so sites can
+ * still use them. The access check applies each block's visibility settings.
+ */
+function _jarvis_append_block_layout(array &$variables, string $region): void {
+  if (!\Drupal::moduleHandler()->moduleExists('block')) {
+    return;
+  }
+  $blocks = \Drupal::entityTypeManager()->getStorage('block')->loadByProperties([
+    'theme' => \Drupal::theme()->getActiveTheme()->getName(),
+    'region' => $region,
+    'status' => TRUE,
+  ]);
+  uasort($blocks, [Block::class, 'sort']);
+  $builder = \Drupal::entityTypeManager()->getViewBuilder('block');
+  $cache = new CacheableMetadata();
+  foreach ($blocks as $id => $block) {
+    // Without Canvas the block page variant already rendered it, keyed by ID.
+    if (isset($variables['page'][$region][$id])) {
+      continue;
+    }
+    $access = $block->access('view', NULL, TRUE);
+    $cache->addCacheableDependency($access)->addCacheableDependency($block);
+    if ($access->isAllowed()) {
+      $variables['page'][$region]['jarvis_block_layout'][$id] = $builder->view($block);
+    }
+  }
+  // Placing or removing a block must clear pages that rendered this region.
+  $cache->addCacheTags(['config:block_list']);
+  $cache->applyTo($variables['page'][$region]);
 }
 
 /**
