@@ -187,6 +187,20 @@ function jarvis_form_system_theme_settings_alter(array &$form, FormStateInterfac
     }
   }
   $form['jarvis_font_sizes']['#attached']['library'][] = 'jarvis/fs-settings';
+
+  // Logo width, beside core's logo upload. Emitted as --jarvis-logo-width.
+  $logo_w = \Drupal::service(ThemeSettingsProvider::class)->getSetting('jarvis_logo_width');
+  $form['logo']['jarvis_logo_width'] = [
+    '#type' => 'number',
+    '#title' => t('Logo width'),
+    '#description' => t('Display width of the site logo. It still shrinks to fit on narrow screens.'),
+    '#default_value' => is_numeric($logo_w) ? $logo_w : 400,
+    '#field_suffix' => 'px',
+    '#min' => 40,
+    '#max' => 800,
+    '#step' => 1,
+    '#required' => TRUE,
+  ];
 }
 
 /**

@@ -127,3 +127,6 @@ jarvis.settings:
     jarvis_fs_mobile_h6:
       type: float
       label: 'Mobile H6 size (rem)'
+    jarvis_logo_width:
+      type: integer
+      label: 'Logo width (px)'

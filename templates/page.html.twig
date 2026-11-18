@@ -35,17 +35,14 @@
      responsive offcanvas (offcanvas-lg) that slides in from the right when the
      hamburger is tapped and slides back on close/backdrop tap — no custom JS,
      the loaded bootstrap bundle drives it.
-     .jarvis-branding-wrap is filled by js/nav-branding.js, which relocates the
-     branding block out of the drawer after render. It cannot be done here: this
-     region is a Canvas PageRegion rendered from a component tree, so the region
-     arrives as one opaque blob rather than block children a preprocess hook
-     could address (verified — the branding block renders under a UUID id, not
-     its block id). #}
+     .jarvis-branding-wrap holds the branding block, which jarvis_preprocess_page()
+     lifts out of the region's rendered HTML (primary_menu_branding) so the logo
+     shows on phones without opening the drawer. #}
   {# primary_menu_markup / _empty from jarvis_preprocess_page() — an enabled but
      empty Canvas PageRegion must not paint the menu bar and hamburger. #}
   {% if not primary_menu_empty %}
     <div class="container jarvis-region jarvis-primary-menu d-flex align-items-center">
-      <div class="jarvis-branding-wrap"></div>
+      <div class="jarvis-branding-wrap">{{ primary_menu_branding|raw }}</div>
       <button class="jarvis-menu-toggle d-lg-none ms-auto" type="button"
               data-bs-toggle="offcanvas" data-bs-target="#jarvis-primary-nav"
               aria-controls="jarvis-primary-nav" aria-label="{{ 'Toggle main menu'|t }}">
@@ -79,8 +76,10 @@
   {% endif %}
 
   {# Full-width #}
-  {# Front page hides its title regardless of which node/Canvas page it is. #}
-  {% if not page_title_empty and not is_front %}
+  {# Front page hides its title regardless of which node/Canvas page it is;
+     so does a Canvas page that opens with a Hero (hero_first, from
+     jarvis_preprocess_page()), whose h1 already carries the title. #}
+  {% if not page_title_empty and not is_front and not hero_first %}
     <div class="jarvis-region jarvis-region--full jarvis-page-title">{{ page_title_markup|raw }}</div>
   {% elseif page_title_empty %}
     {# Keep the editor's region markers without painting the title band. #}

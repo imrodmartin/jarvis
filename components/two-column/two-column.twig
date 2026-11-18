@@ -14,12 +14,16 @@
   'wide-left-75': ['col-12 col-md-9', 'col-12 col-md-3'],
   'wide-right-75': ['col-12 col-md-3', 'col-12 col-md-9'],
 }[ratio|default('even')] %}
+{# Phone order "lead-first": overrides.css dissolves both columns below 768px
+   and orders their items: column 1's first item, all of column 2, then the
+   rest of column 1. #}
+{% set lead = (phone_order|default('columns')) == 'lead-first' %}
 {% embed '@jarvis/jarvis-columns-shell.html.twig' with { count: 2 } %}
   {% block columns %}
-    <div class="{{ cols[0] }}">
+    <div class="{{ cols[0] }}{{ lead ? ' jarvis-phone-lead jarvis-phone-lead--1' }}">
       {{ first }}
     </div>
-    <div class="{{ cols[1] }}">
+    <div class="{{ cols[1] }}{{ lead ? ' jarvis-phone-lead jarvis-phone-lead--2' }}">
       {{ second }}
     </div>
   {% endblock %}

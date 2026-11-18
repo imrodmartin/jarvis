@@ -81,6 +81,17 @@ props:
       default: even
       examples:
         - even
+    phone_order:
+      title: 'Phone order'
+      description: 'How the columns stack on phones. "Lead item first" shows the first item in column 1, then column 2, then the rest of column 1: for example a photo, the text beside it, then more photos. Desktop is unchanged.'
+      type: string
+      enum: [columns, lead-first]
+      'meta:enum':
+        columns: 'Column 1, then column 2'
+        lead-first: 'Lead item first'
+      default: columns
+      examples:
+        - columns
     padding:
       title: Padding
       type: string

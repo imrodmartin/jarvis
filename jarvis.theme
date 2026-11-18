@@ -6,6 +6,7 @@
  */
 
 use Drupal\block\Entity\Block;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Render\Markup;
@@ -175,6 +176,19 @@ function jarvis_preprocess_html(array &$variables) {
     'jarvis-font-sizes',
   ];
 
+  // Logo width in px. Numeric-only (int cast) so the setting can't inject CSS;
+  // overrides.css falls back to 400px when it's unset.
+  $logo_w = \Drupal::service(ThemeSettingsProvider::class)->getSetting('jarvis_logo_width');
+  if (is_numeric($logo_w) && (int) $logo_w > 0) {
+    $variables['#attached']['html_head'][] = [
+      [
+        '#tag' => 'style',
+        '#value' => 'html:root{--jarvis-logo-width:' . (int) $logo_w . 'px;}',
+      ],
+      'jarvis-logo-width',
+    ];
+  }
+
   // Attach the self-hosted fonts stylesheet generated on settings save. It is
   // a library (jarvis/fonts, weighted after jarvis/global) rather than a
   // <link> in html_head: head links print BEFORE the CSS placeholder, so
@@ -229,6 +243,43 @@ function jarvis_preprocess_page(array &$variables) {
     $stripped = preg_replace('/<!--.*?-->/s', '', $markup);
     $variables[$region . '_empty'] = trim(strip_tags($stripped)) === ''
       && !preg_match('/<(img|picture|video|iframe|svg|canvas|embed|drupal-render-placeholder)\b|data-big-pipe-placeholder-id/i', $stripped);
+  }
+
+  // Lift the site-branding block out of the primary-menu region so
+  // page.html.twig can print it in the logo/hamburger row. Otherwise it would
+  // sit inside the offcanvas drawer, which is hidden on phones. Canvas renders
+  // the region from a component tree with UUID block ids, so the render array
+  // has no addressable branding child; work on the rendered HTML instead and
+  // take the block that holds the rel="home" link.
+  $variables['primary_menu_branding'] = '';
+  if (str_contains($variables['primary_menu_markup'], 'rel="home"')) {
+    $dom = Html::load($variables['primary_menu_markup']);
+    $home = (new \DOMXPath($dom))->query('//a[@rel="home"]')->item(0);
+    $block = $home;
+    while ($block->parentNode instanceof \DOMElement && !str_starts_with($block->getAttribute('id'), 'block-')) {
+      $block = $block->parentNode;
+    }
+    // No block wrapper found: move just the link.
+    if (!str_starts_with($block->getAttribute('id'), 'block-')) {
+      $block = $home;
+    }
+    $block->parentNode->removeChild($block);
+    $variables['primary_menu_branding'] = $dom->saveHTML($block);
+    $variables['primary_menu_markup'] = Html::serialize($dom);
+  }
+
+  // A Canvas page that opens with a Hero already shows its title as the
+  // hero's h1, so the title band would repeat it (two h1s, and on a phone the
+  // whole first screen). page.html.twig skips the band when this is set.
+  $variables['hero_first'] = FALSE;
+  $page = \Drupal::routeMatch()->getParameter('canvas_page');
+  if ($page instanceof \Drupal\Core\Entity\FieldableEntityInterface && $page->hasField('components')) {
+    foreach ($page->get('components')->getValue() as $item) {
+      if (empty($item['parent_uuid'])) {
+        $variables['hero_first'] = ($item['component_id'] ?? '') === 'sdc.jarvis.hero';
+        break;
+      }
+    }
   }
   $variables['content_self_boxed'] = _jarvis_content_self_boxed();
 }

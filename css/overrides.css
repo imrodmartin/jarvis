@@ -146,17 +146,40 @@ blockquote > :last-child {
    because it must beat jp-vpad and the jp-p-* utilities above. */
 .jp-nopad { padding-top: 0 !important; padding-bottom: 0 !important; }
 
-/* Site logo: cap at 400px, pin left. Same rule whether branding sits in the
+/* Phones: one 24px text gutter everywhere. A section's side padding stacked on
+   its own container and a nested columns container put body text 54px in,
+   while columns placed straight in a region (footer, a lone map) sat at 12px.
+   Containers carry the gutter; a container inside another adds none. */
+@media (max-width: 767.98px) {
+  .container { padding-inline: 24px; }
+  .container .container { padding-inline: 0; }
+  .jarvis-section[class*="jp-p-"] { padding-left: 0; padding-right: 0; }
+
+  /* Two-column "Phone order: Lead item first". The columns drop out of the box
+     tree so their items become the row's flex items, each taking back the
+     gutter and full width the column gave it; order sets the sequence. */
+  .jarvis-phone-lead { display: contents; }
+  .jarvis-phone-lead > * {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding-inline: calc(var(--bs-gutter-x) * 0.5);
+    margin-top: var(--bs-gutter-y);
+    order: 3;
+  }
+  .jarvis-phone-lead--1 > :first-child { order: 1; }
+  .jarvis-phone-lead--2 > * { order: 2; }
+}
+
+/* Site logo: width from the Logo width theme setting (default 400px), pin left. Same rule whether branding sits in the
    header region or the primary-menu (nav) region. */
 .jarvis-header [id*="branding"],
 .jarvis-primary-menu [id*="branding"] { text-align: left; }
 .jarvis-header [id*="branding"] img,
-.jarvis-primary-menu [id*="branding"] img { width: 400px; max-width: 100%; height: auto; }
+.jarvis-primary-menu [id*="branding"] img { width: var(--jarvis-logo-width, 400px); max-width: 100%; height: auto; }
 
-/* Canvas renders the primary-menu blocks with random UUID ids, so the Twig
-   split by block id never matches; js/nav-branding.js moves the logo link out
-   of the offcanvas drawer into .jarvis-branding-wrap so it stays visible on
-   mobile (the drawer is hidden until the hamburger is tapped). */
+/* jarvis_preprocess_page() lifts the branding block out of the offcanvas
+   drawer into .jarvis-branding-wrap so the logo stays visible on mobile (the
+   drawer is hidden until the hamburger is tapped). */
 /* Break the nav row out of the centered .container so it spans the viewport;
    100px left pad pins the logo near the browser's left edge — desktop only,
    on mobile it would eat a quarter of the screen from the logo/hamburger row. */
@@ -164,9 +187,9 @@ blockquote > :last-child {
 @media (min-width: 992px) {
   .jarvis-primary-menu { padding-left: 100px; }
 }
-/* Logo left (capped 400px, shrinks on narrow screens), menu 50px to its right. */
+/* Logo left (Logo width setting, shrinks on narrow screens), menu 50px to its right. */
 .jarvis-branding-wrap { min-width: 0; }
-.jarvis-branding-wrap img { width: 400px; max-width: 100%; height: auto; }
+.jarvis-branding-wrap img { width: var(--jarvis-logo-width, 400px); max-width: 100%; height: auto; }
 .jarvis-primary-menu .offcanvas-body > div { display: flex; align-items: center; }
 .jarvis-primary-menu .offcanvas-body nav { margin-left: 50px; }
 
