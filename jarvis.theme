@@ -224,9 +224,11 @@ function jarvis_preprocess_page(array &$variables) {
     // Canvas's editor wraps even an empty region in comment markers plus a
     // bare <div>, so "empty" = no text once tags/comments are stripped AND no
     // visual element (an image-only sidebar has no text but isn't empty).
+    // Placeholdered blocks (custom block content, BigPipe) arrive here as an
+    // empty placeholder tag and are filled in later, so they count as content.
     $stripped = preg_replace('/<!--.*?-->/s', '', $markup);
     $variables[$region . '_empty'] = trim(strip_tags($stripped)) === ''
-      && !preg_match('/<(img|picture|video|iframe|svg|canvas|embed)\b/i', $stripped);
+      && !preg_match('/<(img|picture|video|iframe|svg|canvas|embed|drupal-render-placeholder)\b|data-big-pipe-placeholder-id/i', $stripped);
   }
   $variables['content_self_boxed'] = _jarvis_content_self_boxed();
 }
@@ -259,12 +261,7 @@ function _jarvis_append_block_layout(array &$variables, string $region): void {
   uasort($blocks, [Block::class, 'sort']);
   $builder = \Drupal::entityTypeManager()->getViewBuilder('block');
   $cache = new CacheableMetadata();
-  // Canvas component IDs for block plugins: "block." + plugin ID, ":" → ".".
-  $page_region = \Drupal::config("canvas.page_region.$theme.$region");
-  $cache->addCacheableDependency($page_region);
-  $in_canvas = $page_region->get('status')
-    ? array_column($page_region->get('component_tree') ?? [], 'component_id')
-    : [];
+  $in_canvas = _jarvis_canvas_region_component_ids($theme, $region, $cache);
   foreach ($blocks as $id => $block) {
     // Without Canvas the block page variant already rendered it, keyed by ID.
     if (isset($variables['page'][$region][$id])) {
@@ -282,6 +279,41 @@ function _jarvis_append_block_layout(array &$variables, string $region): void {
   // Placing or removing a block must clear pages that rendered this region.
   $cache->addCacheTags(['config:block_list']);
   $cache->applyTo($variables['page'][$region]);
+}
+
+/**
+ * Component IDs Canvas renders in a theme region.
+ *
+ * Canvas 1.12+ keeps the whole page in one page variant
+ * (canvas.page_variant.theme_<theme>): a theme page template whose slots are
+ * the regions. Earlier versions keep one PageRegion per region. Block plugins
+ * appear as "block." + plugin ID with ":" turned into ".".
+ */
+function _jarvis_canvas_region_component_ids(string $theme, string $region, CacheableMetadata $cache): array {
+  $variant = \Drupal::config("canvas.page_variant.theme_$theme");
+  $cache->addCacheableDependency($variant);
+  if ($variant->get('status') && ($tree = $variant->get('component_tree'))) {
+    $parent = array_column($tree, 'parent_uuid', 'uuid');
+    $slot = array_column($tree, 'slot', 'uuid');
+    $ids = [];
+    foreach ($tree as $item) {
+      // Climb to the item directly under the page template; its slot is the
+      // region.
+      $uuid = $item['uuid'];
+      while (!empty($parent[$uuid]) && !empty($parent[$parent[$uuid]])) {
+        $uuid = $parent[$uuid];
+      }
+      if (!empty($parent[$uuid]) && ($slot[$uuid] ?? NULL) === $region) {
+        $ids[] = $item['component_id'];
+      }
+    }
+    return $ids;
+  }
+  $page_region = \Drupal::config("canvas.page_region.$theme.$region");
+  $cache->addCacheableDependency($page_region);
+  return $page_region->get('status')
+    ? array_column($page_region->get('component_tree') ?? [], 'component_id')
+    : [];
 }
 
 /**
