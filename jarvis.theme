@@ -240,22 +240,37 @@ function jarvis_preprocess_page(array &$variables) {
  * blocks) cannot be placed through Canvas at all, and block-layout placements
  * are ignored. This appends the region's block-layout blocks so sites can
  * still use them. The access check applies each block's visibility settings.
+ *
+ * A block whose plugin is already in the region's Canvas tree is skipped. The
+ * Jarvis recipe ships the footer's account menu and "Powered by" both as
+ * block-layout blocks and inside the Canvas footer, so without this they
+ * would show twice on every recipe-built site.
  */
 function _jarvis_append_block_layout(array &$variables, string $region): void {
   if (!\Drupal::moduleHandler()->moduleExists('block')) {
     return;
   }
+  $theme = \Drupal::theme()->getActiveTheme()->getName();
   $blocks = \Drupal::entityTypeManager()->getStorage('block')->loadByProperties([
-    'theme' => \Drupal::theme()->getActiveTheme()->getName(),
+    'theme' => $theme,
     'region' => $region,
     'status' => TRUE,
   ]);
   uasort($blocks, [Block::class, 'sort']);
   $builder = \Drupal::entityTypeManager()->getViewBuilder('block');
   $cache = new CacheableMetadata();
+  // Canvas component IDs for block plugins: "block." + plugin ID, ":" → ".".
+  $page_region = \Drupal::config("canvas.page_region.$theme.$region");
+  $cache->addCacheableDependency($page_region);
+  $in_canvas = $page_region->get('status')
+    ? array_column($page_region->get('component_tree') ?? [], 'component_id')
+    : [];
   foreach ($blocks as $id => $block) {
     // Without Canvas the block page variant already rendered it, keyed by ID.
     if (isset($variables['page'][$region][$id])) {
+      continue;
+    }
+    if (in_array('block.' . str_replace(':', '.', $block->getPluginId()), $in_canvas, TRUE)) {
       continue;
     }
     $access = $block->access('view', NULL, TRUE);
