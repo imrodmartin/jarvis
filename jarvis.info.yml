@@ -2,7 +2,7 @@ name: Jarvis
 type: theme
 base theme: false
 core_version_requirement: '>=11.3'
-version: '4.2.1'
+version: '4.3.0'
 description: 'DXPR-style SDC theme with Bootstrap 5, built for Drupal Canvas and Layout Builder.'
 package: Jarvis
 screenshot: screenshot.jpg
@@ -44,3 +44,7 @@ regions:
   sidebar_right: 'Right sidebar'
   content_bottom: 'Content bottom'
   footer: Footer
+  # Printed only by the Block region component, never by page.html.twig.
+  block_region_1: 'Block region 1'
+  block_region_2: 'Block region 2'
+  block_region_3: 'Block region 3'

@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: 'Block region'
+status: stable
+description: 'Shows the blocks placed in a Jarvis block region on the Block layout page. Use it for blocks Canvas cannot place itself, such as the AI chatbot.'
+category: Jarvis
+props:
+  type: object
+  required:
+    - region
+  properties:
+    region:
+      title: Region
+      description: 'Place blocks in this region at Structure > Block layout.'
+      type: string
+      enum: [block_region_1, block_region_2, block_region_3]
+      'meta:enum':
+        block_region_1: 'Block region 1'
+        block_region_2: 'Block region 2'
+        block_region_3: 'Block region 3'
+      default: block_region_1
+      examples:
+        - block_region_1

@@ -1,0 +1,15 @@
+{#
+/**
+ * @file
+ * Jarvis block region SDC.
+ *
+ * Prints the block-layout blocks placed in one of the theme's block regions,
+ * which page.html.twig never prints itself. Canvas only offers a block as a
+ * component when its settings are fully validatable, so blocks such as the AI
+ * chatbot can only reach a Canvas layout this way. twig_tweak's drupal_region()
+ * applies each block's visibility settings and carries its cache metadata.
+ */
+#}
+<div class="jarvis-block-region">
+  {{ drupal_region(region|default('block_region_1')) }}
+</div>
