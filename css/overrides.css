@@ -751,3 +751,52 @@ a {
 .blog-block .views-field-view-node {
   font-size: 80%;
 }
+
+/* Core pager (views listings, node lists). Drupal renders stable9's
+   `.pager__items` / `.pager__item` markup, which Bootstrap 5 styles not at all
+   — it only knows `.pagination` — so the pager came out as an indented,
+   bulleted vertical list. Styled here rather than by overriding pager.html.twig
+   so every view and entity listing on the site picks it up with no template.
+   ponytail: no template override, no new library — one block in overrides.css. */
+.pager__items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem;
+  margin: 2rem 0 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.pager__item {
+  display: block;
+  margin: 0;
+}
+
+.pager__item > a {
+  display: block;
+  padding: 0.375rem 0.75rem;
+  /* currentColor tracks the section's computed (contrast-safe) text colour, so
+     the outline stays visible on light bands and dark heroes alike. */
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  border-radius: var(--bs-border-radius, 0.65rem);
+  color: var(--bs-link-color, var(--bs-primary));
+  line-height: 1.25;
+  text-decoration: none;
+}
+
+.pager__item > a:hover {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  color: var(--bs-link-hover-color, var(--bs-link-color));
+}
+
+/* ADA (WCAG 1.4.1): the current page is marked by the `aria-current="page"`
+   core already sets plus the fill below — colour is not the only cue, since the
+   filled chip also differs in weight. --jarvis-primary-text is the contrast-safe
+   text colour jarvis_preprocess_html() computes for the editable primary. */
+.pager__item.is-active > a {
+  background: var(--bs-primary, #2d6cdf);
+  border-color: var(--bs-primary, #2d6cdf);
+  color: var(--jarvis-primary-text, #fff);
+  font-weight: 600;
+}
