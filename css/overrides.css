@@ -792,11 +792,18 @@ a {
 
 /* ADA (WCAG 1.4.1): the current page is marked by the `aria-current="page"`
    core already sets plus the fill below — colour is not the only cue, since the
-   filled chip also differs in weight. --jarvis-primary-text is the contrast-safe
-   text colour jarvis_preprocess_html() computes for the editable primary. */
+   filled chip also differs in weight.
+   White, not --jarvis-primary-text: the chip is button-shaped and sits on the
+   same primary fill as .btn-primary, which keeps Bootstrap's stock #fff
+   --bs-btn-color (the rules above never touch it). The contrast engine's
+   computed colour can be black on a mid-tone primary, which left the chip
+   reading as the one odd element in a row of white-on-blue buttons. Both pass:
+   on drupalhelps.com's #2f7bb1 white is 4.58:1 and black 4.59:1, against the
+   4.5 bar for this 18px/600 text. Caveat: this is a hardcode, so a pale primary
+   would fail it — exactly as it already would for every .btn-primary. */
 .pager__item.is-active > a {
   background: var(--bs-primary, #2d6cdf);
   border-color: var(--bs-primary, #2d6cdf);
-  color: var(--jarvis-primary-text, #fff);
+  color: #fff;
   font-weight: 600;
 }
