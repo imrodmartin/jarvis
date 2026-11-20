@@ -24,6 +24,13 @@
  *
  * no_padding is declared by 1 Column only (inherited from the Section
  * component it replaced), so for every other component it is simply absent.
+ *
+ * An explicitly unchecked vertical_padding emits jp-vpad-off, and `is same
+ * as(false)` is deliberate: only a stored boolean FALSE counts, so a prop that
+ * never arrived stays absent and keeps whatever default its background gives
+ * it. Nothing was emitted for OFF before, so CSS could not tell "the author
+ * unticked this" from "the prop is not here", and the 2rem padding a coloured
+ * .jarvis-bg band adds by default filled in for both.
  */
 #}
 {%- set p = padding|default('none') -%}
@@ -32,5 +39,6 @@
   p != 'none' ? 'jp-p-' ~ p ~ '-' ~ padding_size|default('medium') : '',
   m != 'none' ? 'jp-m-' ~ m ~ '-' ~ margin_size|default('medium') : '',
   vertical_padding|default(false) ? 'jp-vpad' : '',
+  vertical_padding is same as(false) ? 'jp-vpad-off' : '',
   no_padding|default(false) ? 'jp-nopad' : '',
 ]|join(' ')|trim -}}
