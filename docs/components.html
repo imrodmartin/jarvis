@@ -335,6 +335,12 @@
         <a href="#map">Map</a>
         <a href="#person">Person</a>
         <a href="#stat">Stat card</a>
+        <a href="#share">Share</a>
+      </div>
+      <div class="nav-group">
+        <p class="nav-group__title">Blocks on a page</p>
+        <a href="#block-region">Block region</a>
+        <a href="#content-blocks">Content &amp; views blocks</a>
       </div>
       <div class="nav-group">
         <p class="nav-group__title">Module</p>
@@ -349,7 +355,7 @@
       <header class="page">
         <p class="eyebrow">Jarvis Theme · Drupal 11 / 12</p>
         <h1>The Jarvis component reference</h1>
-        <p class="lede">Every building block that ships with the Jarvis theme, explained in plain language — the 23 components you drag into a page, plus the two small modules that make them work. Written for site builders who are new to Single Directory Components but comfortable in Drupal.</p>
+        <p class="lede">Every building block that ships with the Jarvis theme, explained in plain language — the 24 components you drag into a page, plus the two small modules that make them work. Written for site builders who are new to Single Directory Components but comfortable in Drupal.</p>
         <div class="meta-row">
           <span class="pill"><b>23</b> components</span>
           <span class="pill"><b>2</b> custom modules</span>
@@ -376,7 +382,7 @@
       <!-- ===== FOUNDATIONS ===== -->
       <section class="prose">
         <h2 id="spacing"><span class="section-tag">Foundations</span>The shared spacing controls</h2>
-        <p>Twenty of the twenty-three components expose the same set of spacing props. The three exceptions are <a href="#button">Button</a>, <a href="#card-full-image">Card Full Image</a> and Share, which have none. Rather than repeat them in every table below, here they are once. When a component's badge says <em>"＋ standard spacing controls,"</em> it means this set.</p>
+        <p>Twenty of the twenty-four components expose the same set of spacing props. The four exceptions are <a href="#button">Button</a>, <a href="#card-full-image">Card Full Image</a>, <a href="#share">Share</a> and <a href="#block-region">Block region</a>, which have none. Rather than repeat them in every table below, here they are once. When a component's badge says <em>"＋ standard spacing controls,"</em> it means this set.</p>
         <p>Under the hood they all funnel through one shared Twig helper, <code>jarvis-spacing.html.twig</code>, which turns your choices into utility classes (<code>jp-p-*</code>, <code>jp-m-*</code>, <code>jp-vpad</code>) defined in the theme's <code>overrides.css</code>. One source of truth — change spacing behaviour there and every component follows.</p>
         <div class="table-scroll">
           <table>
@@ -5984,6 +5990,199 @@ props:
 })(Drupal, once);</code></pre></div>
 </details>
         </article>
+
+        <!-- SHARE -->
+        <article class="comp" id="share">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Share</h3>
+            <span class="comp__id">jarvis:share</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">Share buttons for the page they sit on: Facebook, X, LinkedIn, Bluesky, Reddit, email and a copy-link button. Each network is its own toggle, so you ship only the ones you want. Leave the URL empty and the buttons share whatever page they are on, which is what you want in a <a href="#jarvis-canvas">content template</a> — one placement then serves every article.</p>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">label</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Optional visible text before the buttons. Screen readers always hear "Share", with or without it.</td></tr>
+              <tr><td class="prop"><span class="pname">share_text</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Sent along with the link — the page title, usually. In a content template, bind it to the Title field.</td></tr>
+              <tr><td class="prop"><span class="pname">url</span></td><td><span class="ptype">string</span></td><td><span class="pdef pdef--none">—</span></td><td class="desc-cell">Leave empty to share the page the buttons are on. Only <code>http</code> and <code>https</code> are accepted.</td></tr>
+              <tr><td class="prop"><span class="pname">facebook</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">true</span></td><td class="desc-cell">Show the Facebook button.</td></tr>
+              <tr><td class="prop"><span class="pname">x</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">true</span></td><td class="desc-cell">Show the X button.</td></tr>
+              <tr><td class="prop"><span class="pname">linkedin</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">true</span></td><td class="desc-cell">Show the LinkedIn button.</td></tr>
+              <tr><td class="prop"><span class="pname">bluesky</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Show the Bluesky button.</td></tr>
+              <tr><td class="prop"><span class="pname">reddit</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">false</span></td><td class="desc-cell">Show the Reddit button.</td></tr>
+              <tr><td class="prop"><span class="pname">email</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">true</span></td><td class="desc-cell">Show the email button.</td></tr>
+              <tr><td class="prop"><span class="pname">copy_link</span></td><td><span class="ptype">boolean</span></td><td><span class="pdef">true</span></td><td class="desc-cell">Show the copy-link button. Copies the URL to the clipboard.</td></tr>
+              <tr><td class="prop"><span class="pname">color</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">brand</span></td><td class="desc-cell"><code>brand</code> gives each network its own colour; <code>dark</code> uses one dark colour for all of them.</td></tr>
+              <tr><td class="prop"><span class="pname">shape</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">rounded</span></td><td class="desc-cell"><code>square</code>, <code>rounded</code> or <code>circle</code>.</td></tr>
+              <tr><td class="prop"><span class="pname">size</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">medium</span></td><td class="desc-cell">Small (32px), medium (40px) or large (48px).</td></tr>
+              <tr><td class="prop"><span class="pname">align</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">center</span></td><td class="desc-cell">Left, center or right within the space the component sits in.</td></tr>
+            </tbody>
+          </table></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 2 files</summary>
+<div class="srcfile"><div class="srcfile__name">share.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Share
+status: stable
+description: &#x27;Share buttons for the current page: Facebook, X, LinkedIn, Bluesky, Reddit, email and copy link.&#x27;
+category: Jarvis
+libraryOverrides:
+  dependencies:
+    - core/drupal
+    - core/once
+    - jarvis/fontawesome
+props:
+  type: object
+  properties:
+    label:
+      title: Label
+      description: &#x27;Optional visible text before the buttons. Empty by default; screen readers always hear &quot;Share&quot;.&#x27;
+      type: string
+    share_text:
+      title: &#x27;Share text&#x27;
+      description: &#x27;Optional. Sent with the link, for example the page title. In a content template, link it to the Title field.&#x27;
+      type: string
+    url:
+      title: &#x27;Page URL&#x27;
+      description: &#x27;Optional. Leave empty to share the page the buttons are on.&#x27;
+      type: string
+      format: uri-reference
+      x-allowed-schemes: [http, https]
+    facebook:
+      title: Facebook
+      type: boolean
+      default: true
+    x:
+      title: X
+      type: boolean
+      default: true
+    linkedin:
+      title: LinkedIn
+      type: boolean
+      default: true
+    bluesky:
+      title: Bluesky
+      type: boolean
+      default: false
+    reddit:
+      title: Reddit
+      type: boolean
+      default: false
+    email:
+      title: Email
+      type: boolean
+      default: true
+    copy_link:
+      title: &#x27;Copy link&#x27;
+      type: boolean
+      default: true
+    color:
+      title: Colors
+      description: &#x27;Brand uses each network&#x27;&#x27;s own color. Dark uses one dark color for all.&#x27;
+      type: string
+      enum: [brand, dark]
+      &#x27;meta:enum&#x27;:
+        brand: Brand
+        dark: Dark
+      default: brand
+    shape:
+      title: Shape
+      type: string
+      enum: [square, rounded, circle]
+      &#x27;meta:enum&#x27;:
+        square: Square
+        rounded: Rounded
+        circle: Circle
+      default: rounded
+    size:
+      title: Size
+      type: string
+      enum: [small, medium, large]
+      &#x27;meta:enum&#x27;:
+        small: &#x27;Small (32px)&#x27;
+        medium: &#x27;Medium (40px)&#x27;
+        large: &#x27;Large (48px)&#x27;
+      default: medium
+    align:
+      title: Alignment
+      type: string
+      enum: [start, center, end]
+      &#x27;meta:enum&#x27;:
+        start: Left
+        center: Center
+        end: Right
+      default: center</code></pre></div>
+</details>
+        </article>
+
+        <!-- BLOCK REGION -->
+        <article class="comp" id="block-region">
+          <div class="comp__head">
+            <h3 class="comp__name" style="margin:0">Block region</h3>
+            <span class="comp__id">jarvis:block-region</span>
+            <span class="chip chip--content">Jarvis</span>
+          </div>
+          <p class="comp__desc">Prints the blocks you placed in <strong>Block region 1</strong>, <strong>2</strong> or <strong>3</strong> on the Block layout page. Those three regions exist for exactly this: the page template never prints them itself, so the only way they reach a visitor is through this component. Reach for it when Canvas refuses to place a block at all — one whose settings are not strictly validatable, or that needs a context value. An AI chatbot block is the usual case. <strong>Content blocks and views blocks do not need this</strong>; they show up in the library on their own, see <a href="#content-blocks">Content &amp; views blocks</a> below.</p>
+          <p class="subhead">Props</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="prop"><span class="pname">region</span><span class="req" title="required">✳</span></td><td><span class="ptype">enum</span></td><td><span class="pdef">block_region_1</span></td><td class="desc-cell">Which of the three block regions to print. Blocks keep their own visibility conditions and cache metadata, so one restricted to certain pages stays restricted.</td></tr>
+            </tbody>
+          </table></div>
+<details class="src">
+<summary>&lt;/&gt; Source · 2 files</summary>
+<div class="srcfile"><div class="srcfile__name">block-region.component.yml</div><pre class="code"><code>$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: &#x27;Block region&#x27;
+status: stable
+description: &#x27;Shows the blocks placed in a Jarvis block region on the Block layout page. Use it for blocks Canvas cannot place itself, such as the AI chatbot.&#x27;
+category: Jarvis
+props:
+  type: object
+  required:
+    - region
+  properties:
+    region:
+      title: Region
+      description: &#x27;Place blocks in this region at Structure &gt; Block layout.&#x27;
+      type: string
+      enum: [block_region_1, block_region_2, block_region_3]
+      &#x27;meta:enum&#x27;:
+        block_region_1: &#x27;Block region 1&#x27;
+        block_region_2: &#x27;Block region 2&#x27;
+        block_region_3: &#x27;Block region 3&#x27;
+      default: block_region_1
+      examples:
+        - block_region_1</code></pre></div>
+<div class="srcfile"><div class="srcfile__name">block-region.twig</div><pre class="code"><code>{#
+/**
+ * @file
+ * Jarvis block region SDC.
+ *
+ * Prints the block-layout blocks placed in one of the theme&#x27;s block regions,
+ * which page.html.twig never prints itself. Canvas only offers a block as a
+ * component when its settings are fully validatable, so blocks such as the AI
+ * chatbot can only reach a Canvas layout this way. twig_tweak&#x27;s drupal_region()
+ * applies each block&#x27;s visibility settings and carries its cache metadata.
+ */
+#}
+&lt;div class=&quot;jarvis-block-region&quot;&gt;
+  {{ drupal_region(region|default(&#x27;block_region_1&#x27;)) }}
+&lt;/div&gt;</code></pre></div>
+</details>
+        </article>
+      </section>
+
+      <!-- ===== CONTENT BLOCKS ===== -->
+      <section class="prose">
+<h2 id="content-blocks"><span class="section-tag">Not a component</span>Content &amp; views blocks</h2>
+<p>These are not Jarvis components, but they appear in the same library next to them and you place them the same way — so this is where people come looking.</p>
+<p>Every <strong>reusable content block</strong> you build at <code>/admin/content/block</code> is listed in the Canvas component library under its own name. Views blocks are there too. Drag one in like any other component.</p>
+<p>That is the answer to "I need this same panel on five pages." Build it once as a content block, place it in each page, and edit it in one place afterwards. Place it in a region tree instead — <strong>Content bottom</strong>, say — and it lands on every page of the site, still edited in that one place.</p>
+<p>Saving the block is all it takes. It appears in the library immediately, with nothing to enable and no cache to clear.</p>
+<p><strong>Version note.</strong> This needs Jarvis 4.3.3 with the Jarvis Canvas module 2.3.0 or newer. Before those, Canvas created a <em>disabled</em> component for each one — content blocks come from a Drupal core module, and Canvas disables core-provided blocks when it first discovers them — so they never reached the library at all, and the <a href="#block-region">Block region</a> route was the only way to get one onto a Canvas page. Upgrading runs <code>drush updb</code>, which switches on the blocks you already had.</p>
+<p>To take one out of the library again, disable it at <strong>Appearance &rarr; Components</strong> (<code>/admin/appearance/component</code>). That decision is respected from then on — nothing switches it back.</p>
+<p>A few blocks still never make it: any block plugin that needs a context value, or whose settings are not strictly validatable. Canvas records why on the component status page, and <a href="#block-region">Block region</a> is how you place those.</p>
       </section>
 
       <!-- ===== MODULES ===== -->
