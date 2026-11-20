@@ -774,3 +774,24 @@ a {
 .blog-block .views-field-view-node {
   font-size: 80%;
 }
+
+/* Button components placed one after another in a slot (e.g. "Pay with card"
+   then "Pay with PayPal"). They're inline links, so when the row wraps they
+   used to touch. Give the pair one size and a gap, and on phones stack them
+   full width so each is an easy tap target. Canvas's HTML comments between
+   them don't break the + combinator. */
+:is(.btn:has(+ .btn), .btn + .btn) {
+  --bs-btn-padding-x: 1.6rem;
+  --bs-btn-padding-y: 0.7rem;
+  margin-block-end: 0.75rem;
+}
+.btn:has(+ .btn) {
+  margin-inline-end: 0.5rem;
+}
+@media (max-width: 575.98px) {
+  :is(.btn:has(+ .btn), .btn + .btn) {
+    display: block;
+    width: 100%;
+    margin-inline-end: 0;
+  }
+}

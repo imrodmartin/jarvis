@@ -44,6 +44,19 @@ props:
     caption:
       title: Caption
       type: string
+    max_width:
+      title: 'Max width'
+      description: 'Keep the image smaller than its column, centered. Use for logos and small source images that would pixelate if stretched.'
+      type: string
+      enum: [none, small, medium, large]
+      'meta:enum':
+        none: 'None (fill the column)'
+        small: 'Small (160px)'
+        medium: 'Medium (240px)'
+        large: 'Large (360px)'
+      default: none
+      examples:
+        - none
     full_width:
       title: 'Full width'
       type: boolean

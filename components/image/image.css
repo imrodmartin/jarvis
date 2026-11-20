@@ -13,3 +13,13 @@
   height: 100%;
   object-fit: cover;
 }
+
+/* Max width: cap the image below its column width (e.g. a logo beside text)
+   so a small source file isn't stretched until it pixelates. Centered in the
+   column. */
+.jarvis-image[class*="jarvis-image--max-"] {
+  margin-inline: auto;
+}
+.jarvis-image--max-small { max-width: 160px; }
+.jarvis-image--max-medium { max-width: 240px; }
+.jarvis-image--max-large { max-width: 360px; }
