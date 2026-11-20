@@ -434,6 +434,22 @@ td:has(> span.file) { padding-right: 20px; }
 :where(.jarvis-bg) {
   padding-block: 2rem; /* breathing room so text isn't flush to the colour band edge */
 }
+/* vertical_padding explicitly unchecked. Also :where() (zero specificity), and
+   it MUST stay below the band rule above: order is what makes it win, so an
+   author who unticks the toggle on a coloured section gets no vertical padding
+   instead of the band's 2rem. Keeping it at zero specificity means a real
+   padding choice still beats it — .jp-p-*, .jp-vpad and .jp-nopad are all
+   0-1-0, so "pad all sides 20px" plus an unticked vertical toggle keeps the
+   20px rather than being silently zeroed.
+
+   Without this the toggle was a no-op at best: the class list for OFF carried
+   nothing, so the band default filled the gap the prop was meant to leave, and
+   because .jp-vpad is a flat 30px while 2rem tracks the theme's base font
+   setting, switching the toggle ON actually REDUCED the padding on any site
+   with a base above 15px (measured 30px ON vs 40px OFF at a 20px base). */
+:where(.jp-vpad-off) {
+  padding-block: 0;
+}
 /* One foreground contract for every surface below. Each variant declares only
    what it IS — its background and its safe text colour as --jarvis-on /
    --jarvis-on-rgb — and this rule wires that into every colour var the theme
