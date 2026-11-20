@@ -1,6 +1,6 @@
 # Components
 
-Jarvis ships twenty-three SDC components. Canvas lists them under the **Jarvis**
+Jarvis ships twenty-four SDC components. Canvas lists them under the **Jarvis**
 category.
 
 **The prop-by-prop reference is the
@@ -10,8 +10,9 @@ maintained list; this page is just the map.
 
 ## Shared spacing props
 
-Twenty of the twenty-three components carry the same spacing controls
-(**Button**, **Card Full Image** and **Share** are the exceptions):
+Twenty of the twenty-four components carry the same spacing controls
+(**Block region**, **Button**, **Card Full Image** and **Share** are the
+exceptions):
 
 - `padding`: which sides get padding (none, all, top, bottom, left, right).
 - `padding_size`: small (10px), medium (20px), or large (30px).
@@ -46,6 +47,15 @@ Twenty of the twenty-three components carry the same spacing controls
 - **Button** — a single Bootstrap-styled button.
 - **Share** — share buttons for the current page: Facebook, X, LinkedIn,
   Bluesky, Reddit, email and copy link.
+
+## Bridge components
+
+- **Block region** — prints the blocks placed in **Block region 1/2/3** on the
+  Block layout page, which the page template never prints itself. Use it for a
+  block Canvas refuses to place — one whose settings are not strictly
+  validatable, or that needs a context value, such as an AI chatbot. Content
+  blocks and views blocks do not need it: they appear in the library on their
+  own. See [Regions and layout](regions.md).
 
 ## Layout components
 
