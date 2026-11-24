@@ -14,12 +14,17 @@
   'wide-left-75': ['col-12 col-md-9', 'col-12 col-md-3'],
   'wide-right-75': ['col-12 col-md-3', 'col-12 col-md-9'],
 }[ratio|default('even')] %}
+{# Per-column alignment. `start` maps to an empty string on purpose: a
+   column with the default alignment carries no text-* class, so it
+   inherits instead of forcing `text-align: left !important` onto
+   everything inside it — including a nested column section. #}
+{% set align_classes = { start: '', center: 'text-center', end: 'text-end' } %}
 {% embed '@jarvis/jarvis-columns-shell.html.twig' with { count: 2 } %}
   {% block columns %}
-    <div class="{{ cols[0] }}">
+    <div class="{{ cols[0] }} {{ align_classes[align_first|default('start')] }}">
       {{ first }}
     </div>
-    <div class="{{ cols[1] }}">
+    <div class="{{ cols[1] }} {{ align_classes[align_second|default('start')] }}">
       {{ second }}
     </div>
   {% endblock %}
