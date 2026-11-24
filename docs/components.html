@@ -638,6 +638,16 @@ props:
       default: none
       examples:
         - none
+    align_first:
+      title: &#x27;Alignment&#x27;
+      description: &#x27;Aligns the content placed in this column. A WYSIWYG component sets its own alignment and ignores this.&#x27;
+      type: string
+      enum: [start, center, end]
+      &#x27;meta:enum&#x27;:
+        start: Left
+        center: Center
+        end: Right
+      default: start
 slots:
   first:
     title: Column
@@ -826,6 +836,26 @@ props:
       default: none
       examples:
         - none
+    align_first:
+      title: &#x27;Column 1 alignment&#x27;
+      description: &#x27;Aligns the content placed in this column. A WYSIWYG component sets its own alignment and ignores this.&#x27;
+      type: string
+      enum: [start, center, end]
+      &#x27;meta:enum&#x27;:
+        start: Left
+        center: Center
+        end: Right
+      default: start
+    align_second:
+      title: &#x27;Column 2 alignment&#x27;
+      description: &#x27;Aligns the content placed in this column. A WYSIWYG component sets its own alignment and ignores this.&#x27;
+      type: string
+      enum: [start, center, end]
+      &#x27;meta:enum&#x27;:
+        start: Left
+        center: Center
+        end: Right
+      default: start
 slots:
   first:
     title: &#x27;Column 1&#x27;
@@ -1027,6 +1057,36 @@ props:
       default: none
       examples:
         - none
+    align_first:
+      title: &#x27;Column 1 alignment&#x27;
+      description: &#x27;Aligns the content placed in this column. A WYSIWYG component sets its own alignment and ignores this.&#x27;
+      type: string
+      enum: [start, center, end]
+      &#x27;meta:enum&#x27;:
+        start: Left
+        center: Center
+        end: Right
+      default: start
+    align_second:
+      title: &#x27;Column 2 alignment&#x27;
+      description: &#x27;Aligns the content placed in this column. A WYSIWYG component sets its own alignment and ignores this.&#x27;
+      type: string
+      enum: [start, center, end]
+      &#x27;meta:enum&#x27;:
+        start: Left
+        center: Center
+        end: Right
+      default: start
+    align_third:
+      title: &#x27;Column 3 alignment&#x27;
+      description: &#x27;Aligns the content placed in this column. A WYSIWYG component sets its own alignment and ignores this.&#x27;
+      type: string
+      enum: [start, center, end]
+      &#x27;meta:enum&#x27;:
+        start: Left
+        center: Center
+        end: Right
+      default: start
 slots:
   first:
     title: &#x27;Column 1&#x27;
@@ -1254,6 +1314,36 @@ props:
       default: none
       examples:
         - none
+    align_first:
+      title: &#x27;Column 1 alignment&#x27;
+      description: &#x27;Aligns the content placed in this column. A WYSIWYG component sets its own alignment and ignores this.&#x27;
+      type: string
+      enum: [start, center, end]
+      &#x27;meta:enum&#x27;:
+        start: Left
+        center: Center
+        end: Right
+      default: start
+    align_second:
+      title: &#x27;Column 2 alignment&#x27;
+      description: &#x27;Aligns the content placed in this column. A WYSIWYG component sets its own alignment and ignores this.&#x27;
+      type: string
+      enum: [start, center, end]
+      &#x27;meta:enum&#x27;:
+        start: Left
+        center: Center
+        end: Right
+      default: start
+    align_third:
+      title: &#x27;Column 3 alignment&#x27;
+      description: &#x27;Aligns the content placed in this column. A WYSIWYG component sets its own alignment and ignores this.&#x27;
+      type: string
+      enum: [start, center, end]
+      &#x27;meta:enum&#x27;:
+        start: Left
+        center: Center
+        end: Right
+      default: start
 slots:
   first:
     title: &#x27;Column 1&#x27;
@@ -1474,6 +1564,46 @@ props:
       default: none
       examples:
         - none
+    align_first:
+      title: &#x27;Column 1 alignment&#x27;
+      description: &#x27;Aligns the content placed in this column. A WYSIWYG component sets its own alignment and ignores this.&#x27;
+      type: string
+      enum: [start, center, end]
+      &#x27;meta:enum&#x27;:
+        start: Left
+        center: Center
+        end: Right
+      default: start
+    align_second:
+      title: &#x27;Column 2 alignment&#x27;
+      description: &#x27;Aligns the content placed in this column. A WYSIWYG component sets its own alignment and ignores this.&#x27;
+      type: string
+      enum: [start, center, end]
+      &#x27;meta:enum&#x27;:
+        start: Left
+        center: Center
+        end: Right
+      default: start
+    align_third:
+      title: &#x27;Column 3 alignment&#x27;
+      description: &#x27;Aligns the content placed in this column. A WYSIWYG component sets its own alignment and ignores this.&#x27;
+      type: string
+      enum: [start, center, end]
+      &#x27;meta:enum&#x27;:
+        start: Left
+        center: Center
+        end: Right
+      default: start
+    align_fourth:
+      title: &#x27;Column 4 alignment&#x27;
+      description: &#x27;Aligns the content placed in this column. A WYSIWYG component sets its own alignment and ignores this.&#x27;
+      type: string
+      enum: [start, center, end]
+      &#x27;meta:enum&#x27;:
+        start: Left
+        center: Center
+        end: Right
+      default: start
 slots:
   first:
     title: &#x27;Column 1&#x27;
@@ -2492,6 +2622,7 @@ props:
         - normal
     align:
       title: Alignment
+      description: &#x27;Left follows the alignment of the column this sits in. Center and Right override it.&#x27;
       type: string
       enum: [start, center, end]
       &#x27;meta:enum&#x27;:
