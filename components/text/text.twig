@@ -8,7 +8,18 @@
 {% set width = width|default('normal') %}
 {% set align = align|default('start') %}
 {% set col = { narrow: 'col-lg-6', normal: 'col-lg-8', wide: 'col-12' }[width] %}
-{% set align_class = { start: 'text-start', center: 'text-center', end: 'text-end' }[align] %}
+{# `start` emits no class on purpose, so a Text placed in a column follows
+   that column's alignment. It used to print `text-start`, which Bootstrap
+   declares !important, so a Text in a centred column stayed left with no
+   way to change it. Set Center or Right here to override the column; the
+   WYSIWYG component still always wins, since it prints its own class.
+
+   Nothing in the theme centres a slot wrapper, so on an existing page this
+   renders the same as before — the computed alignment goes from `left` to
+   `start`, which is the same thing in an LTR document. The one case that does
+   change: a Text set to Left under an ancestor a site's own CSS centres now
+   follows that ancestor instead of forcing itself left. #}
+{% set align_class = { start: '', center: 'text-center', end: 'text-end' }[align] %}
 {% set color = color|default('inherit') %}
 {% set color_class = color != 'inherit' ? 'jarvis-text--' ~ color : '' %}
 <div class="jarvis-text container {{ space }} {{ color_class }}">

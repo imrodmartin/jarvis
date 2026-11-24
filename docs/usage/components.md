@@ -20,6 +20,19 @@ exceptions):
 - `margin_size`: small, medium, or large.
 - `vertical_padding`: a boolean that adds a standard block of vertical padding.
 
+## Column alignment
+
+Every layout component carries one alignment control per column — Left, Center
+or Right, defaulting to Left. It aligns whatever is placed in that column:
+component copy and headings, buttons, and any inline content. Block-level,
+full-width things have nothing to centre and stay put — images, maps, video —
+and the Stat card is always centred by its own CSS.
+
+Two components answer for themselves. **WYSIWYG** always prints its own
+alignment and ignores the column, so use it when one block must differ from
+the column it sits in. **Text** follows the column while its own alignment is
+Left, and overrides it when set to Center or Right.
+
 ## Content components
 
 - **Hero** — full-width banner: heading, subtext, CTA button, background image
@@ -62,8 +75,9 @@ exceptions):
 Layout components hold other components in slots.
 
 - **1 Column / 2 Columns / 3 Columns / 4 Columns** — responsive column rows with
-  background image, overlay, and ratio controls; one slot per column.
-- **3 Columns (custom widths)** — three columns with a percentage width set
-  per column; a column set to 0% collapses.
+  background image, overlay, ratio and per-column alignment controls; one slot
+  per column.
+- **3 Columns (custom widths)** — three columns with a percentage width and an
+  alignment set per column; a column set to 0% collapses.
 - **Card Full Image** — full-width two-column band: an edge-to-edge image slot
   beside a rich-text content slot.

@@ -33,20 +33,25 @@
    editor needs for its drop zones. Print it via a variable and the column
    renders but nothing can be dragged into it. #}
 {% set pct = widths|map(w => (w / total * 100)|round(4)) %}
+{# Per-column alignment. `start` maps to an empty string on purpose: a
+   column with the default alignment carries no text-* class, so it
+   inherits instead of forcing `text-align: left !important` onto
+   everything inside it — including a nested column section. #}
+{% set align_classes = { start: '', center: 'text-center', end: 'text-end' } %}
 {% embed '@jarvis/jarvis-columns-shell.html.twig' with { count: 3 } %}
   {% block columns %}
     {% if pct[0] > 0 %}
-      <div class="col-12 jarvis-col-pct" style="--jarvis-col-w: {{ pct[0] }}%;">
+      <div class="col-12 jarvis-col-pct {{ align_classes[align_first|default('start')] }}" style="--jarvis-col-w: {{ pct[0] }}%;">
         {{ first }}
       </div>
     {% endif %}
     {% if pct[1] > 0 %}
-      <div class="col-12 jarvis-col-pct" style="--jarvis-col-w: {{ pct[1] }}%;">
+      <div class="col-12 jarvis-col-pct {{ align_classes[align_second|default('start')] }}" style="--jarvis-col-w: {{ pct[1] }}%;">
         {{ second }}
       </div>
     {% endif %}
     {% if pct[2] > 0 %}
-      <div class="col-12 jarvis-col-pct" style="--jarvis-col-w: {{ pct[2] }}%;">
+      <div class="col-12 jarvis-col-pct {{ align_classes[align_third|default('start')] }}" style="--jarvis-col-w: {{ pct[2] }}%;">
         {{ third }}
       </div>
     {% endif %}

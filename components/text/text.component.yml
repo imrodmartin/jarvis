@@ -28,6 +28,7 @@ props:
         - normal
     align:
       title: Alignment
+      description: 'Left follows the alignment of the column this sits in. Center and Right override it.'
       type: string
       enum: [start, center, end]
       'meta:enum':
