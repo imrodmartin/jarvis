@@ -3260,6 +3260,20 @@ props:
 <div class="srcfile"><div class="srcfile__name">card.css</div><pre class="code"><code>.jarvis-card {
   overflow: hidden;
 }
+/* card.twig always prints Bootstrap&#x27;s h-100, which is `height: 100%
+   !important`. Alone in its column that is the whole point — the column is a
+   stretched flex item, so every card in a row ends up the same height.
+   Sharing a column it is actively harmful: the percentage resolves against
+   the column, the column then takes its height from the card alone, and
+   anything beside the card overflows out of the bottom and lands on top of
+   whatever section follows. Dropping a card above a hero clipped the hero&#x27;s
+   own heading behind the hero image.
+   :not(:only-child) is the whole fix — a card that shares its column stops
+   stretching, a card that does not keeps the equal-height behaviour. The
+   !important is required to beat the utility class, not decoration. */
+.jarvis-card.h-100:not(:only-child) {
+  height: auto !important;
+}
 .jarvis-card__img {
   object-fit: cover;
 }
