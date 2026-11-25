@@ -22,22 +22,29 @@ The rest of this page installs the theme by itself.
 
 ## Require the theme
 
-Register **both** repositories as Composer VCS sources, then require the theme.
-The theme requires `imrodmartin/jarvis-modules` (the `jarvis_canvas` module):
+The theme is on Packagist as `imrodmartin/jarvis` (it was `drupal/jarvis` up to
+4.4.1; see the README for switching an existing site). It requires
+`imrodmartin/jarvis-modules` (the `jarvis_canvas` module), also on Packagist:
 several templates call Twig filters it provides, so the theme will neither
 resolve nor install without it.
 
 ```bash
+ddev composer require imrodmartin/jarvis
+```
+
+If your host cannot reach Packagist, register both repositories as Composer VCS
+sources before the require:
+
+```bash
 ddev composer config repositories.jarvis '{"type":"vcs","url":"https://github.com/imrodmartin/jarvis","no-api":true}'
 ddev composer config repositories.jarvis-modules '{"type":"vcs","url":"https://github.com/imrodmartin/jarvis-modules","no-api":true}'
-ddev composer require drupal/jarvis
 ```
 
 `no-api` makes Composer clone over git instead of the GitHub API. It avoids the
 unauthenticated 60-calls-per-hour API rate limit (and the occasional `502`) that
 otherwise blocks the install.
 
-Composer installs the theme to `web/themes/custom/jarvis` and downloads the
+Composer installs the theme to `web/themes/contrib/jarvis` (it is a `drupal-theme` package) and downloads the
 contrib modules to `web/modules/contrib`.
 
 ## Enable and apply the recipe

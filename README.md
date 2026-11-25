@@ -30,13 +30,26 @@ just the theme, included there as a git submodule.
 
 ## Install
 
-Register **both** repositories as Composer VCS sources — the theme cannot
-resolve without the modules package — then require the theme:
+The theme and its `imrodmartin/jarvis-modules` dependency are on
+[Packagist](https://packagist.org/packages/imrodmartin/jarvis), so no extra
+repositories are needed:
+
+```bash
+ddev composer require imrodmartin/jarvis
+```
+
+The package was called `drupal/jarvis` up to 4.4.1. Packagist does not accept
+the `drupal/` vendor, so from 4.5.0 it is `imrodmartin/jarvis`, and it declares
+`"replace": {"drupal/jarvis": "self.version"}` so anything that still requires
+the old name is satisfied by it. A site that required `drupal/jarvis` itself
+has to switch once — see [Switching from drupal/jarvis](#switching-from-drupaljarvis).
+
+If your host cannot reach Packagist, register both repositories as Composer
+VCS sources first:
 
 ```bash
 ddev composer config repositories.jarvis '{"type":"vcs","url":"https://github.com/imrodmartin/jarvis","no-api":true}'
 ddev composer config repositories.jarvis-modules '{"type":"vcs","url":"https://github.com/imrodmartin/jarvis-modules","no-api":true}'
-ddev composer require drupal/jarvis
 ```
 
 `no-api` makes Composer clone over git instead of the GitHub API — it avoids the
@@ -50,11 +63,35 @@ modules in `web/modules/contrib`.
 
 `themes/contrib` is not a mistake: the theme declares `"type": "drupal-theme"`,
 which stock installer-paths route to contrib, and Drupal loads it the same
-either way. To keep it under `themes/custom`, add `"drupal/jarvis"` to the
+either way. To keep it under `themes/custom`, add `"imrodmartin/jarvis"` to the
 `web/themes/custom/{$name}` entry of `extra.installer-paths` **and move that
 entry above** `web/themes/contrib/{$name}` — composer/installers takes the
 first matching entry in file order, so a later package-name match loses to an
 earlier `type:drupal-theme`.
+
+### Switching from drupal/jarvis
+
+A site whose root `composer.json` requires `drupal/jarvis` (every site that
+required the theme or a Jarvis recipe before 4.5.0 — recipe unpacking copies
+the requirement into your root file) swaps the name once:
+
+```bash
+ddev composer remove drupal/jarvis --no-update
+ddev composer require 'imrodmartin/jarvis:^4.5' 'imrodmartin/jarvis-modules:^2.3'
+ddev drush cache:rebuild
+```
+
+The theme stays in the same directory and keeps the `jarvis` machine name, so
+Drupal sees no change. Until you do this, `composer install` keeps working from
+your lock file, but a `composer update` that touches the theme fails with
+*found drupal/jarvis[v4.4.1] in the lock file but not in remote repositories*:
+composer reads a GitHub repository's package name from its default branch,
+and `replace` satisfies other packages that require `drupal/jarvis`, not a
+root requirement.
+
+If you put `"drupal/jarvis"` in `extra.installer-paths` to keep the theme under
+`themes/custom`, change it to `"imrodmartin/jarvis"` before running the
+require, or the theme moves to `themes/contrib`.
 
 ### Then apply a recipe
 
