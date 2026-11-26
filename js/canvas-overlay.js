@@ -176,6 +176,32 @@
     const isCard = !!sibling('layout');
     const isHero = !isCard && !!sibling('heading_level');
 
+    // Video Background. `box_opacity` is unique to it among the components that
+    // have an `overlay` prop, so it identifies the form.
+    //
+    // Its dimming gets a slider but NO badge, because neither state of the
+    // component is something this badge can score honestly:
+    //
+    // - With a text card (box_background != 'none', the default) the text sits
+    //   on the card, not on the video, and video-background.twig paints the
+    //   card colour in a separate __card-bg layer so box_opacity never fades
+    //   the text. The card's `jarvis-bg--*` class carries a paired --jarvis-on
+    //   text colour that is already AA against it, so the dimming level simply
+    //   does not decide the text's contrast.
+    // - Bare (box_background: 'none') the text does sit on the dimmed video,
+    //   but scoring that would mean sampling video frames, which sampleBlocks()
+    //   cannot do — it reads still images.
+    //
+    // Until that happened the badge scored previewTargets(), which matches only
+    // hero/card/columns background IMAGES, so on a page with any of those it
+    // reported a ratio belonging to a different component: a confident ✗ on a
+    // card that actually passes comfortably. A wrong fail is worse than none.
+    if (sibling('box_opacity')) {
+      // video-background.twig defaults an empty overlay to 30.
+      plainSlider(num, 30, Drupal.t('Background dimming (%)'));
+      return;
+    }
+
     // An empty field means the SDC's own |default() applies at render time.
     // card.twig and hero.twig default to 40, the column layouts to 45 — seeding
     // a flat 40 made the slider and the WCAG badge disagree with what a column
