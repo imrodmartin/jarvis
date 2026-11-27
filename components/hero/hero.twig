@@ -11,22 +11,47 @@
 {% set align_class = { start: 'text-start', center: 'text-center', end: 'text-end' }[align] %}
 {% set justify_class = { start: 'justify-content-start', center: 'justify-content-center', end: 'justify-content-end' }[align] %}
 {% set has_image = image.src is defined and image.src %}
-{% set text_color = text_color|default('light') %}
+{# Text card (box_background). The card decides the text colour — a dark card
+   under dark text would be unreadable — so text_color is ignored while it is
+   on. #}
+{% set card = box_background|default('none') %}
+{% set has_card = card in ['dark', 'light'] %}
+{% set text_color = has_card ? (card == 'light' ? 'dark' : 'light') : text_color|default('light') %}
 {# Light text gets a black overlay, dark text a white one — the same split the
    column components use. Dark text used to force the overlay to 0 and sit on
    the bare photo, which is unreadable over a dark image. #}
+{# Read before the |default below: that filter turns an explicit 0 into 40,
+   which is harmless when the overlay is auto-raised anyway but would stop a
+   carded hero from ever showing the untouched photo. #}
+{% set overlay_exact = (overlay is defined and overlay is not null and overlay is not same as('')) ? overlay / 100 : 0.4 %}
 {% set overlay = overlay|default(40) %}
 {% set overlay_light = text_color == 'dark' %}
-<section class="jarvis-hero jarvis-hero--text-{{ text_color }} position-relative d-flex align-items-center {{ align_class }} {{ space }}"{% if has_image %} style="background-image: url('{{ image.src }}');"{% endif %}>
+{% if has_card %}
+  {# With a card the text never touches the bare photo, so the image overlay is
+     the author's exact value and the WCAG AA guarantee moves to the card.
+     `need` is the total black (or white) the photo needs under the text. The
+     overlay already supplies some of it and the two layers are the same
+     colour, so they compose as 1 - (1 - overlay)(1 - card): the card only has
+     to cover the remainder. Its slider is a floor, exactly like the overlay's
+     is on a hero without a card. #}
+  {% set box_floor = (box_opacity is defined and box_opacity is not null and box_opacity is not same as('')) ? box_opacity / 100 : 0.85 %}
+  {% set need = has_image ? image.src|jarvis_overlay_alpha(overlay_light, 0) : 0 %}
+  {% set box_need = overlay_exact >= 1 ? 0 : 1 - (1 - need) / (1 - overlay_exact) %}
+  {% set box_alpha = max(box_floor, box_need)|round(2, 'ceil') %}
+{% endif %}
+<section class="jarvis-hero jarvis-hero--text-{{ text_color }}{{ has_card ? ' jarvis-hero--card' : '' }} position-relative d-flex align-items-center {{ align_class }} {{ space }}"{% if has_image %} style="background-image: url('{{ image.src }}');"{% endif %}>
   {% if has_image %}
-    {# opacity is the author's floor; jarvis_overlay_alpha samples the image
-       server-side and raises it until the text clears WCAG AA, so the value is
-       already right on first paint. #}
-    <div class="jarvis-bg__overlay{{ overlay_light ? ' jarvis-bg__overlay--light' : '' }}" style="opacity: {{ image.src|jarvis_overlay_alpha(overlay_light, overlay / 100) }};" aria-hidden="true"></div>
+    {# No card: opacity is the author's floor; jarvis_overlay_alpha samples the
+       image server-side and raises it until the text clears WCAG AA, so the
+       value is already right on first paint. #}
+    <div class="jarvis-bg__overlay{{ overlay_light ? ' jarvis-bg__overlay--light' : '' }}" style="opacity: {{ has_card ? overlay_exact : image.src|jarvis_overlay_alpha(overlay_light, overlay / 100) }};" aria-hidden="true"></div>
   {% endif %}
   <div class="container position-relative jarvis-hero__inner py-5">
     <div class="row {{ justify_class }}">
       <div class="jarvis-hero__content">
+        {# Colour layer behind the text, so its opacity never fades the text
+           (same split as video-background and image-overlay). #}
+        {% if has_card %}<span class="jarvis-hero__card-bg" style="opacity: {{ box_alpha }};" aria-hidden="true"></span>{% endif %}
         {% set h = heading_level|default('h1') %}
         {# No display-* class: it pins one size regardless of {{ h }}, so the
            heading_level prop changed the tag but never the size. Sizing lives

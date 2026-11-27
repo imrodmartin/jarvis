@@ -75,6 +75,31 @@ props:
       default: light
       examples:
         - light
+    # Text card: same idea as Video Background's, so the photo can run bright
+    # while the text keeps its contrast. 'none' is a sentinel — Canvas never
+    # lists a component whose enum has an empty value. Only black and white
+    # cards, because they are the two colours OverlayAlpha can solve for.
+    box_background:
+      title: 'Text card color'
+      description: 'Puts a card behind the text so the photo can stay bright. With a card on, the overlay opacity above is used exactly as set (0 = untouched photo) and the text color follows the card.'
+      type: string
+      enum: [none, dark, light]
+      'meta:enum':
+        none: 'None (text straight on the image)'
+        dark: 'Dark card, white text'
+        light: 'Light card, black text'
+      default: none
+      examples:
+        - none
+    box_opacity:
+      title: 'Text card opacity (%)'
+      description: 'Opacity of the card only; the text on it stays fully opaque. Raised automatically when the photo behind it needs more to keep the text at WCAG AA.'
+      type: integer
+      minimum: 0
+      maximum: 100
+      default: 85
+      examples:
+        - 85
     padding:
       title: Padding
       type: string
