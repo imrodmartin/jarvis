@@ -23,7 +23,7 @@ The rest of this page installs the theme by itself.
 ## Require the theme
 
 The theme is on Packagist as `imrodmartin/jarvis` (it was `drupal/jarvis` up to
-4.4.1; see the README for switching an existing site). It requires
+4.4.4; see the README for switching an existing site). It requires
 `imrodmartin/jarvis-modules` (the `jarvis_canvas` module), also on Packagist:
 several templates call Twig filters it provides, so the theme will neither
 resolve nor install without it.

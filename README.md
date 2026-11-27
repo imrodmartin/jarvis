@@ -38,7 +38,7 @@ repositories are needed:
 ddev composer require imrodmartin/jarvis
 ```
 
-The package was called `drupal/jarvis` up to 4.4.1. Packagist does not accept
+The package was called `drupal/jarvis` up to 4.4.4. Packagist does not accept
 the `drupal/` vendor, so from 4.5.0 it is `imrodmartin/jarvis`, and it declares
 `"replace": {"drupal/jarvis": "self.version"}` so anything that still requires
 the old name is satisfied by it. A site that required `drupal/jarvis` itself
@@ -84,7 +84,7 @@ ddev drush cache:rebuild
 The theme stays in the same directory and keeps the `jarvis` machine name, so
 Drupal sees no change. Until you do this, `composer install` keeps working from
 your lock file, but a `composer update` that touches the theme fails with
-*found drupal/jarvis[v4.4.1] in the lock file but not in remote repositories*:
+*found drupal/jarvis[v4.4.x] in the lock file but not in remote repositories*:
 composer reads a GitHub repository's package name from its default branch,
 and `replace` satisfies other packages that require `drupal/jarvis`, not a
 root requirement.
