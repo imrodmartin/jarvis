@@ -1,7 +1,7 @@
 /**
  * Canvas editor: turn every "overlay opacity" number field (prop name
  * `overlay` — hero, card, one/two/three-column) into a 0-100 slider with a
- * live WCAG check. Video Background's `box_opacity` (text card opacity) gets
+ * live WCAG check. Video Background's and hero's `box_opacity` (text card opacity) get
  * the same slider without the badge, as do the custom-columns width_* props. The badge samples the background image(s) rendered in the
  * preview iframe, composites the overlay at the slider value, and shows
  * ✓ when text still clears WCAG AA (4.5:1) or ✗ when it doesn't.
@@ -58,7 +58,10 @@
       try { doc = frame.contentDocument; } catch (e) { return; }
       if (!doc) return;
       doc.querySelectorAll(
-        '.jarvis-hero[style*="background-image"], .jarvis-card--background[style*="background-image"], .jarvis-columns[style*="background-image"]'
+        // A hero with a text card is left out: its text sits on the card, whose
+        // opacity hero.twig solves server-side, so the image overlay no longer
+        // decides the contrast and scoring it would report a false fail.
+        '.jarvis-hero[style*="background-image"]:not(.jarvis-hero--card), .jarvis-card--background[style*="background-image"], .jarvis-columns[style*="background-image"]'
       ).forEach((el) => {
         const m = (el.style.backgroundImage || '').match(/url\(["']?(.*?)["']?\)/);
         if (!m) return;
@@ -78,8 +81,10 @@
     return contrast(DARK_TEXT_L, lum(...lighten(avg, a)));
   };
 
-  const updateBadge = (badge, pct) => {
-    const targets = previewTargets();
+  // skip() is asked twice — before sampling and again when it lands — because
+  // the sampling is async and the answer can change in between.
+  const updateBadge = (badge, pct, skip = () => false) => {
+    const targets = skip() ? [] : previewTargets();
     if (!targets.length) { badge.hidden = true; return; }
     let pending = targets.length;
     let worst = Infinity;
@@ -90,7 +95,7 @@
         });
       }
       if (--pending === 0) {
-        if (!Number.isFinite(worst)) { badge.hidden = true; return; }
+        if (skip() || !Number.isFinite(worst)) { badge.hidden = true; return; }
         const pass = worst >= NEED;
         const text = `${pass ? '✓' : '✗'} ${worst.toFixed(2)}:1`;
         // Only touch the DOM on real change — scan() re-runs updates on every
@@ -176,8 +181,8 @@
     const isCard = !!sibling('layout');
     const isHero = !isCard && !!sibling('heading_level');
 
-    // Video Background. `box_opacity` is unique to it among the components that
-    // have an `overlay` prop, so it identifies the form.
+    // Video Background. `box_opacity` is shared with hero (its text card), so
+    // the form is identified by having it without being a hero.
     //
     // Its dimming gets a slider but NO badge, because neither state of the
     // component is something this badge can score honestly:
@@ -196,7 +201,7 @@
     // hero/card/columns background IMAGES, so on a page with any of those it
     // reported a ratio belonging to a different component: a confident ✗ on a
     // card that actually passes comfortably. A wrong fail is worse than none.
-    if (sibling('box_opacity')) {
+    if (sibling('box_opacity') && !isHero) {
       // video-background.twig defaults an empty overlay to 30.
       plainSlider(num, 30, Drupal.t('Background dimming (%)'));
       return;
@@ -214,15 +219,33 @@
     const badge = document.createElement('span');
     badge.className = 'jarvis-overlay-badge';
     badge.hidden = true;
-    const { wrap, range } = plainSlider(num, emptyDefault, Drupal.t('Overlay opacity (%)'), 1, (value) => updateBadge(badge, value));
+    // A hero with a text card gets no badge on this slider. Its text sits on
+    // the card, and hero.twig raises the card's opacity server-side until that
+    // clears AA, so the image overlay is used exactly as set and no longer
+    // decides the contrast. Leaving the badge up showed a ✗ plus a tooltip
+    // promising an auto-raise that a carded hero never gets. Read live: the
+    // editor can switch the card on and off while the tray stays open.
+    const carded = () => {
+      const select = isHero && sibling('box_background');
+      return !!select && !!select.value && select.value !== 'none';
+    };
+    const { wrap, range } = plainSlider(num, emptyDefault, Drupal.t('Overlay opacity (%)'), 1, (value) => updateBadge(badge, value, carded));
     wrap.append(badge);
 
     const refresh = () => {
       if (!badge.isConnected) { refreshers.delete(refresh); return; }
-      updateBadge(badge, Number(range.value));
+      updateBadge(badge, Number(range.value), carded);
     };
     refreshers.add(refresh);
-    updateBadge(badge, Number(range.value));
+    // Delegated, because React may swap the <select> for a new node.
+    if (isHero) {
+      const onChange = (e) => {
+        if (!badge.isConnected) { document.removeEventListener('change', onChange); return; }
+        if (e.target === sibling('box_background')) refresh();
+      };
+      document.addEventListener('change', onChange);
+    }
+    updateBadge(badge, Number(range.value), carded);
   };
 
   const scan = () => {

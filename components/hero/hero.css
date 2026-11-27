@@ -22,6 +22,46 @@
     width: 85%;
   }
 }
+/* Text card (box_background prop). The content block becomes a card that hugs
+   its text instead of spanning 85% of the row, so most of the photo stays
+   uncovered. Three classes on purpose: the block is a direct child of a
+   Bootstrap .row, whose `.row > *` rule (and the column layouts' stricter
+   copy in overrides.css) would otherwise reset its width and padding. */
+.jarvis-hero.jarvis-hero--card .jarvis-hero__content {
+  position: relative;
+  /* Own stacking context, so the colour layer's z-index: -1 lands behind the
+     text but still in front of the photo and its overlay. */
+  isolation: isolate;
+  width: fit-content;
+  /* The row's negative margin reaches the container's outer edge; pull the
+     card back in by the gutter the row would have given a column. */
+  max-width: min(720px, calc(100% - var(--bs-gutter-x, 1.5rem)));
+  margin-inline: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+  padding: 36px 40px;
+}
+/* Bootstrap's mb-* utilities are !important; the card's padding is the only
+   space wanted under whichever element comes last. */
+.jarvis-hero--card .jarvis-hero__content > :last-child {
+  margin-bottom: 0 !important;
+}
+/* Colour layer: fills the card, sits behind the text and carries the opacity,
+   so the text itself never fades. Pure black / pure white, not the theme's
+   #1a1a1a / #f5f5f5 — hero.twig works the opacity out with the same solver as
+   the image overlay, and that solver assumes exactly these two colours. */
+.jarvis-hero__card-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #000;
+}
+.jarvis-hero--text-dark .jarvis-hero__card-bg {
+  background: #fff;
+}
+@media (max-width: 767.98px) {
+  .jarvis-hero.jarvis-hero--card .jarvis-hero__content {
+    padding: 24px 20px;
+  }
+}
 /* Text color: light (#fff) or dark (#000), from the text_color prop. */
 .jarvis-hero--text-light,
 .jarvis-hero--text-light .jarvis-hero__heading,
