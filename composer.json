@@ -1,5 +1,5 @@
 {
-    "name": "drupal/jarvis",
+    "name": "imrodmartin/jarvis",
     "description": "DXPR-style SDC theme with Bootstrap 5, built for Drupal Canvas and Layout Builder.",
     "type": "drupal-theme",
     "license": "GPL-2.0-or-later",
@@ -15,5 +15,8 @@
         "drupal/canvas_field_component": "^1.0",
         "drupal/focal_point": "^2.1",
         "drupal/twig_tweak": "^3.4"
+    },
+    "replace": {
+        "drupal/jarvis": "self.version"
     }
 }
